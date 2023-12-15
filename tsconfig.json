@@ -21,6 +21,8 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "src",
+    "../babel.config.js",
+    "../jest.config.js"
   ]
 }
