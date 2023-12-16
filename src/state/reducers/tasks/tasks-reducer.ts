@@ -35,7 +35,7 @@ export type UpdateTaskModelTypeForAnyField = { //only for UpdateTaskTC
   deadline?: string
 }
 
-export const tasksReducer = (state: TasksStateType = tasksInitialState, action: TasksActionType): TasksStateType => {
+export const tasksReducer = (state: TasksStateType = {}, action: TasksActionType): TasksStateType => {
   switch (action.type) {
     case "REMOVE-TASK":
       return { ...state, [action.todoListsId]: state[action.todoListsId].filter(t => t.id !== action.id) };

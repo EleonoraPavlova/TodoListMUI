@@ -5,7 +5,7 @@ import { ReduxStoreProviderDecorator } from "../../stories/decorators/ReduxStore
 import { useSelector } from "react-redux";
 import { AddTodolistAC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
 import { useLayoutEffect } from "react";
-import { useAppDispatch } from "../../state/hooks/hooks-selectors";
+import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { todoListId1 } from "../../state/initialState/idState";
 import { AppRootStateType } from "../../state/store";
 
@@ -48,7 +48,7 @@ type Story = StoryObj<typeof TodolistRedax>;
 
 //добавить todolist после того, как удалили последний из state
 const TodolistStoryRedux = () => {
-  let todoLists = useSelector<AppRootStateType, TodolistDomainTypeApi[]>(state => state.todolist)
+  let todoLists = useAppSelector<TodolistDomainTypeApi[]>(state => state.todolists)
   const dispatch = useAppDispatch()
   console.log("todoLists", todoLists)
 

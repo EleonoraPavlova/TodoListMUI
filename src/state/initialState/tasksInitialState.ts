@@ -3,7 +3,7 @@ import { TaskPriorities, TaskStatuses } from "../../api/tasks-api"
 import { TasksStateType } from "../../apps/App"
 import { v1 } from "uuid"
 
-export const tasksInitialState = ({
+export const tasksInitialState: TasksStateType = ({
   [todoListId1]: [
     {
       id: v1(), title: "HTML&CSS", description: "", completed: false, status: TaskStatuses.Completed,
@@ -98,4 +98,4 @@ export const tasksInitialState = ({
       addedDate: ""
     },
   ],
-} as TasksStateType)
+})

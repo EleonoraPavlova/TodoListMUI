@@ -19,13 +19,12 @@ export type TodolistRedaxProps = {
 
 export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, demo = false }) => {
   console.log("TodolistRedax")
-  let { id, filter, title } = todolists // что входит todoLists пропсы,
+  let { id, filter, title, entityStatus } = todolists // что входит todoLists пропсы,
   // ПИСАТЬ НУЖНО ТО, ЧТО НУЖНО ВЫТЯНУТЬ ИЗ state - разворачивание объекта todoLists
 
   //СТРОГО БРАТЬ ТЕ ДАННЫЕ, КОТОРЫЕ НУЖНЫ, ДЕСТРУКТУР ТУТ ДЕЛАТЬ НЕ НУЖНО!!ЛИШНИЕ ПЕРЕРЕНДЕРЫ
   let tasks = useAppSelector<TaskTypeApi[]>(tasks => tasks.tasks[id])//так вытянули
   //нужный массив tasks по id
-  let status = useAppSelector<RequestStatusType>(state => state.app.status)//так вытянули 
 
   const dispatch = useAppDispatch()
 
@@ -68,30 +67,30 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
   const tasksList: Array<JSX.Element> =
     tasks.map(t => {
-      return (< Task key={t.id} task={t} todoListsId={id} disabled={status === "loading"} />)
+      return (< Task key={t.id} task={t} todoListsId={id} disabled={entityStatus === "loading"} />)
     })
 
   return <>
     <Typography variant={"h6"} align="center" sx={{ fontWeight: "bold", paddingBottom: '8px' }}>
-      <EditableSpan title={title} changeTitle={changeTodolistTitleHandler} isDone={status === "loading"} />
+      <EditableSpan title={title} changeTitle={changeTodolistTitleHandler} isDone={entityStatus === "loading"} />
       <IconButton aria-label="delete"
         size="small"
         onClick={removeTodoListHandler}
-        sx={{ ml: "4px" }} disabled={status === "loading"}>
-        <CancelPresentationIcon color={status === "loading" ? "disabled" : "success"} />
+        sx={{ ml: "4px" }} disabled={entityStatus === "loading"}>
+        <CancelPresentationIcon color={entityStatus === "loading" ? "disabled" : "success"} />
       </IconButton>
     </Typography >
-    <AddItemForm errorText="Mistake" addItem={addItem} disabled={status === "loading"} />
+    <AddItemForm errorText="Mistake" addItem={addItem} disabled={entityStatus === "loading"} />
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
       {tasksList}
     </List>
     <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: 6 }}>
       <ButtonMemo size="small" color="info" variant={filter === 'all' ? "outlined" : "text"}
-        onClick={onAllClickHandler} children={"All"} sx={{ mr: "6px", flexGrow: 1 }} />
+        onClick={onAllClickHandler} children={"All"} sx={{ mr: "6px", flexGrow: 1 }} disabled={entityStatus === "loading"} />
       <ButtonMemo size="small" color="success" variant={filter === 'active' ? "outlined" : "text"}
-        onClick={onActiveClickHandler} children={"Active"} sx={{ mr: "6px", flexGrow: 1 }} />
+        onClick={onActiveClickHandler} children={"Active"} sx={{ mr: "6px", flexGrow: 1 }} disabled={entityStatus === "loading"} />
       <ButtonMemo size="small" color="error" variant={filter === 'completed' ? "outlined" : "text"}
-        onClick={onCompletedClickHandler} children={"Completed"} sx={{ mr: "6px" }} />
+        onClick={onCompletedClickHandler} children={"Completed"} sx={{ mr: "6px" }} disabled={entityStatus === "loading"} />
     </div>
   </>
 })

@@ -22,7 +22,6 @@ export type ActionTypeTodolist =
   | RemoveTodoListAction
 
 
-export let initialStateTodolist: TodolistDomainTypeApi[] = [];
 export type FilterValuesType = "all" | "active" | "completed";
 
 export type TodolistDomainTypeApi = TodolistTypeApi & { //расширяю тип который приходить с backend
@@ -30,7 +29,7 @@ export type TodolistDomainTypeApi = TodolistTypeApi & { //расширяю ти�
   entityStatus: RequestStatusType
 }
 
-export const todolistReducer = (state: TodolistDomainTypeApi[] = initialStateTodolist, action: ActionTypeTodolist): TodolistDomainTypeApi[] => {
+export const todolistReducer = (state: TodolistDomainTypeApi[] = [], action: ActionTypeTodolist): TodolistDomainTypeApi[] => {
   switch (action.type) {
     case "REMOVE-TODOLIST":
       return state.filter(l => l.id !== action.todoListsId);

@@ -4,7 +4,7 @@ import { EditableSpan } from "../EditableSpan/EditableSpan";
 import { Delete } from "@mui/icons-material";
 import { RemoveTaskTC, UpdateTaskTC } from "../../state/reducers/tasks/tasks-reducer";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
-import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
+import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 import { RequestStatusType } from "../../state/reducers/app-reducer/app-reducer";
 
 
@@ -16,7 +16,6 @@ type TaskProps = {
 
 //рендер компоненты происходит, если пропсы меняются
 export const Task: React.FC<TaskProps> = memo(({ task, todoListsId, disabled }) => {
-  let status = useAppSelector<RequestStatusType>(state => state.app.status)
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
@@ -45,12 +44,12 @@ export const Task: React.FC<TaskProps> = memo(({ task, todoListsId, disabled }) 
         onChange={changeTaskStatusHandler} disabled={disabled} />
       <EditableSpan title={task.title}
         changeTitle={changeTaskTitleHandler}
-        isDone={task.status === TaskStatuses.Completed || status === "loading"}
+        isDone={task.status === TaskStatuses.Completed || disabled}
       />
       <IconButton edge="end" aria-label="delete"
         size="small" onClick={removeTaskHandler}
         sx={{ ml: "4px" }}
-        disabled={status === "loading"}>
+        disabled={disabled}>
         <Delete fontSize="inherit" sx={{ margin: "10px" }} />
       </IconButton>
     </ListItem>)
