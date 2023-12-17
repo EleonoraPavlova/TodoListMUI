@@ -3,7 +3,8 @@ import { TasksStateType } from "../../../apps/App";
 import { AddTodoListAction, RemoveTodoListAction, SetTodoListAction } from "../todolists/todolists-reducer";
 import { tasksInitialState } from "../../initialState/tasksInitialState";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
-import { setErrorAppAC, setStatusAppAC } from "../app-reducer/app-reducer";
+import { setErrorAppAC, setStatusAppAC, setSuccessAppAC } from "../app-reducer/app-reducer";
+import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 
 //АЛГОРИТМ редьюсер- функция кот хранит логику изменения state => возвращает измененый state
 //1. Исходный state
@@ -151,16 +152,13 @@ export const AddTaskTC = (title: string, todoListsId: string) => (dispatch: AppD
       if (res.data.resultCode === 0) {
         const task = res.data.data.item
         dispatch(AddTaskAC(task))
+        dispatch(setSuccessAppAC("task added successful"))
         dispatch(setStatusAppAC("succeeded"))
-        //тут добавить notification success
       } else {
-        if (res.data.messages.length) {
-          dispatch(setErrorAppAC(res.data.messages[0]))//вывод серверной ошибки
-        } else {
-          dispatch(setErrorAppAC("Some error occurred"))//если ошибка с сервера не пришла
-        }
-        dispatch(setStatusAppAC("failed"))
+        handleServerAppError(res.data, dispatch)
       }
+    }).catch((error) => {
+      handleServerNetworkError(error, dispatch)
     })
 }
 
@@ -188,8 +186,14 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
     dispatch(setStatusAppAC("loading"))
     tasksApi.updateTasks(todoListsId, taskId, apiModel)
       .then(res => {
-        dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
-        dispatch(setStatusAppAC("succeeded"))
+        if (res.data.resultCode === 0) {
+          dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
+          dispatch(setStatusAppAC("succeeded"))
+        } else {
+          handleServerAppError(res.data, dispatch)
+        }
+      }).catch((error) => {
+        handleServerNetworkError(error, dispatch)
       })
   }
 

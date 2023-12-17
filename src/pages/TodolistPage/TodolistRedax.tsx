@@ -25,6 +25,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   //СТРОГО БРАТЬ ТЕ ДАННЫЕ, КОТОРЫЕ НУЖНЫ, ДЕСТРУКТУР ТУТ ДЕЛАТЬ НЕ НУЖНО!!ЛИШНИЕ ПЕРЕРЕНДЕРЫ
   let tasks = useAppSelector<TaskTypeApi[]>(tasks => tasks.tasks[id])//так вытянули
   //нужный массив tasks по id
+  const loading = (entityStatus === "loading")
 
   const dispatch = useAppDispatch()
 
@@ -67,30 +68,31 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
   const tasksList: Array<JSX.Element> =
     tasks.map(t => {
-      return (< Task key={t.id} task={t} todoListsId={id} disabled={entityStatus === "loading"} />)
+      return (< Task key={t.id} task={t} todoListsId={id} disabled={loading} />)
     })
+
 
   return <>
     <Typography variant={"h6"} align="center" sx={{ fontWeight: "bold", paddingBottom: '8px' }}>
-      <EditableSpan title={title} changeTitle={changeTodolistTitleHandler} isDone={entityStatus === "loading"} />
+      <EditableSpan title={title} changeTitle={changeTodolistTitleHandler} isDone={loading} />
       <IconButton aria-label="delete"
         size="small"
         onClick={removeTodoListHandler}
-        sx={{ ml: "4px" }} disabled={entityStatus === "loading"}>
-        <CancelPresentationIcon color={entityStatus === "loading" ? "disabled" : "success"} />
+        sx={{ ml: "4px" }} disabled={loading}>
+        <CancelPresentationIcon color={loading ? "disabled" : "success"} />
       </IconButton>
     </Typography >
-    <AddItemForm errorText="Mistake" addItem={addItem} disabled={entityStatus === "loading"} />
+    <AddItemForm errorText="Mistake" addItem={addItem} disabled={loading} />
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
       {tasksList}
     </List>
     <div style={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: 6 }}>
       <ButtonMemo size="small" color="info" variant={filter === 'all' ? "outlined" : "text"}
-        onClick={onAllClickHandler} children={"All"} sx={{ mr: "6px", flexGrow: 1 }} disabled={entityStatus === "loading"} />
+        onClick={onAllClickHandler} children={"All"} sx={{ mr: "6px", flexGrow: 1 }} disabled={loading} />
       <ButtonMemo size="small" color="success" variant={filter === 'active' ? "outlined" : "text"}
-        onClick={onActiveClickHandler} children={"Active"} sx={{ mr: "6px", flexGrow: 1 }} disabled={entityStatus === "loading"} />
+        onClick={onActiveClickHandler} children={"Active"} sx={{ mr: "6px", flexGrow: 1 }} disabled={loading} />
       <ButtonMemo size="small" color="error" variant={filter === 'completed' ? "outlined" : "text"}
-        onClick={onCompletedClickHandler} children={"Completed"} sx={{ mr: "6px" }} disabled={entityStatus === "loading"} />
+        onClick={onCompletedClickHandler} children={"Completed"} sx={{ mr: "6px" }} disabled={loading} />
     </div>
   </>
 })

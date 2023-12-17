@@ -2,6 +2,7 @@ import {
   AddTodolistAC,
   ChangeTodoListFilterAC,
   ChangeTodoListTitleAC,
+  ChangeTodolistEntityStatusAC,
   FilterValuesType,
   RemoveTodolistAC,
   SetTodoListAC,
@@ -9,6 +10,7 @@ import {
 } from "./todolists-reducer";
 import { todoListId1, todoListId2 } from "../../initialState/idState";
 import { todolistInitialState } from "../../initialState/todolistsInitialState";
+import { RequestStatusType } from "../app-reducer/app-reducer";
 
 let startState = todolistInitialState
 
@@ -71,4 +73,13 @@ test('todolist should be set', () => {
   expect(endState.length).toBe(2);//
   expect(endState[1].id).toBe(todoListId2);
   expect(endState[0].id).toBe(todoListId1)
+});
+
+
+test('todolist entityStatus should be changed', () => {
+  let newStatus: RequestStatusType = "succeeded"
+  const endState = todolistReducer(startState, ChangeTodolistEntityStatusAC(startState[0].id, newStatus))
+
+  expect(endState[0].entityStatus).toBe(newStatus)
+  expect(startState[0].entityStatus).toBe("idle");
 });

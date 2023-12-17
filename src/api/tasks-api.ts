@@ -38,7 +38,7 @@ type ResponseTasksGetType = {
   error: string
 }
 
-type ResponseTasksType<T = {}> = {
+export type ResponseTasksType<T = {}> = {
   data: T
   resultCode: number
   messages: string[]

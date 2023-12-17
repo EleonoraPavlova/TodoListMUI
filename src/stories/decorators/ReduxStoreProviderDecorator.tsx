@@ -27,11 +27,11 @@ const initialGlobalStateMoc: AppRootStateTypeMoc = {
 
 export type AppRootStateTypeMoc = ReturnType<typeof rootReducerMoc>
 
-export const storyBookStore = configureStore({ reducer: rootReducerMoc, preloadedState: initialGlobalStateMoc })
+export const storyBookStore = configureStore({ reducer: rootReducerMoc, preloadedState: undefined })
 
-// storyBookStore.dispatch({ type: 'SET-TODOLISTS', todolists: initialGlobalStateMoc.todolists })
-// storyBookStore.dispatch({ type: 'SET-TASKS', tasks: initialGlobalStateMoc.tasks })
-// storyBookStore.dispatch({ type: 'SET-APP-STATUS', status: initialGlobalStateMoc.app.status })
+storyBookStore.dispatch({ type: 'SET-TODOLISTS', todolists: initialGlobalStateMoc.todolists })
+storyBookStore.dispatch({ type: 'SET-TASKS', tasks: initialGlobalStateMoc.tasks })
+storyBookStore.dispatch({ type: 'SET-APP-STATUS', status: initialGlobalStateMoc.app.status })
 
 export const ReduxStoreProviderDecorator = (storyFn: () => React.ReactNode) => {
   // React. ReactNode - это набор всех возможных значений, возвращаемых компонентом

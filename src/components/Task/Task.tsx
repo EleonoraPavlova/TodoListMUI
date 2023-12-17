@@ -5,7 +5,6 @@ import { Delete } from "@mui/icons-material";
 import { RemoveTaskTC, UpdateTaskTC } from "../../state/reducers/tasks/tasks-reducer";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
 import { useAppDispatch } from "../../state/hooks/hooks-selectors";
-import { RequestStatusType } from "../../state/reducers/app-reducer/app-reducer";
 
 
 type TaskProps = {
