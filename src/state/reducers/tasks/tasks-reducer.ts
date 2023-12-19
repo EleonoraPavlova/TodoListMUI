@@ -1,9 +1,8 @@
 import { AppDispatchType, AppRootStateType } from '../../store';
 import { TasksStateType } from "../../../apps/App";
 import { AddTodoListAction, RemoveTodoListAction, SetTodoListAction } from "../todolists/todolists-reducer";
-import { tasksInitialState } from "../../initialState/tasksInitialState";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
-import { setErrorAppAC, setStatusAppAC, setSuccessAppAC } from "../app-reducer/app-reducer";
+import { setStatusAppAC, setSuccessAppAC } from "../app-reducer/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 
 //АЛГОРИТМ редьюсер- функция кот хранит логику изменения state => возвращает измененый state
@@ -130,6 +129,9 @@ export const SetTasksTC = (todoListsId: string) => (dispatch: AppDispatchType) =
       dispatch(SetTaskskAC(todoListsId, res.data.items))
       dispatch(setStatusAppAC("succeeded"))
     })
+    .catch((error) => {
+      handleServerNetworkError(error, dispatch)
+    })
 }
 
 
@@ -139,7 +141,11 @@ export const RemoveTaskTC = (todoListsId: string, taskId: string) => (dispatch: 
   tasksApi.deleteTasks(todoListsId, taskId)
     .then(res => {
       dispatch(RemoveTaskAC(todoListsId, taskId))
+      dispatch(setSuccessAppAC("task was successfully removed"))
       dispatch(setStatusAppAC("succeeded"))
+    })
+    .catch((error) => {
+      handleServerNetworkError(error, dispatch)
     })
 }
 
@@ -152,7 +158,7 @@ export const AddTaskTC = (title: string, todoListsId: string) => (dispatch: AppD
       if (res.data.resultCode === 0) {
         const task = res.data.data.item
         dispatch(AddTaskAC(task))
-        dispatch(setSuccessAppAC("task added successful"))
+        dispatch(setSuccessAppAC("task was successfully added"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
@@ -188,6 +194,7 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
       .then(res => {
         if (res.data.resultCode === 0) {
           dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
+          dispatch(setSuccessAppAC("task was successfully updated"))
           dispatch(setStatusAppAC("succeeded"))
         } else {
           handleServerAppError(res.data, dispatch)

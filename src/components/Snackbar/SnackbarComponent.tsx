@@ -15,7 +15,6 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 export function SnackbarComponent() { //вывод всплывающих сообщений ошибки и success
   let error = useAppSelector<string | null>(state => state.app.error) //null - не выводится всплывашка
   let success = useAppSelector<string | null>(state => state.app.success) //null - не выводится всплывашка
-  // debugger
   const dispatch = useAppDispatch()
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
@@ -24,9 +23,13 @@ export function SnackbarComponent() { //вывод всплывающих соо
     dispatch(setSuccessAppAC(null))
   };
 
+  if (!error && !success) {
+    return null
+  }
+
   return (
     <Stack sx={{ width: '100%' }}>
-      <Snackbar open={!!error || success !== null} autoHideDuration={5000} onClose={handleClose}>
+      <Snackbar open={!!error || !!success} autoHideDuration={3000} onClose={handleClose}>
         <Alert onClose={handleClose}
           severity={success ? "success" : "error"}
           sx={{ width: '100%' }}>{success ? success : error}
