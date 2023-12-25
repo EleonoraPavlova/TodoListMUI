@@ -33,7 +33,6 @@ export type AppProps = {
 
 export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useAppSelector<RequestStatusType>(state => state.app.status)
-  console.log("status", status)
   const dispatch = useAppDispatch()
 
   useEffect(() => {

@@ -34,21 +34,12 @@ export const appReducer = (state: InitialStateType = InitialState, action: Actio
 
 //action creator
 export const setErrorAppAC = (error: string | null) => {
-  return {
-    type: "SET-APP-ERROR",
-    error
-  } as const
+  return { type: "SET-APP-ERROR", error } as const
 }
 
 export const setStatusAppAC = (status: RequestStatusType) => {
-  return {
-    type: "SET-APP-STATUS",
-    status
-  } as const
+  return { type: "SET-APP-STATUS", status } as const
 }
 export const setSuccessAppAC = (success: string | null) => {
-  return {
-    type: "SET-APP-SUCCESS",
-    success
-  } as const
+  return { type: "SET-APP-SUCCESS", success } as const
 }

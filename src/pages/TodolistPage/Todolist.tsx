@@ -34,8 +34,7 @@ export function Todolist(props: TodolistPropsType) {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    const thunk = SetTasksTC(props.todoListsId)
-    dispatch(thunk)
+    dispatch(SetTasksTC(props.todoListsId))
   }, [])
 
   const addItem = (title: string) => {
