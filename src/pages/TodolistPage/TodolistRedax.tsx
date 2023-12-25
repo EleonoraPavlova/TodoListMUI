@@ -9,7 +9,6 @@ import { ButtonMemo } from "../../components/ButtonMemo";
 import { Task } from "../../components/Task/Task";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
 import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
-import { RequestStatusType } from "../../state/reducers/app-reducer/app-reducer";
 
 
 export type TodolistRedaxProps = {

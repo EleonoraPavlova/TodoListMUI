@@ -1,4 +1,4 @@
-import { AppDispatchType, AppRootStateType } from '../../store';
+import { AppRootStateType, AppThunk } from '../../store';
 import { TasksStateType } from "../../../apps/App";
 import { AddTodoListAction, RemoveTodoListAction, SetTodoListAction } from "../todolists/todolists-reducer";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
@@ -23,6 +23,13 @@ export type TasksActionType =
   | SetTodoListAction
   | AddTodoListAction
   | RemoveTodoListAction
+
+
+export enum ResultCode { //enum  ONLY for reading, cannot be overwritten!!
+  SUCCEEDED = 0,
+  ERROR = 1,
+  ERROR_CAPTCHA = 10
+}
 
 
 export type UpdateTaskModelTypeForAnyField = { //only for UpdateTaskTC
@@ -122,40 +129,43 @@ export const SetTaskskAC = (todoListsId: string, tasks: TaskTypeApi[]) => {
 
 
 //thunks
-export const SetTasksTC = (todoListsId: string) => (dispatch: AppDispatchType) => {
-  dispatch(setStatusAppAC("loading"))
-  tasksApi.getTasks(todoListsId)
-    .then(res => {
+export const SetTasksTC = (todoListsId: string): AppThunk =>
+  async dispatch => {
+    dispatch(setStatusAppAC("loading"))
+    try {
+      const res = await tasksApi.getTasks(todoListsId)
       dispatch(SetTaskskAC(todoListsId, res.data.items))
       dispatch(setStatusAppAC("succeeded"))
-    })
-    .catch((error) => {
-      handleServerNetworkError(error, dispatch)
-    })
-}
+    } catch (err) {
+      handleServerNetworkError(err, dispatch)
+    }
+  }
 
 
-export const RemoveTaskTC = (todoListsId: string, taskId: string) => (dispatch: AppDispatchType) => {
-  //dispatch - функция, которая используется для отправки действий в хранилище Redux.
-  dispatch(setStatusAppAC("loading"))
-  tasksApi.deleteTasks(todoListsId, taskId)
-    .then(res => {
-      dispatch(RemoveTaskAC(todoListsId, taskId))
-      dispatch(setSuccessAppAC("task was successfully removed"))
-      dispatch(setStatusAppAC("succeeded"))
-    })
-    .catch((error) => {
-      handleServerNetworkError(error, dispatch)
-    })
-}
+export const RemoveTaskTC = (todoListsId: string, taskId: string): AppThunk =>
+  async dispatch => {
+    //dispatch - функция, которая используется для отправки действий в хранилище Redux.
+    dispatch(setStatusAppAC("loading"))
+    try {
+      const res = await tasksApi.deleteTasks(todoListsId, taskId)
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
+        dispatch(RemoveTaskAC(todoListsId, taskId))
+        dispatch(setSuccessAppAC("task was successfully removed"))
+        dispatch(setStatusAppAC("succeeded"))
+      }
+    } catch (err) {
+      handleServerNetworkError(err, dispatch)
+    }
+  }
 
 
-export const AddTaskTC = (title: string, todoListsId: string) => (dispatch: AppDispatchType) => {
-  //Для чего нужна функция dispatch санке ? Чтобы изменять state
-  dispatch(setStatusAppAC("loading"))
-  tasksApi.createTasks(todoListsId, title)
-    .then(res => {
-      if (res.data.resultCode === 0) {
+export const AddTaskTC = (title: string, todoListsId: string): AppThunk =>
+  async dispatch => {
+    //Для чего нужна функция dispatch санке ? Чтобы изменять state
+    dispatch(setStatusAppAC("loading"))
+    try {
+      const res = await tasksApi.createTasks(todoListsId, title)
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
         const task = res.data.data.item
         dispatch(AddTaskAC(task))
         dispatch(setSuccessAppAC("task was successfully added"))
@@ -163,22 +173,20 @@ export const AddTaskTC = (title: string, todoListsId: string) => (dispatch: AppD
       } else {
         handleServerAppError(res.data, dispatch)
       }
-    }).catch((error) => {
-      handleServerNetworkError(error, dispatch)
-    })
-}
+    } catch (err) {
+      handleServerNetworkError(err, dispatch)
+    }
+  }
 
 
 //update any field
-export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateTaskModelTypeForAnyField) =>
-  (dispatch: AppDispatchType, getState: () => AppRootStateType) => { //Для чего нужна функция dispatch санке? Чтобы изменять state
+export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateTaskModelTypeForAnyField): AppThunk =>
+  async (dispatch, getState: () => AppRootStateType) => { //Для чего нужна функция dispatch санке? Чтобы изменять state
     const state = getState()
     const task = state.tasks[todoListsId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
 
-    if (!task) {
-      console.warn("Task was not found")
-      return
-    }
+    if (!task) return
+
     const apiModel: UpdateTaskModelType = {
       title: task.title,
       description: task.description,
@@ -190,18 +198,18 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
       ...model //перезатираю теми соападающими полями, которые приходят с UpdateTaskTC
     }
     dispatch(setStatusAppAC("loading"))
-    tasksApi.updateTasks(todoListsId, taskId, apiModel)
-      .then(res => {
-        if (res.data.resultCode === 0) {
-          dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
-          dispatch(setSuccessAppAC("task was successfully updated"))
-          dispatch(setStatusAppAC("succeeded"))
-        } else {
-          handleServerAppError(res.data, dispatch)
-        }
-      }).catch((error) => {
-        handleServerNetworkError(error, dispatch)
-      })
+    try {
+      const res = await tasksApi.updateTasks(todoListsId, taskId, apiModel)
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
+        dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
+        dispatch(setSuccessAppAC("task was successfully updated"))
+        dispatch(setStatusAppAC("succeeded"))
+      } else {
+        handleServerAppError(res.data, dispatch)
+      }
+    } catch (err) {
+      handleServerNetworkError(err, dispatch)
+    }
   }
 
 //export const ChangeTaskTitleTC = (todoListsId: string, taskId: string, title: string) => {

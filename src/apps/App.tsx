@@ -76,7 +76,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
                 {btnText}
               </Button>
               <Button variant="outlined" size="small" color={"secondary"}>
-                LogOut
+                LogIn
               </Button>
             </Box>
           </Toolbar>
