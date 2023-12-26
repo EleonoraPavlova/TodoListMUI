@@ -29,9 +29,9 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!demo) return
+    // if (!demo) return
     dispatch(SetTasksTC(id))
-  }, [dispatch, id, demo])
+  }, [dispatch, id])
 
 
   const addItem = useCallback((title: string) => {

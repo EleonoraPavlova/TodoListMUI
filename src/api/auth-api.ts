@@ -4,7 +4,7 @@ import { OperationResult } from "./tasks-api"
 import { instance } from "./todolist-api"
 
 
-export type RequestParamsType = {
+export type LoginParamsType = {
   email: string
   password: string
   rememberMe: boolean
@@ -13,7 +13,7 @@ export type RequestParamsType = {
 
 
 export const authApi = {
-  login(params: RequestParamsType) {
+  login(params: LoginParamsType) {
     return instance.post<OperationResult<{ userId: number }>>("/auth/login", params)
   },
 

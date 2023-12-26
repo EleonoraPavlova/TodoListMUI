@@ -8,13 +8,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
 import { TaskTypeApi } from "./../api/tasks-api"
-import { FilterValuesType, SetTodoListTC } from "../state/reducers/todolists/todolists-reducer";
+import { FilterValuesType, setTodoListTC } from "../state/reducers/todolists/todolists-reducer";
 import { useAppDispatch, useAppSelector } from "../state/hooks/hooks-selectors";
 import { TodoListsForRender } from "../components/TodolistRender/TodolistRender";
 import LinearProgress from '@mui/material/LinearProgress';
 import { SnackbarComponent } from "../components/Snackbar/SnackbarComponent";
 import { RequestStatusType } from "../state/reducers/app/app-reducer";
-import { Navigate, Routes } from "react-router-dom";
+import { Navigate, Routes, useNavigate } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { Login } from "../pages/Login/Login";
 
@@ -35,12 +35,15 @@ export type AppProps = {
 
 export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useAppSelector<RequestStatusType>(state => state.app.status)
+  let isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
+  const navigate = useNavigate();
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     // if (!demo) return
-    dispatch(SetTodoListTC())
-  }, [dispatch])
+    if (isLoggedIn) navigate("/")
+    dispatch(setTodoListTC())
+  }, [dispatch, isLoggedIn])
 
   let [lightMode, setLightMode] = useState<boolean>(true) // для изменения темы стейт
   let btnText = lightMode ? "dark" : "light"
@@ -56,14 +59,19 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
     setLightMode(!lightMode)
   }
 
+  const logIn = () => {
+    navigate("/login")
+  }
+
   // <CssBaseline /> - обеспечивает максимальное применение стилей из библиотеки
 
   return (
     <ThemeProvider theme={themeHandler}>
       <CssBaseline />
       <SnackbarComponent />
-      <div className="App">
+      <Box>
         <AppBar position="static">
+          {isLoggedIn}
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <IconButton edge="start" color={"default"} aria-label="menu">
               <MenuIcon fontSize="large" />
@@ -73,19 +81,19 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
               <Button variant="outlined" size="small" color={"inherit"} onClick={toggleTheme} sx={{ mr: '10px' }}>
                 {btnText}
               </Button>
-              <Button variant="outlined" size="small" color={"secondary"}>
-                LogIn
+              <Button variant="outlined" size="small" color={"secondary"} onClick={logIn}>
+                {isLoggedIn ? "LogOut" : "LogIn"}
               </Button>
             </Box>
           </Toolbar>
         </AppBar>
         {status === "loading" && <LinearProgress />}
         {/* when status === "loading" show LinearProgress*/}
-        <Container >
+        <Container sx={{ marginTop: '25px' }}>
           <Grid container
             sx={{
-              p: "10px", justifyContent: "space-berween",
-              display: "flex", alignItems: "flex-start", gap: "40px",
+              p: "10px", justifyContent: "center",
+              display: "flex", alignItems: "center", gap: "40px",
               flexWrap: "wrap"
             }}>
             <Routes>
@@ -96,7 +104,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
             </Routes>
           </Grid>
         </Container >
-      </div >
+      </ Box>
     </ThemeProvider >
   )
 }

@@ -9,19 +9,17 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useFormik } from "formik";
 import { Typography } from "@mui/material";
+import { useAppDispatch } from "../../state/hooks/hooks-selectors";
+import { loginTC } from "../../state/reducers/auth/auth-reducers";
+import { LoginParamsType } from "../../api/auth-api";
 
-
-type FormValues = {
-  email: string
-  password: string
-  rememberMe: boolean
-}
 
 export const Login = () => {
+  const dispatch = useAppDispatch()
 
   const formik = useFormik({
     validate: (values) => {
-      const errors: Partial<FormValues> = {}
+      const errors: Partial<LoginParamsType> = {}
 
       if (!values.email) {
         errors.email = 'email is required';
@@ -37,13 +35,11 @@ export const Login = () => {
       rememberMe: false,
     },
     onSubmit: (values) => {
-      alert(JSON.stringify(values));
+      dispatch(loginTC(values))
     }
   })
 
-
   return (
-
     < Grid container justifyContent={'center'} >
       <Grid item justifyContent={'center'}>
         <form onSubmit={formik.handleSubmit}>
@@ -61,7 +57,7 @@ export const Login = () => {
                 </Typography>
               )}
 
-              <TextField label="Password" margin="normal" autoComplete="password"
+              <TextField label="Password" margin="normal" type="password" autoComplete="password"
                 {...formik.getFieldProps("password")}
               />
               {formik.errors.password && formik.touched.password && (

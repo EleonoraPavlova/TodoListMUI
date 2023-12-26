@@ -86,7 +86,7 @@ export const SetTodoListAC = (todoLists: TodolistTypeApi[]) => { //устано�
 }
 
 //thunks
-export const SetTodoListTC = (): AppThunk =>
+export const setTodoListTC = (): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {

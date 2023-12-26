@@ -1,29 +1,17 @@
-import { RequestParamsType } from "../../../api/auth-api"
-import { authReducer, loginAC } from "./auth-reducers"
+import { authReducer, initialParamsAuthType, setIsLoggedInAC } from "./auth-reducers"
 
-let startState: RequestParamsType
+let startState: initialParamsAuthType
 
 beforeEach(() => {
   startState = {
-    email: "",
-    password: "",
-    rememberMe: false,
-    captcha: false
+    isLoggedIn: false
   }
 })
 
 
 test('auth params should be set', () => {
-  const data = {
-    email: "free@samuraijs.com",
-    password: "free",
-    rememberMe: true,
-    captcha: false
-  }
+  const endState = authReducer(startState, setIsLoggedInAC(true))
 
-  const endState = authReducer(startState, loginAC(data))
-
-  expect(endState.email).toBe("free@samuraijs.com")
-  expect(endState.password).toBe("free")
-  expect(endState.rememberMe).toBe(true)
+  expect(endState.isLoggedIn).toBe(true)
+  expect(startState.isLoggedIn).toBe(false)
 })

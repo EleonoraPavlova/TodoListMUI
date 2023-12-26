@@ -1,4 +1,4 @@
-import { Grid, Paper } from "@mui/material"
+import { Box, Grid, Paper } from "@mui/material"
 import { TodolistRedax } from "../../pages/TodolistPage/TodolistRedax"
 import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { memo } from "react";
@@ -25,24 +25,30 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
   }
 
   return (
-    <Grid container sx={{ p: "20px", justifyContent: "center", alignItems: "center" }}>
+    <Box sx={{
+      alignItems: "center",
+      display: "flex",
+      flexDirection: "column",
+      gap: "26px"
+    }}>
       <AddItemForm errorText={"Enter title"} addItem={addTodoList} />
-      {todolists.map(t => (
-        <Paper
-          key={t.id}
-          sx={{
-            p: '15px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-          }}
-          elevation={8}
-        >
-          <TodolistRedax todolists={t} demo={demo} />
-        </Paper>
-      ))}
-    </Grid>
-
-  );
+      <Grid container sx={{ p: "20px", justifyContent: "space-evenly", alignItems: "flex-start", gap: "35px" }}>
+        {todolists.map(t => (
+          <Paper
+            key={t.id}
+            sx={{
+              p: '15px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'column',
+            }}
+            elevation={8}
+          >
+            <TodolistRedax todolists={t} demo={demo} />
+          </Paper>
+        ))}
+      </Grid>
+    </Box >
+  )
 })
