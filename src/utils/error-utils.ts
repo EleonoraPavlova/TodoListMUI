@@ -1,8 +1,8 @@
 import { Dispatch } from "redux"
-import { ResponseTasksType } from "../api/tasks-api"
-import { setErrorAppAC, setStatusAppAC } from "../state/reducers/app-reducer/app-reducer"
+import { OperationResult } from "../api/tasks-api"
+import { setErrorAppAC, setStatusAppAC } from "../state/reducers/app/app-reducer"
 
-export const handleServerAppError = <D>(data: ResponseTasksType<D>, dispatch: Dispatch) => {
+export const handleServerAppError = <D>(data: OperationResult<D>, dispatch: Dispatch) => {
   if (data.messages.length) {
     dispatch(setErrorAppAC(data.messages[0]))//вывод серверной ошибки
   } else {

@@ -1,5 +1,5 @@
 import { TodolistTypeApi, todolistApi } from "../../../api/todolist-api";
-import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from "../app-reducer/app-reducer";
+import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { AppThunk } from "../../store";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { ResultCode } from "../tasks/tasks-reducer";
@@ -148,7 +148,6 @@ export const ChangeTodoListTitleTC = (todolistId: string, title: string): AppThu
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      debugger
       handleServerNetworkError(err, dispatch)
     }
   }

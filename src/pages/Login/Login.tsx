@@ -7,25 +7,79 @@ import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { useFormik } from "formik";
+import { Typography } from "@mui/material";
+
+
+type FormValues = {
+  email: string
+  password: string
+  rememberMe: boolean
+}
 
 export const Login = () => {
-  return <Grid container justifyContent={'center'}>
-    <Grid item justifyContent={'center'}>
-      <FormControl>
-        <FormLabel>
-          <p>To log in get registered</p>
-        </FormLabel>
-        <FormGroup>
-          <TextField label="Email" margin="normal" />
-          <TextField type="password" label="Password"
-            margin="normal"
-          />
-          <FormControlLabel label={'Remember me'} control={<Checkbox />} />
-          <Button type={'submit'} variant={'contained'} color={'primary'}>
-            Login
-          </Button>
-        </FormGroup>
-      </FormControl>
+
+  const formik = useFormik({
+    validate: (values) => {
+      const errors: Partial<FormValues> = {}
+
+      if (!values.email) {
+        errors.email = 'email is required';
+      }
+      if (!values.password) {
+        errors.password = 'password is required';
+      }
+      return errors
+    },
+    initialValues: {
+      email: '',
+      password: '',
+      rememberMe: false,
+    },
+    onSubmit: (values) => {
+      alert(JSON.stringify(values));
+    }
+  })
+
+
+  return (
+
+    < Grid container justifyContent={'center'} >
+      <Grid item justifyContent={'center'}>
+        <form onSubmit={formik.handleSubmit}>
+          <FormControl>
+            <FormLabel>
+              <Typography variant="body1" fontWeight="bold" sx={{ paddingTop: "15px" }}>To log in get registered</Typography>
+            </FormLabel>
+            <FormGroup>
+              <TextField label="Email" margin="normal" autoComplete="email"
+                {...formik.getFieldProps("email")}
+              />
+              {formik.errors.email && formik.touched.email && (
+                <Typography variant="body2" color="error" component="span">
+                  {formik.errors.email}
+                </Typography>
+              )}
+
+              <TextField label="Password" margin="normal" autoComplete="password"
+                {...formik.getFieldProps("password")}
+              />
+              {formik.errors.password && formik.touched.password && (
+                <Typography variant="body2" color="error" component="span">
+                  {formik.errors.password}
+                </Typography>
+              )}
+              <FormControlLabel label={'Remember me'} control={<Checkbox
+                checked={formik.values.rememberMe}
+                {...formik.getFieldProps("rememberMe")} />}
+              />
+              <Button type={'submit'} variant={'contained'} color={'primary'} sx={{ color: 'white' }}>
+                Login
+              </Button>
+            </FormGroup>
+          </FormControl>
+        </form>
+      </Grid>
     </Grid>
-  </Grid>
-}​
+  )
+}

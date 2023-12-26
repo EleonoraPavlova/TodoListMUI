@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { AddItemForm } from "../components/AddItemForm/AddItemForm";
 import {
   AppBar, Box, Button, Container,
   CssBaseline, Grid, IconButton, Toolbar, Typography,
@@ -9,12 +8,15 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
 import { TaskTypeApi } from "./../api/tasks-api"
-import { AddTodolistTC, FilterValuesType, SetTodoListTC } from "../state/reducers/todolists/todolists-reducer";
+import { FilterValuesType, SetTodoListTC } from "../state/reducers/todolists/todolists-reducer";
 import { useAppDispatch, useAppSelector } from "../state/hooks/hooks-selectors";
 import { TodoListsForRender } from "../components/TodolistRender/TodolistRender";
 import LinearProgress from '@mui/material/LinearProgress';
 import { SnackbarComponent } from "../components/Snackbar/SnackbarComponent";
-import { RequestStatusType } from "../state/reducers/app-reducer/app-reducer";
+import { RequestStatusType } from "../state/reducers/app/app-reducer";
+import { Navigate, Routes } from "react-router-dom";
+import { Route } from "react-router-dom";
+import { Login } from "../pages/Login/Login";
 
 
 export type TodolistType = {
@@ -36,13 +38,9 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    if (!demo) return
+    // if (!demo) return
     dispatch(SetTodoListTC())
-  }, [dispatch, demo])
-
-  function addTodoList(title: string) {
-    dispatch(AddTodolistTC(title))
-  }
+  }, [dispatch])
 
   let [lightMode, setLightMode] = useState<boolean>(true) // для изменения темы стейт
   let btnText = lightMode ? "dark" : "light"
@@ -84,11 +82,18 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
         {status === "loading" && <LinearProgress />}
         {/* when status === "loading" show LinearProgress*/}
         <Container >
-          <Grid container sx={{ p: "20px", justifyContent: "center", alignItems: "center" }}>
-            <AddItemForm errorText={"Enter title"} addItem={addTodoList} />
-          </Grid>
-          <Grid container sx={{ p: "10px", justifyContent: "space-berween", display: "flex", alignItems: "flex-start", gap: "40px", flexWrap: "wrap" }}>
-            <TodoListsForRender demo={demo} />
+          <Grid container
+            sx={{
+              p: "10px", justifyContent: "space-berween",
+              display: "flex", alignItems: "flex-start", gap: "40px",
+              flexWrap: "wrap"
+            }}>
+            <Routes>
+              <Route path="/" element={<TodoListsForRender demo={demo} />} />
+              <Route path="/login" element={<Login />} />
+              <Route path='/404' element={<h1>404: PAGE NOT FOUND</h1>} />
+              <Route path='*' element={<Navigate to="/404" />} />
+            </Routes>
           </Grid>
         </Container >
       </div >

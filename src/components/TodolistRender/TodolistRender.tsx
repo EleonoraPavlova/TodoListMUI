@@ -1,8 +1,9 @@
-import { Paper } from "@mui/material"
+import { Grid, Paper } from "@mui/material"
 import { TodolistRedax } from "../../pages/TodolistPage/TodolistRedax"
-import { useAppSelector } from "../../state/hooks/hooks-selectors";
+import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { memo } from "react";
-import { TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
+import { AddTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
+import { AddItemForm } from "../AddItemForm/AddItemForm";
 
 export type TodoListsForRenderProps = {
   demo?: boolean
@@ -17,8 +18,15 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
   //let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
   //такая запись без использования слоя selectors
 
+  const dispatch = useAppDispatch()
+
+  const addTodoList = (title: string) => {
+    dispatch(AddTodolistTC(title))
+  }
+
   return (
-    <>
+    <Grid container sx={{ p: "20px", justifyContent: "center", alignItems: "center" }}>
+      <AddItemForm errorText={"Enter title"} addItem={addTodoList} />
       {todolists.map(t => (
         <Paper
           key={t.id}
@@ -34,6 +42,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
           <TodolistRedax todolists={t} demo={demo} />
         </Paper>
       ))}
-    </>
+    </Grid>
+
   );
 })

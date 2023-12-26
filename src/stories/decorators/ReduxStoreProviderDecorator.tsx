@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { combineReducers } from "redux";
 import { tasksReducer } from '../../state/reducers/tasks/tasks-reducer';
 import { todolistReducer } from "../../state/reducers/todolists/todolists-reducer";
-import { appReducer } from "../../state/reducers/app-reducer/app-reducer";
+import { appReducer } from "../../state/reducers/app/app-reducer";
 import { appInitialStatusState } from "../../state/initialState/appInitialStatusState";
 import { configureStore } from "@reduxjs/toolkit";
 import { tasksInitialState } from "../../state/initialState/tasksInitialState";

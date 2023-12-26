@@ -1,4 +1,4 @@
-import { InitialStateType } from "../reducers/app-reducer/app-reducer";
+import { InitialStateType } from "../reducers/app/app-reducer";
 
 export const appInitialStatusState: InitialStateType = {
   status: 'idle',

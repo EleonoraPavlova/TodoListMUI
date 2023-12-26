@@ -10,7 +10,7 @@ import {
 } from "./todolists-reducer";
 import { todoListId1, todoListId2 } from "../../initialState/idState";
 import { todolistInitialState } from "../../initialState/todolistsInitialState";
-import { RequestStatusType } from "../app-reducer/app-reducer";
+import { RequestStatusType } from "../app/app-reducer";
 
 let startState = todolistInitialState
 

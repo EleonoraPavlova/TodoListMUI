@@ -2,7 +2,7 @@ import { AppRootStateType, AppThunk } from '../../store';
 import { TasksStateType } from "../../../apps/App";
 import { AddTodoListAction, RemoveTodoListAction, SetTodoListAction } from "../todolists/todolists-reducer";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
-import { setStatusAppAC, setSuccessAppAC } from "../app-reducer/app-reducer";
+import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 
 //АЛГОРИТМ редьюсер- функция кот хранит логику изменения state => возвращает измененый state

@@ -38,7 +38,7 @@ type ResponseTasksGetType = {
   error: string
 }
 
-export type ResponseTasksType<T = {}> = {
+export type OperationResult<T = {}> = {
   data: T
   resultCode: number
   messages: string[]
@@ -60,14 +60,14 @@ export const tasksApi = {
   },
 
   createTasks(todolistId: string, title: string) {
-    return instance.post<ResponseTasksType<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks`, { title })
+    return instance.post<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks`, { title })
   },
 
   deleteTasks(todolistId: string, taskId: string) {
-    return instance.delete<ResponseTasksType>(`/todo-lists/${todolistId}/tasks/${taskId}`)
+    return instance.delete<OperationResult>(`/todo-lists/${todolistId}/tasks/${taskId}`)
   },
 
   updateTasks(todolistId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put<ResponseTasksType<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
+    return instance.put<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
   }
 }
