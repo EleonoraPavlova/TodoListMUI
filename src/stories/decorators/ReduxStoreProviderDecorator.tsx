@@ -3,8 +3,7 @@ import { Provider } from 'react-redux';
 import { combineReducers } from "redux";
 import { tasksReducer } from '../../state/reducers/tasks/tasks-reducer';
 import { todolistReducer } from "../../state/reducers/todolists/todolists-reducer";
-import { appReducer } from "../../state/reducers/app/app-reducer";
-import { appInitialStatusState } from "../../state/initialState/appInitialStatusState";
+import { InitialStateApp, appReducer } from "../../state/reducers/app/app-reducer";
 import { configureStore } from "@reduxjs/toolkit";
 import { tasksInitialState } from "../../state/initialState/tasksInitialState";
 import { AppRootStateType } from "../../state/store";
@@ -22,7 +21,7 @@ const rootReducerMoc = combineReducers({
 const initialGlobalStateMoc: AppRootStateTypeMoc = {
   todolists: todolistInitialState,
   tasks: tasksInitialState,
-  app: appInitialStatusState
+  app: InitialStateApp
 };
 
 export type AppRootStateTypeMoc = ReturnType<typeof rootReducerMoc>

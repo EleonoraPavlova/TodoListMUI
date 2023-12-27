@@ -12,7 +12,7 @@ export type initialParamsAuthType = {
 }
 
 const initialParamsAuth = {
-  isLoggedIn: false
+  isLoggedIn: false //залогин пользователь или нет
 }
 
 export const authReducer = (state = initialParamsAuth, action: AuthActionType): initialParamsAuthType => {
@@ -38,6 +38,7 @@ export const loginTC = (params: LoginParamsType): AppThunk =>
     dispatch(setStatusAppAC("loading"))
     try {
       const res = await authApi.login(params)
+
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         dispatch(setIsLoggedInAC(true))
         dispatch(setTodoListTC())
@@ -47,6 +48,25 @@ export const loginTC = (params: LoginParamsType): AppThunk =>
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+    }
+  }
+
+
+export const logOutTC = (): AppThunk =>
+  async dispatch => {
+    dispatch(setStatusAppAC("loading"))
+    try {
+      const res = await authApi.logOut()
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
+        dispatch(setIsLoggedInAC(false))
+        dispatch(setTodoListTC())
+        dispatch(setSuccessAppAC("you have successfully logged out"))
+        dispatch(setStatusAppAC("succeeded"))
+      } else {
+        handleServerAppError(res.data, dispatch)
+      }
+    } catch (err) {
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }

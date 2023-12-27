@@ -39,14 +39,17 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   }, [dispatch, id])
 
   tasks = useMemo(() => {
+    let filtered = tasks;
+
     if (filter === "active") {
-      tasks = tasks.filter(t => t.status === TaskStatuses.New);
+      filtered = filtered.filter(t => t.status === TaskStatuses.New);
     }
     if (filter === "completed") {
-      tasks = tasks.filter(t => t.status === TaskStatuses.Completed);
+      filtered = filtered.filter(t => t.status === TaskStatuses.Completed);
     }
-    return tasks
-  }, [tasks, filter])
+
+    return filtered;
+  }, [tasks, filter]);
 
   const changeTodolistTitleHandler = useCallback((title: string) => {
     dispatch(ChangeTodoListTitleTC(id, title))

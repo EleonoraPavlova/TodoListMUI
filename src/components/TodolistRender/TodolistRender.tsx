@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selector
 import { memo } from "react";
 import { AddTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
 import { AddItemForm } from "../AddItemForm/AddItemForm";
+import { useNavigate } from "react-router-dom";
 
 export type TodoListsForRenderProps = {
   demo?: boolean
@@ -17,7 +18,6 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
 
   //let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
   //такая запись без использования слоя selectors
-
   const dispatch = useAppDispatch()
 
   const addTodoList = (title: string) => {

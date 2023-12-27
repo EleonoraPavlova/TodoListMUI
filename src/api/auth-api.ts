@@ -18,7 +18,7 @@ export const authApi = {
   },
 
   authMe() {
-    return instance.post<OperationResult<{ id: number, email: string, login: string }>>("/auth/me")
+    return instance.get<OperationResult<{ id: number, email: string, login: string }>>("/auth/me")
   },
 
   logOut() {

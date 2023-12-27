@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import {
-  AppBar, Box, Button, Container,
+  AppBar, Box, Button, CircularProgress, Container,
   CssBaseline, Grid, IconButton, Toolbar, Typography,
 } from "@mui/material";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
 import { TaskTypeApi } from "./../api/tasks-api"
@@ -13,10 +13,11 @@ import { useAppDispatch, useAppSelector } from "../state/hooks/hooks-selectors";
 import { TodoListsForRender } from "../components/TodolistRender/TodolistRender";
 import LinearProgress from '@mui/material/LinearProgress';
 import { SnackbarComponent } from "../components/Snackbar/SnackbarComponent";
-import { RequestStatusType } from "../state/reducers/app/app-reducer";
+import { RequestStatusType, setInitializeAppTC } from "../state/reducers/app/app-reducer";
 import { Navigate, Routes, useNavigate } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { Login } from "../pages/Login/Login";
+import { logOutTC } from "../state/reducers/auth/auth-reducers";
 
 
 export type TodolistType = {
@@ -36,14 +37,24 @@ export type AppProps = {
 export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useAppSelector<RequestStatusType>(state => state.app.status)
   let isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
+  let initialized = useAppSelector<boolean>(state => state.app.initialized)
+  console.log("initialized", initialized)
+  console.log("isLoggedIn", isLoggedIn)
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     // if (!demo) return
-    if (isLoggedIn) navigate("/")
-    dispatch(setTodoListTC())
-  }, [dispatch, isLoggedIn])
+    dispatch(setInitializeAppTC())
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!isLoggedIn && initialized) {
+      navigate('/login')
+    } else {
+      navigate('/')
+    }
+  }, [isLoggedIn, initialized])
 
   let [lightMode, setLightMode] = useState<boolean>(true) // для изменения темы стейт
   let btnText = lightMode ? "dark" : "light"
@@ -59,11 +70,26 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
     setLightMode(!lightMode)
   }
 
-  const logIn = () => {
-    navigate("/login")
-  }
+  const logOutHandler = useCallback(() => {
+    dispatch(logOutTC())
+  }, [isLoggedIn])
 
   // <CssBaseline /> - обеспечивает максимальное применение стилей из библиотеки
+
+  const CustomCircularProgress = styled(CircularProgress)(({ theme }) => ({
+    "& circle": {
+      strokeWidth: 2,
+      stroke: lime,
+    },
+  }));
+
+  if (!initialized) { //loader во время проверки срока куки и настроек
+    return (
+      <Box
+        sx={{ display: 'flex', alignItems: "center", justifyContent: 'center', height: '100vh' }}>
+        <CustomCircularProgress />
+      </Box>)
+  }
 
   return (
     <ThemeProvider theme={themeHandler}>
@@ -71,7 +97,6 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
       <SnackbarComponent />
       <Box>
         <AppBar position="static">
-          {isLoggedIn}
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <IconButton edge="start" color={"default"} aria-label="menu">
               <MenuIcon fontSize="large" />
@@ -81,9 +106,9 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
               <Button variant="outlined" size="small" color={"inherit"} onClick={toggleTheme} sx={{ mr: '10px' }}>
                 {btnText}
               </Button>
-              <Button variant="outlined" size="small" color={"secondary"} onClick={logIn}>
-                {isLoggedIn ? "LogOut" : "LogIn"}
-              </Button>
+              {isLoggedIn && <Button variant="outlined" size="small" color={"secondary"} onClick={logOutHandler} sx={{ color: "white" }}>
+                Log Out
+              </Button>}
             </Box>
           </Toolbar>
         </AppBar>

@@ -94,7 +94,7 @@ export const setTodoListTC = (): AppThunk =>
       dispatch(SetTodoListAC(res.data))
       dispatch(setStatusAppAC("succeeded"))
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }
 
@@ -112,7 +112,7 @@ export const RemoveTodolistTC = (todoListsId: string): AppThunk =>
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }
 
@@ -130,7 +130,7 @@ export const AddTodolistTC = (title: string): AppThunk =>
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }
 
@@ -148,7 +148,7 @@ export const ChangeTodoListTitleTC = (todolistId: string, title: string): AppThu
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }
 
@@ -165,6 +165,6 @@ export const ChangeTodoListFilterTC = (todolistId: string, title: string, filter
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError(err, dispatch)
+      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
     }
   }

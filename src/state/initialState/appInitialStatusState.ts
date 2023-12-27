@@ -1,7 +1,8 @@
 import { InitialStateType } from "../reducers/app/app-reducer";
 
-export const appInitialStatusState: InitialStateType = {
+export const InitialStateApp: InitialStateType = {
   status: 'idle',
   error: null,
-  success: null
+  success: null,
+  initialized: false
 }
