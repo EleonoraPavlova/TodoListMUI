@@ -70,7 +70,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
   const tasksList: Array<JSX.Element> =
     tasks.map(t => {
-      return (< Task key={t.id} task={t} todoListsId={id} disabled={loading} />)
+      return (< Task key={t.id} task={t} todoListsId={id} />)
     })
 
 

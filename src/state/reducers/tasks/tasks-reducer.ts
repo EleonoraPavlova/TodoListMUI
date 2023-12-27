@@ -42,7 +42,40 @@ export type UpdateTaskModelTypeForAnyField = { //only for UpdateTaskTC
   deadline?: string
 }
 
-export const tasksReducer = (state: TasksStateType = {}, action: TasksActionType): TasksStateType => {
+export const initialStateTasks: TasksStateType = {
+  "todoListId1": [
+    {
+      description: "",
+      title: "",
+      completed: false,
+      status: TaskStatuses.New,
+      priority: TaskPriorities.Low,
+      startDate: "",
+      deadline: "",
+      id: "",
+      todoListId: "",
+      order: 0,
+      addedDate: ""
+    }
+  ],
+  "todoListId2": [
+    {
+      description: "",
+      title: "",
+      completed: false,
+      status: TaskStatuses.New,
+      priority: TaskPriorities.Low,
+      startDate: "",
+      deadline: "",
+      id: "",
+      todoListId: "",
+      order: 0,
+      addedDate: ""
+    }
+  ]
+}
+
+export const tasksReducer = (state: TasksStateType = initialStateTasks, action: TasksActionType): TasksStateType => {
   switch (action.type) {
     case "REMOVE-TASK":
       return { ...state, [action.todoListsId]: state[action.todoListsId].filter(t => t.id !== action.id) };
@@ -61,7 +94,6 @@ export const tasksReducer = (state: TasksStateType = {}, action: TasksActionType
       const copyState = { ...state }
       const tasks = copyState[action.todoListsId]
       if (tasks) {
-
         return { ...copyState, [action.todoListsId]: tasks.map(t => t.id === action.taskId ? { ...t, status: action.status } : t) }
       }
       return copyState
@@ -146,6 +178,7 @@ export const RemoveTaskTC = (todoListsId: string, taskId: string): AppThunk =>
   async dispatch => {
     //dispatch - функция, которая используется для отправки действий в хранилище Redux.
     dispatch(setStatusAppAC("loading"))
+    dispatch(ChangeTaskStatusAC(todoListsId, taskId, TaskStatuses.inProgress))
     try {
       const res = await tasksApi.deleteTasks(todoListsId, taskId)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {

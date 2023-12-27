@@ -48,7 +48,7 @@ export function Todolist(props: TodolistPropsType) {
 
 
   const tasksList = () => {
-    return props.tasks.map(t => (<Task key={t.id} task={t} todoListsId={t.id} disabled={true} />))
+    return props.tasks.map(t => (<Task key={t.id} task={t} todoListsId={t.id} />))
   }
 
   const changeEditableSpanTitleHandler = (title: string) => {

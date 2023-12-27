@@ -99,7 +99,7 @@ const TaskWithRedux = () => {
     order: 1,
     addedDate: ""
   } //дефолтная таска
-  return <Task todoListsId={"todolistId1"} task={task} disabled={true} />
+  return <Task todoListsId={"todolistId1"} task={task} />
 }
 
 export const TaskWithReduxStory: Story = { //интерактив

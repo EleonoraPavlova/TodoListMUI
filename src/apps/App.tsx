@@ -8,7 +8,7 @@ import { createTheme, styled, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
 import { TaskTypeApi } from "./../api/tasks-api"
-import { FilterValuesType, setTodoListTC } from "../state/reducers/todolists/todolists-reducer";
+import { FilterValuesType } from "../state/reducers/todolists/todolists-reducer";
 import { useAppDispatch, useAppSelector } from "../state/hooks/hooks-selectors";
 import { TodoListsForRender } from "../components/TodolistRender/TodolistRender";
 import LinearProgress from '@mui/material/LinearProgress';
@@ -56,7 +56,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
     }
   }, [isLoggedIn, initialized])
 
-  let [lightMode, setLightMode] = useState<boolean>(true) // для изменения темы стейт
+  let [lightMode, setLightMode] = useState<boolean>(true) // change state theme
   let btnText = lightMode ? "dark" : "light"
   const themeHandler = createTheme({
     palette: {
@@ -123,7 +123,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
             }}>
             <Routes>
               <Route path="/" element={<TodoListsForRender demo={demo} />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/login" element={isLoggedIn && initialized ? <Navigate to="/" /> : <Login />} />
               <Route path='/404' element={<h1>404: PAGE NOT FOUND</h1>} />
               <Route path='*' element={<Navigate to="/404" />} />
             </Routes>

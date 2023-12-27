@@ -10,11 +10,12 @@ import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 type TaskProps = {
   task: TaskTypeApi
   todoListsId: string
-  disabled: boolean
 }
 
 //рендер компоненты происходит, если пропсы меняются
-export const Task: React.FC<TaskProps> = memo(({ task, todoListsId, disabled }) => {
+export const Task: React.FC<TaskProps> = memo(({ task, todoListsId }) => {
+  let { id, title, status } = task
+  const disabled = (status === TaskStatuses.inProgress)
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
@@ -24,26 +25,26 @@ export const Task: React.FC<TaskProps> = memo(({ task, todoListsId, disabled }) 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const currentStatus = e.currentTarget.checked;
     const newStatus = currentStatus ? TaskStatuses.Completed : TaskStatuses.New;
-    dispatch(UpdateTaskTC(todoListsId, task.id, { status: newStatus }))
+    dispatch(UpdateTaskTC(todoListsId, id, { status: newStatus }))
   }
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatch(UpdateTaskTC(todoListsId, task.id, { title }))
+    dispatch(UpdateTaskTC(todoListsId, id, { title }))
   }
 
   return (
-    <ListItem key={task.id}
-      className={task.status === TaskStatuses.Completed ? "is-done" : ""}
+    <ListItem key={id}
+      className={status === TaskStatuses.Completed ? "is-done" : ""}
       disablePadding
       divider
       sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingLeft: "14px" }}>
       <Checkbox edge="start"
         size="small" color="success"
-        checked={!!task.status}
+        checked={!!status}
         onChange={changeTaskStatusHandler} disabled={disabled} />
-      <EditableSpan title={task.title}
+      <EditableSpan title={title}
         changeTitle={changeTaskTitleHandler}
-        isDone={task.status === TaskStatuses.Completed || disabled}
+        isDone={status === TaskStatuses.Completed || disabled}
       />
       <IconButton edge="end" aria-label="delete"
         size="small" onClick={removeTaskHandler}
