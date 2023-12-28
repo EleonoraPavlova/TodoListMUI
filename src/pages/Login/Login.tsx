@@ -22,11 +22,17 @@ export const Login = () => {
       const errors: Partial<LoginParamsType> = {}
 
       if (!values.email) {
-        errors.email = 'email is required';
+        errors.email = 'Required'
+      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+        errors.email = 'Invalid email address'
       }
+
       if (!values.password) {
-        errors.password = 'password is required';
+        errors.password = 'Required';
+      } else if (values.password.length < 5) {
+        errors.password = 'Must be more 5 symbols';
       }
+
       return errors
     },
     initialValues: {
@@ -34,12 +40,12 @@ export const Login = () => {
       password: '',
       rememberMe: false,
     },
-    onSubmit: (values) => {
+    onSubmit: (values, { setFieldValue }) => {
       dispatch(loginTC(values))
+      setFieldValue("password", "")
     }
   })
-
-
+  console.log("errors", formik.touched)
   return (
     < Grid container justifyContent={'center'} >
       <Grid item justifyContent={'center'}>
@@ -49,34 +55,35 @@ export const Login = () => {
               <Typography variant="body1" fontWeight="bold" sx={{ paddingTop: "15px" }}>To log in get registered</Typography>
             </FormLabel>
             <FormGroup>
-              <TextField label="Email" margin="normal" autoComplete="email"
+              <TextField label="Email"
+                margin="normal"
+                autoComplete="email"
+                error={!!(formik.touched.email && formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
                 {...formik.getFieldProps("email")}
               />
-              {formik.errors.email && formik.touched.email && (
-                <Typography variant="body2" color="error" component="span">
-                  {formik.errors.email}
-                </Typography>
-              )}
 
-              <TextField label="Password" margin="normal" type="password" autoComplete="password"
+              <TextField label="Password"
+                margin="normal"
+                type="password"
+                autoComplete="password"
+                error={!!(formik.touched.password && formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
                 {...formik.getFieldProps("password")}
               />
-              {formik.errors.password && formik.touched.password && (
-                <Typography variant="body2" color="error" component="span">
-                  {formik.errors.password}
-                </Typography>
-              )}
+
               <FormControlLabel label={'Remember me'} control={<Checkbox
                 checked={formik.values.rememberMe}
                 {...formik.getFieldProps("rememberMe")} />}
               />
-              <Button type={'submit'} variant={'contained'} color={'primary'} sx={{ color: 'white' }}>
-                Login
+              <Button type={'submit'} variant={'contained'} color={'primary'} sx={{ color: 'white', margin: "20px 0" }}
+                disabled={!!(formik.values.email && !formik.values.password)}
+              >Login
               </Button>
             </FormGroup>
           </FormControl>
         </form>
       </Grid>
-    </Grid>
+    </Grid >
   )
 }

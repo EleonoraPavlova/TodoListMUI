@@ -123,8 +123,8 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
             }}>
             <Routes>
               <Route path="/" element={<TodoListsForRender demo={demo} />} />
-              <Route path="/login" element={isLoggedIn && initialized ? <Navigate to="/" /> : <Login />} />
-              <Route path='/404' element={<h1>404: PAGE NOT FOUND</h1>} />
+              <Route path="login" element={isLoggedIn && initialized ? <Navigate to="/" /> : <Login />} />
+              <Route path='404' element={<h1>404: PAGE NOT FOUND</h1>} />
               <Route path='*' element={<Navigate to="/404" />} />
             </Routes>
           </Grid>
