@@ -5,7 +5,7 @@ import {
   changeTodolistEntityStatusAC,
   FilterValuesType,
   removeTodolistAC,
-  setTodoListAC,
+  getTodoListAC,
   todolistReducer
 } from "./todolists-reducer";
 import { todoListId1, todoListId2 } from "../../initialState/idState";
@@ -65,7 +65,7 @@ test('should be change filter todolist ', () => {
 test('todolist should be set', () => {
   //const action: changeTodoListFilterACtion = { type: "CNAHGE-TODOLIST-FILTER", todoListsId: todolistId2, filter: newFilter }
 
-  const endState = todolistReducer([], setTodoListAC(startState))
+  const endState = todolistReducer([], getTodoListAC(startState))
 
   const keys = Object.keys(endState)
 

@@ -3,7 +3,7 @@ import { AddItemForm } from "../../components/AddItemForm/AddItemForm";
 import { EditableSpan } from "../../components/EditableSpan/EditableSpan";
 import { IconButton, List, Typography } from "@mui/material"
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import { AddTaskTC, SetTasksTC } from "../../state/reducers/tasks/tasks-reducer";
+import { AddTaskTC } from "../../state/reducers/tasks/tasks-reducer";
 import { ChangeTodoListFilterTC, ChangeTodoListTitleTC, FilterValuesType, RemoveTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
 import { ButtonMemo } from "../../components/ButtonMemo";
 import { Task } from "../../components/Task/Task";
@@ -25,14 +25,11 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   let tasks = useAppSelector<TaskTypeApi[]>(tasks => tasks.tasks[id])//так вытянули
   //нужный массив tasks по id
   const loading = (entityStatus === "loading")
-
   const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    // if (!demo) return
-    console.log("4")
-    dispatch(SetTasksTC(id))
-  }, [dispatch, id])
+  // useEffect(() => {
+  //   // if (!demo) return
+  // }, [])
 
 
   const addItem = useCallback((title: string) => {

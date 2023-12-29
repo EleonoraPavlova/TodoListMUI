@@ -1,6 +1,6 @@
 import { AppRootStateType, AppThunk } from '../../store';
 import { TasksStateType } from "../../../apps/App";
-import { addTodolistACtion, removeTodolistACtion, setTodoListACtion } from "../todolists/todolists-reducer";
+import { addTodolistAction, removeTodolistAction, getTodoListAction, clearTodoListAction } from "../todolists/todolists-reducer";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
@@ -20,9 +20,10 @@ export type TasksActionType =
   | ReturnType<typeof ChangeTaskStatusAC>
   | ReturnType<typeof SetTaskskAC>
   | ReturnType<typeof UpdateTaskAC>
-  | setTodoListACtion
-  | addTodolistACtion
-  | removeTodolistACtion
+  | addTodolistAction
+  | getTodoListAction
+  | removeTodolistAction
+  | clearTodoListAction
 
 
 export enum ResultCode { //enum  ONLY for reading, cannot be overwritten!!
@@ -117,6 +118,8 @@ export const tasksReducer = (state: TasksStateType = initialStateTasks, action: 
       return { ...state, [action.todoListsId]: action.tasks }//скопировала стейт,
       // нашла нужный todolist по приходящему action и установила tasks, которые прилетели с сервера
     }
+    case "CLEAR-TODOLISTS":
+      return {}
     default: return state
   }
 }

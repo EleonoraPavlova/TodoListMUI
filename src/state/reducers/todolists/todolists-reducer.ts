@@ -2,7 +2,7 @@ import { TodolistTypeApi, todolistApi } from "../../../api/todolist-api";
 import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { AppThunk } from "../../store";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
-import { ResultCode } from "../tasks/tasks-reducer";
+import { ResultCode, SetTasksTC } from "../tasks/tasks-reducer";
 
 
 //АЛГОРИТМ
@@ -11,19 +11,22 @@ import { ResultCode } from "../tasks/tasks-reducer";
 //2.1 Какой тип действия хотим выполнить
 //2.2 Данные необходимые для этого действия - action
 
-export type setTodoListACtion = ReturnType<typeof setTodoListAC>
-export type addTodolistACtion = ReturnType<typeof addTodolistAC>
-export type removeTodolistACtion = ReturnType<typeof removeTodolistAC>
-export type changeTodolistEntityStatusACtion = ReturnType<typeof changeTodolistEntityStatusAC>
+export type getTodoListAction = ReturnType<typeof getTodoListAC>
+export type addTodolistAction = ReturnType<typeof addTodolistAC>
+export type removeTodolistAction = ReturnType<typeof removeTodolistAC>
+export type changeTodolistEntityStatusAction = ReturnType<typeof changeTodolistEntityStatusAC>
+export type clearTodoListAction = ReturnType<typeof clearTodoListAC>
+
 
 //пишем что нам нужно для выполения action, какие именно данные
 export type ActionTypeTodolist =
   | ReturnType<typeof changeTodoListTitleAC>
   | ReturnType<typeof changeTodoListFilterAC>
-  | setTodoListACtion
-  | addTodolistACtion
-  | removeTodolistACtion
-  | changeTodolistEntityStatusACtion
+  | getTodoListAction
+  | addTodolistAction
+  | removeTodolistAction
+  | changeTodolistEntityStatusAction
+  | clearTodoListAction
 
 
 export type FilterValuesType = "all" | "active" | "completed";
@@ -48,6 +51,8 @@ export const todolistReducer = (state: TodolistDomainTypeApi[] = [], action: Act
       return action.todoLists.map(tl => ({ ...tl, filter: "all", entityStatus: "idle" })) //добавила каждому листу недостающий фильтр
     case "CNAHGE-TODOLIST-ENTITY-STATUS":
       return state.map(t => t.id === action.todoListsId ? { ...t, entityStatus: action.entityStatus } : t)
+    case "CLEAR-TODOLISTS":
+      return []
     default: return state
   }
 }
@@ -79,9 +84,15 @@ export const changeTodolistEntityStatusAC = (todoListsId: string, entityStatus: 
   return { type: "CNAHGE-TODOLIST-ENTITY-STATUS", todoListsId, entityStatus } as const
 }
 
-export const setTodoListAC = (todoLists: TodolistTypeApi[]) => { //установить todolist, который пришел с сервера
+export const getTodoListAC = (todoLists: TodolistTypeApi[]) => { //установить todolist, который пришел с сервера
   return {
     type: "SET-TODOLIST", todoLists
+  } as const
+}
+
+export const clearTodoListAC = () => { //убрать все todolists, после вылогинивания
+  return {
+    type: "CLEAR-TODOLISTS",
   } as const
 }
 
@@ -90,9 +101,12 @@ export const SetTodoListTC = (): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {
-      const res = await todolistApi.getTodo()
-      dispatch(setTodoListAC(res.data))
+      const res = await todolistApi.getTodos()
+      dispatch(getTodoListAC(res.data))
       dispatch(setStatusAppAC("succeeded"))
+      res.data.map(tl => {
+        dispatch(SetTasksTC(tl.id))
+      })
     } catch (err) {
       handleServerNetworkError(err as { message: string }, dispatch)
     }

@@ -3,7 +3,7 @@ import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { LoginParamsType, authApi } from "../../../api/auth-api";
 import { ResultCode } from "../tasks/tasks-reducer";
-import { SetTodoListTC } from "../todolists/todolists-reducer";
+import { SetTodoListTC, clearTodoListAC } from "../todolists/todolists-reducer";
 
 export type AuthActionType = ReturnType<typeof setIsLoggedInAC>
 
@@ -59,9 +59,9 @@ export const LogOutTC = (): AppThunk =>
       const res = await authApi.logOut()
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         dispatch(setIsLoggedInAC(false))
-        dispatch(SetTodoListTC())
         dispatch(setSuccessAppAC("you have successfully logged out"))
         dispatch(setStatusAppAC("succeeded"))
+        dispatch(clearTodoListAC())
       } else {
         handleServerAppError(res.data, dispatch)
       }
