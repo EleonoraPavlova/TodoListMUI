@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selector
 import { memo } from "react";
 import { AddTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
 import { AddItemForm } from "../AddItemForm/AddItemForm";
-import { useNavigate } from "react-router-dom";
 
 export type TodoListsForRenderProps = {
   demo?: boolean

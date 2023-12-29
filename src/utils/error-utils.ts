@@ -1,7 +1,6 @@
 import { Dispatch } from "redux"
 import { OperationResult } from "../api/tasks-api"
 import { setErrorAppAC, setStatusAppAC } from "../state/reducers/app/app-reducer"
-import { AxiosError } from "axios"
 
 export const handleServerAppError = <D>(data: OperationResult<D>, dispatch: Dispatch) => {
   if (data.messages.length) {
@@ -14,6 +13,6 @@ export const handleServerAppError = <D>(data: OperationResult<D>, dispatch: Disp
 
 
 export const handleServerNetworkError = (err: { message: string }, dispatch: Dispatch) => {
-  dispatch(setErrorAppAC(err.message ? err.message : "Some error! occurred"))//вывод серверной ошибки
+  dispatch(setErrorAppAC(err.message ? err.message : "Some error occurred"))//вывод серверной ошибки
   dispatch(setStatusAppAC("failed"))
 }

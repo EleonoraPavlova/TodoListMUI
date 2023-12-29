@@ -30,6 +30,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
   useEffect(() => {
     // if (!demo) return
+    console.log("4")
     dispatch(SetTasksTC(id))
   }, [dispatch, id])
 

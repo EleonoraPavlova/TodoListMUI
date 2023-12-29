@@ -9,7 +9,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
 import { AddTaskAC, ChangeTaskStatusAC, ChangeTaskTitleAC, RemoveTaskAC, TasksActionType, tasksReducer } from "../state/reducers/tasks/tasks-reducer";
-import { ActionTypeTodolist, AddTodolistAC, ChangeTodoListFilterAC, ChangeTodoListTitleAC, FilterValuesType, RemoveTodolistAC, TodolistDomainTypeApi, todolistReducer } from "../state/reducers/todolists/todolists-reducer";
+import { ActionTypeTodolist, addTodolistAC, changeTodoListFilterAC, changeTodoListTitleAC, FilterValuesType, removeTodolistAC, TodolistDomainTypeApi, todolistReducer } from "../state/reducers/todolists/todolists-reducer";
 import { TaskStatuses, TaskTypeApi } from "../api/tasks-api";
 import { todolistInitialState } from "../state/initialState/todolistsInitialState";
 import { tasksInitialState } from "../state/initialState/tasksInitialState";
@@ -49,25 +49,25 @@ function AppReducers() {
 
   //for lists - 4 функц
   function addTodoList(title: string) {
-    // const action = AddTodolistAC(title)
+    // const action = addTodolistAC(title)
     // dispatchTasks(action)
     // dispatchTodolists(action)
   }
 
   function changeTodoListFilter(todoListsId: string, title: string, filter: FilterValuesType) {
-    const action = ChangeTodoListFilterAC(todoListsId, title, filter)
+    const action = changeTodoListFilterAC(todoListsId, title, filter)
     dispatchTodolists(action)
   }
 
   function removeTodoList(todoListsId: string) {
-    const action = RemoveTodolistAC(todoListsId)
+    const action = removeTodolistAC(todoListsId)
     dispatchTasks(action)
     dispatchTodolists(action)
   }
 
 
   function changeTodoListTitle(todoListsId: string, title: string) {
-    const action = ChangeTodoListTitleAC(todoListsId, title)
+    const action = changeTodoListTitleAC(todoListsId, title)
     dispatchTodolists(action)
   }
 

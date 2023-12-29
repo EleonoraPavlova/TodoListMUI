@@ -17,7 +17,7 @@ import { RequestStatusType, setInitializeAppTC } from "../state/reducers/app/app
 import { Navigate, Routes, useNavigate } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { Login } from "../pages/Login/Login";
-import { logOutTC } from "../state/reducers/auth/auth-reducers";
+import { LogOutTC } from "../state/reducers/auth/auth-reducers";
 
 
 export type TodolistType = {
@@ -38,8 +38,6 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useAppSelector<RequestStatusType>(state => state.app.status)
   let isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
   let initialized = useAppSelector<boolean>(state => state.app.initialized)
-  console.log("initialized", initialized)
-  console.log("isLoggedIn", isLoggedIn)
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
 
@@ -54,7 +52,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
     } else {
       navigate('/')
     }
-  }, [isLoggedIn, initialized])
+  }, [isLoggedIn, initialized, navigate])
 
   let [lightMode, setLightMode] = useState<boolean>(true) // change state theme
   let btnText = lightMode ? "dark" : "light"
@@ -71,7 +69,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   }
 
   const logOutHandler = useCallback(() => {
-    dispatch(logOutTC())
+    dispatch(LogOutTC())
   }, [isLoggedIn])
 
   // <CssBaseline /> - обеспечивает максимальное применение стилей из библиотеки

@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { TodolistRedax } from './TodolistRedax';
 import { ReduxStoreProviderDecorator } from "../../stories/decorators/ReduxStoreProviderDecorator";
 import { useSelector } from "react-redux";
-import { AddTodolistAC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
+import { addTodolistAC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
 import { useLayoutEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { todoListId1 } from "../../state/initialState/idState";
@@ -54,7 +54,7 @@ const TodolistStoryRedux = () => {
 
   useLayoutEffect(() => {
     if (todoLists.length === 0) {
-      dispatch(AddTodolistAC({ id: todoListId1, title: "CSS", addedDate: "", order: 1 }))
+      dispatch(addTodolistAC({ id: todoListId1, title: "CSS", addedDate: "", order: 1 }))
     }
   })
   return !todoLists[0] ? <> </> : <TodolistRedax todolists={todoLists[0]} />

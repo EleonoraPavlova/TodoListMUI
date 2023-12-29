@@ -10,8 +10,9 @@ import Button from '@mui/material/Button';
 import { useFormik } from "formik";
 import { Typography } from "@mui/material";
 import { useAppDispatch } from "../../state/hooks/hooks-selectors";
-import { loginTC } from "../../state/reducers/auth/auth-reducers";
+import { LoginTC } from "../../state/reducers/auth/auth-reducers";
 import { LoginParamsType } from "../../api/auth-api";
+import { handleServerNetworkError } from "../../utils/error-utils";
 
 
 export const Login = () => {
@@ -40,12 +41,19 @@ export const Login = () => {
       password: '',
       rememberMe: false,
     },
-    onSubmit: (values, { setFieldValue }) => {
-      dispatch(loginTC(values))
-      setFieldValue("password", "")
+    onSubmit: async (values, { setFieldValue, setSubmitting }) => {
+      setSubmitting(true)
+      try {
+        await dispatch(LoginTC(values))
+        setFieldValue("password", "")
+      } catch (err) {
+        handleServerNetworkError(err as { message: string }, dispatch)
+      }
+      setSubmitting(false)
     }
   })
-  console.log("errors", formik.touched)
+
+
   return (
     < Grid container justifyContent={'center'} >
       <Grid item justifyContent={'center'}>
@@ -77,7 +85,7 @@ export const Login = () => {
                 {...formik.getFieldProps("rememberMe")} />}
               />
               <Button type={'submit'} variant={'contained'} color={'primary'} sx={{ color: 'white', margin: "20px 0" }}
-                disabled={!!(formik.values.email && !formik.values.password)}
+                disabled={formik.isSubmitting || !(formik.values.email && formik.values.password && !formik.errors.password)}
               >Login
               </Button>
             </FormGroup>

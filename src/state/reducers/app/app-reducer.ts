@@ -3,7 +3,7 @@ import { handleServerAppError, handleServerNetworkError } from "../../../utils/e
 import { AppThunk } from "../../store"
 import { setIsLoggedInAC } from "../auth/auth-reducers"
 import { ResultCode } from "../tasks/tasks-reducer"
-import { setTodoListTC } from "../todolists/todolists-reducer"
+import { SetTodoListTC } from "../todolists/todolists-reducer"
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed' //статус взаимодействия с сервером
 
@@ -59,21 +59,21 @@ export const setInitializeAppAC = (initialized: boolean) => {
 }
 
 //thunks
-export const setInitializeAppTC = (): AppThunk =>
+export const setInitializeAppTC = (): AppThunk => //самая первая санка кот должна запуститься в приложении
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {
       const res = await authApi.authMe()
       // анонимный пользователь или авториз
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(setStatusAppAC("succeeded"))
         dispatch(setIsLoggedInAC(true))
-        dispatch(setTodoListTC())
+        dispatch(setStatusAppAC("succeeded"))
+        dispatch(SetTodoListTC())
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch);
+      handleServerNetworkError(err as { message: string }, dispatch);
     } finally {
       dispatch(setInitializeAppAC(true))
     }

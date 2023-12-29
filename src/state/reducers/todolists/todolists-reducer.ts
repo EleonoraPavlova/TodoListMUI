@@ -11,19 +11,19 @@ import { ResultCode } from "../tasks/tasks-reducer";
 //2.1 Какой тип действия хотим выполнить
 //2.2 Данные необходимые для этого действия - action
 
-export type SetTodoListAction = ReturnType<typeof SetTodoListAC>
-export type AddTodoListAction = ReturnType<typeof AddTodolistAC>
-export type RemoveTodoListAction = ReturnType<typeof RemoveTodolistAC>
-export type ChangeTodolistEntityStatusAction = ReturnType<typeof ChangeTodolistEntityStatusAC>
+export type setTodoListACtion = ReturnType<typeof setTodoListAC>
+export type addTodolistACtion = ReturnType<typeof addTodolistAC>
+export type removeTodolistACtion = ReturnType<typeof removeTodolistAC>
+export type changeTodolistEntityStatusACtion = ReturnType<typeof changeTodolistEntityStatusAC>
 
 //пишем что нам нужно для выполения action, какие именно данные
 export type ActionTypeTodolist =
-  | ReturnType<typeof ChangeTodoListTitleAC>
-  | ReturnType<typeof ChangeTodoListFilterAC>
-  | SetTodoListAction
-  | AddTodoListAction
-  | RemoveTodoListAction
-  | ChangeTodolistEntityStatusAction
+  | ReturnType<typeof changeTodoListTitleAC>
+  | ReturnType<typeof changeTodoListFilterAC>
+  | setTodoListACtion
+  | addTodolistACtion
+  | removeTodolistACtion
+  | changeTodolistEntityStatusACtion
 
 
 export type FilterValuesType = "all" | "active" | "completed";
@@ -53,66 +53,66 @@ export const todolistReducer = (state: TodolistDomainTypeApi[] = [], action: Act
 }
 
 //action creator
-export const RemoveTodolistAC = (todoListsId: string) => {
+export const removeTodolistAC = (todoListsId: string) => {
   return {
     type: "REMOVE-TODOLIST", todoListsId
   } as const
 }
 
-export const AddTodolistAC = (todolist: TodolistTypeApi) => ({ type: "ADD-TODOLIST", todolist } as const)
+export const addTodolistAC = (todolist: TodolistTypeApi) => ({ type: "ADD-TODOLIST", todolist } as const)
 
 
-export const ChangeTodoListTitleAC = (todoListsId: string, title: string) => {
+export const changeTodoListTitleAC = (todoListsId: string, title: string) => {
   return {
     type: "CNAHGE-TODOLIST-TITLE", title, todoListsId
   } as const
 }
 
-export const ChangeTodoListFilterAC = (todoListsId: string, title: string, filter: FilterValuesType) => {
+export const changeTodoListFilterAC = (todoListsId: string, title: string, filter: FilterValuesType) => {
   return {
     type: "CNAHGE-TODOLIST-FILTER",
     todoListsId, title, filter
   } as const
 }
 
-export const ChangeTodolistEntityStatusAC = (todoListsId: string, entityStatus: RequestStatusType) => {
+export const changeTodolistEntityStatusAC = (todoListsId: string, entityStatus: RequestStatusType) => {
   return { type: "CNAHGE-TODOLIST-ENTITY-STATUS", todoListsId, entityStatus } as const
 }
 
-export const SetTodoListAC = (todoLists: TodolistTypeApi[]) => { //установить todolist, который пришел с сервера
+export const setTodoListAC = (todoLists: TodolistTypeApi[]) => { //установить todolist, который пришел с сервера
   return {
     type: "SET-TODOLIST", todoLists
   } as const
 }
 
 //thunks
-export const setTodoListTC = (): AppThunk =>
+export const SetTodoListTC = (): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {
       const res = await todolistApi.getTodo()
-      dispatch(SetTodoListAC(res.data))
+      dispatch(setTodoListAC(res.data))
       dispatch(setStatusAppAC("succeeded"))
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
 export const RemoveTodolistTC = (todoListsId: string): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
-    dispatch(ChangeTodolistEntityStatusAC(todoListsId, "loading"))//loader appeared
+    dispatch(changeTodolistEntityStatusAC(todoListsId, "loading"))//loader appeared
     try {
       const res = await todolistApi.deleteTodo(todoListsId)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(RemoveTodolistAC(todoListsId))
+        dispatch(removeTodolistAC(todoListsId))
         dispatch(setSuccessAppAC("todolist was successfully removed"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -123,14 +123,14 @@ export const AddTodolistTC = (title: string): AppThunk =>
     try {
       const res = await todolistApi.createTodo(title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(AddTodolistAC(res.data.data.item))
+        dispatch(addTodolistAC(res.data.data.item))
         dispatch(setSuccessAppAC("todolist was successfully added"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -141,14 +141,14 @@ export const ChangeTodoListTitleTC = (todolistId: string, title: string): AppThu
     try {
       const res = await todolistApi.updateTodo(todolistId, title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(ChangeTodoListTitleAC(todolistId, title))
+        dispatch(changeTodoListTitleAC(todolistId, title))
         dispatch(setSuccessAppAC("todolist title was successfully updated"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -159,12 +159,12 @@ export const ChangeTodoListFilterTC = (todolistId: string, title: string, filter
     try {
       const res = await todolistApi.updateTodo(todolistId, title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(ChangeTodoListFilterAC(todolistId, title, filter))
+        dispatch(changeTodoListFilterAC(todolistId, title, filter))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }

@@ -17,7 +17,7 @@ export const authApi = {
     return instance.post<OperationResult<{ userId: number }>>("/auth/login", params)
   },
 
-  authMe() {
+  authMe() { //проверрочный запрос на cookie при инициализации app
     return instance.get<OperationResult<{ id: number, email: string, login: string }>>("/auth/me")
   },
 

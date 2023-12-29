@@ -1,6 +1,6 @@
 import { AppRootStateType, AppThunk } from '../../store';
 import { TasksStateType } from "../../../apps/App";
-import { AddTodoListAction, RemoveTodoListAction, SetTodoListAction } from "../todolists/todolists-reducer";
+import { addTodolistACtion, removeTodolistACtion, setTodoListACtion } from "../todolists/todolists-reducer";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
@@ -20,9 +20,9 @@ export type TasksActionType =
   | ReturnType<typeof ChangeTaskStatusAC>
   | ReturnType<typeof SetTaskskAC>
   | ReturnType<typeof UpdateTaskAC>
-  | SetTodoListAction
-  | AddTodoListAction
-  | RemoveTodoListAction
+  | setTodoListACtion
+  | addTodolistACtion
+  | removeTodolistACtion
 
 
 export enum ResultCode { //enum  ONLY for reading, cannot be overwritten!!
@@ -169,7 +169,7 @@ export const SetTasksTC = (todoListsId: string): AppThunk =>
       dispatch(SetTaskskAC(todoListsId, res.data.items))
       dispatch(setStatusAppAC("succeeded"))
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -187,7 +187,7 @@ export const RemoveTaskTC = (todoListsId: string, taskId: string): AppThunk =>
         dispatch(setStatusAppAC("succeeded"))
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -207,7 +207,7 @@ export const AddTaskTC = (title: string, todoListsId: string): AppThunk =>
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
@@ -241,7 +241,7 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 

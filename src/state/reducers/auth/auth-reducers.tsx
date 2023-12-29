@@ -3,7 +3,7 @@ import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { LoginParamsType, authApi } from "../../../api/auth-api";
 import { ResultCode } from "../tasks/tasks-reducer";
-import { setTodoListTC } from "../todolists/todolists-reducer";
+import { SetTodoListTC } from "../todolists/todolists-reducer";
 
 export type AuthActionType = ReturnType<typeof setIsLoggedInAC>
 
@@ -33,40 +33,39 @@ export const setIsLoggedInAC = (isLoggedIn: boolean) => {
 
 
 //thunks
-export const loginTC = (params: LoginParamsType): AppThunk =>
+export const LoginTC = (params: LoginParamsType): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {
       const res = await authApi.login(params)
-
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         dispatch(setIsLoggedInAC(true))
-        dispatch(setTodoListTC())
+        dispatch(SetTodoListTC())
         dispatch(setSuccessAppAC("you have successfully logged in"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
 
-export const logOutTC = (): AppThunk =>
+export const LogOutTC = (): AppThunk =>
   async dispatch => {
     dispatch(setStatusAppAC("loading"))
     try {
       const res = await authApi.logOut()
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         dispatch(setIsLoggedInAC(false))
-        dispatch(setTodoListTC())
+        dispatch(SetTodoListTC())
         dispatch(setSuccessAppAC("you have successfully logged out"))
         dispatch(setStatusAppAC("succeeded"))
       } else {
         handleServerAppError(res.data, dispatch)
       }
     } catch (err) {
-      handleServerNetworkError({ message: err instanceof Error ? err.message : String(err) }, dispatch)
+      handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
