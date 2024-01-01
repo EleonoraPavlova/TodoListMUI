@@ -84,8 +84,14 @@ export const Login = () => {
                 checked={formik.values.rememberMe}
                 {...formik.getFieldProps("rememberMe")} />}
               />
-              <Button type={'submit'} variant={'contained'} color={'primary'} sx={{ color: 'white', margin: "20px 0" }}
-                disabled={formik.isSubmitting || !(formik.values.email && formik.values.password && !formik.errors.password)}
+              <Button type={'submit'}
+                variant={'contained'}
+                color={'primary'}
+                sx={{ color: 'white', margin: "20px 0" }}
+                disabled={
+                  formik.isSubmitting ||
+                  !(formik.dirty && formik.isValid)
+                }
               >Login
               </Button>
             </FormGroup>

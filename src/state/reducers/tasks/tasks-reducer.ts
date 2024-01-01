@@ -110,6 +110,8 @@ export const tasksReducer = (state: TasksStateType = initialStateTasks, action: 
     }
     case "SET-TODOLIST": {
       const copyState = { ...state }
+      delete copyState["todoListId1"];
+      delete copyState["todoListId2"];
       action.todoLists.map(tl => copyState[tl.id] = [])//создаем свойство на основе тех листов,
       //которые прилетели с сервера - пробегаемся по каждому листу и  находим свойство id к которому добавляем - пустой массив
       return copyState
