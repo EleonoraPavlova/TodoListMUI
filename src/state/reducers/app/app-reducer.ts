@@ -1,9 +1,10 @@
+import { PayloadAction, createSlice } from "@reduxjs/toolkit"
 import { authApi } from "../../../api/auth-api"
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils"
 import { AppThunk } from "../../store"
-import { setIsLoggedInAC } from "../auth/auth-reducers"
 import { ResultCode } from "../tasks/tasks-reducer"
 import { SetTodoListTC } from "../todolists/todolists-reducer"
+import { setIsLoggedInAC } from "../auth/auth-reducers"
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed' //статус взаимодействия с сервером
 
@@ -14,12 +15,6 @@ export type InitialStateType = {
   initialized: boolean
 }
 
-export type SetErrorApp = ReturnType<typeof setErrorAppAC>
-export type SetStatusApp = ReturnType<typeof setStatusAppAC>
-export type setSuccessApp = ReturnType<typeof setSuccessAppAC>
-export type setInitializeApp = ReturnType<typeof setInitializeAppAC>
-
-export type ActionType = SetErrorApp | SetStatusApp | setSuccessApp | setInitializeApp
 
 export let InitialStateApp: InitialStateType = {
   status: 'idle', //'idle'  - еще запроса не было - for loader App, меняется при каждом запросе на сервер!
@@ -28,46 +23,39 @@ export let InitialStateApp: InitialStateType = {
   initialized: false //(проверка куки, настроек пользователя)
 }
 
-export const appReducer = (state: InitialStateType = InitialStateApp, action: ActionType): InitialStateType => {
-  switch (action.type) {
-    case "SET-APP-ERROR":
-      return { ...state, error: action.error }
-    case "SET-APP-STATUS":
-      return { ...state, status: action.status }
-    case "SET-APP-SUCCESS":
-      return { ...state, success: action.success }
-    case "SET-APP-INITIALIZE":
-      return { ...state, initialized: action.initialized }
-    default: return { ...state }
+const slice = createSlice({
+  name: "app",
+  initialState: InitialStateApp,
+  reducers: {
+    setInitializeAppAC(state, action: PayloadAction<{ initialized: boolean }>) {
+      state.initialized = action.payload.initialized
+    },
+    setErrorAppAC(state, action: PayloadAction<{ error: string | null }>) {
+      state.error = action.payload.error
+    },
+    setStatusAppAC(state, action: PayloadAction<{ status: RequestStatusType }>) {
+      state.status = action.payload.status
+    },
+    setSuccessAppAC(state, action: PayloadAction<{ success: string | null }>) {
+      state.success = action.payload.success
+    }
   }
-}
+})
 
-//action creator
-export const setErrorAppAC = (error: string | null) => {
-  return { type: "SET-APP-ERROR", error } as const
-}
 
-export const setStatusAppAC = (status: RequestStatusType) => {
-  return { type: "SET-APP-STATUS", status } as const
-}
-export const setSuccessAppAC = (success: string | null) => {
-  return { type: "SET-APP-SUCCESS", success } as const
-}
-
-export const setInitializeAppAC = (initialized: boolean) => {
-  return { type: "SET-APP-INITIALIZE", initialized } as const
-}
+export const appReducer = slice.reducer
+export const { setInitializeAppAC, setErrorAppAC, setStatusAppAC, setSuccessAppAC } = slice.actions
 
 //thunks
-export const setInitializeAppTC = (): AppThunk => //самая первая санка кот должна запуститься в приложении
+export const setInitializeAppTC = (): AppThunk =>
   async dispatch => {
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
       const res = await authApi.authMe()
       // анонимный пользователь или авториз
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(setIsLoggedInAC(true))
-        dispatch(setStatusAppAC("succeeded"))
+        dispatch(setIsLoggedInAC({ isLoggedIn: true }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
         dispatch(SetTodoListTC())
       } else {
         handleServerAppError(res.data, dispatch)
@@ -75,6 +63,6 @@ export const setInitializeAppTC = (): AppThunk => //самая первая са
     } catch (err) {
       handleServerNetworkError(err as { message: string }, dispatch);
     } finally {
-      dispatch(setInitializeAppAC(true))
+      dispatch(setInitializeAppAC({ initialized: true }))
     }
   }

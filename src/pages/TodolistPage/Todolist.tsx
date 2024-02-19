@@ -19,40 +19,40 @@ import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 export type TodolistPropsType = {
   title: string
   tasks: TaskTypeApi[]
-  todoListsId: string
+  todoListId: string
   filter: FilterValuesType
-  removeTask: (todoListsId: string, taskId: string) => void
-  changeTodoListFilter: (todoListsId: string, title: string, filter: FilterValuesType) => void
-  addTask: (title: string, todoListsId: string) => void
-  changeTaskStatus: (todoListsId: string, taskId: string, status: TaskStatuses) => void
-  changeTaskTitle: (todoListsId: string, taskId: string, title: string) => void
-  removeTodoList: (todoListsId: string) => void
-  changeTodolistTitle: (todoListsId: string, title: string) => void
+  removeTask: (todoListId: string, taskId: string) => void
+  changeTodoListFilter: (todoListId: string, title: string, filter: FilterValuesType) => void
+  addTask: (title: string, todoListId: string) => void
+  changeTaskStatus: (todoListId: string, taskId: string, status: TaskStatuses) => void
+  changeTaskTitle: (todoListId: string, taskId: string, title: string) => void
+  removeTodoList: (todoListId: string) => void
+  changeTodolistTitle: (todoListId: string, title: string) => void
 }
 
 export function Todolist(props: TodolistPropsType) {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(SetTasksTC(props.todoListsId))
+    dispatch(SetTasksTC(props.todoListId))
   }, [])
 
   const addItem = (title: string) => {
-    props.addTask(title, props.todoListsId);
+    props.addTask(title, props.todoListId);
   }
 
-  const onAllClickHandler = () => props.changeTodoListFilter(props.todoListsId, props.title, "all");
-  const onActiveClickHandler = () => props.changeTodoListFilter(props.todoListsId, props.title, "active");
-  const onCompletedClickHandler = () => props.changeTodoListFilter(props.todoListsId, props.title, "completed");
-  const removeTodoListHandler = () => props.removeTodoList(props.todoListsId);
+  const onAllClickHandler = () => props.changeTodoListFilter(props.todoListId, props.title, "all");
+  const onActiveClickHandler = () => props.changeTodoListFilter(props.todoListId, props.title, "active");
+  const onCompletedClickHandler = () => props.changeTodoListFilter(props.todoListId, props.title, "completed");
+  const removeTodoListHandler = () => props.removeTodoList(props.todoListId);
 
 
   const tasksList = () => {
-    return props.tasks.map(t => (<Task key={t.id} task={t} todoListsId={t.id} />))
+    return props.tasks.map(t => (<Task key={t.id} task={t} todoListId={t.id} />))
   }
 
   const changeEditableSpanTitleHandler = (title: string) => {
-    props.changeTodolistTitle(props.todoListsId, title);
+    props.changeTodolistTitle(props.todoListId, title);
   }
 
   return <>

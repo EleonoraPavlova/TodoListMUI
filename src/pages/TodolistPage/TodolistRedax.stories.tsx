@@ -28,13 +28,13 @@ type Story = StoryObj<typeof TodolistRedax>;
 
 //тут просто вместо листа заглушка div стоит
 // const TodolistStoryRedux = () => {
-//   let todoListsId = useSelector<AppRootStateType, TodolistType>(state => state.todolists[0])
+//   let todoListId = useSelector<AppRootStateType, TodolistType>(state => state.todolists[0])
 //   const dispatch = useDispatch()
 
-//   if (!todoListsId) {
+//   if (!todoListId) {
 //     return <div> oops</div>
 //   }
-//   return <TodolistRedax todoLists={todoListsId} />
+//   return <TodolistRedax todoLists={todoListId} />
 // }
 
 // export const TodolistStory: Story = {
@@ -54,7 +54,7 @@ const TodolistStoryRedux = () => {
 
   useLayoutEffect(() => {
     if (todoLists.length === 0) {
-      dispatch(addTodolistAC({ id: todoListId1, title: "CSS", addedDate: "", order: 1 }))
+      dispatch(addTodolistAC({ todolist: { id: todoListId1, title: "CSS", addedDate: "", order: 1 } }))
     }
   })
   return !todoLists[0] ? <> </> : <TodolistRedax todolists={todoLists[0]} />

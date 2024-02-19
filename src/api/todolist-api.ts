@@ -36,11 +36,11 @@ export const todolistApi = {
     return instance.post<ResponseType<{ item: TodolistTypeApi }>>('/todo-lists', { title })
   },
 
-  deleteTodo(todolistId: string) {
-    return instance.delete<ResponseType>(`/todo-lists/${todolistId}`)
+  deleteTodo(todoListId: string) {
+    return instance.delete<ResponseType>(`/todo-lists/${todoListId}`)
   },
 
-  updateTodo(todolistId: string, title: string) {
-    return instance.put<ResponseType>(`/todo-lists/${todolistId}`, { title })
+  updateTodo(todoListId: string, title: string) {
+    return instance.put<ResponseType>(`/todo-lists/${todoListId}`, { title })
   }
 }

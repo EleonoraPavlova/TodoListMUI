@@ -2,7 +2,7 @@ import { InitialStateApp, appReducer, setErrorAppAC, setStatusAppAC } from "./ap
 
 test('correct error message should be set', () => {
 
-  const endState = appReducer(InitialStateApp, setErrorAppAC("New error"))
+  const endState = appReducer(InitialStateApp, setErrorAppAC({ error: "New error" }))
 
   expect(endState.error).toBe("New error");
   expect(InitialStateApp.error).toBe(null);
@@ -11,7 +11,7 @@ test('correct error message should be set', () => {
 
 test('correct status should be set', () => {
 
-  const endState = appReducer(InitialStateApp, setStatusAppAC("succeeded"))
+  const endState = appReducer(InitialStateApp, setStatusAppAC({ status: "succeeded" }))
 
   expect(endState.status).toBe("succeeded");
   expect(InitialStateApp.status).toBe("idle");

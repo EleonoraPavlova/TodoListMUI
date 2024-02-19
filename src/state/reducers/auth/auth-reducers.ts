@@ -1,48 +1,42 @@
 import { AppThunk } from '../../store';
-import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { LoginParamsType, authApi } from "../../../api/auth-api";
 import { ResultCode } from "../tasks/tasks-reducer";
 import { SetTodoListTC, clearTodoListAC } from "../todolists/todolists-reducer";
-
-export type AuthActionType = ReturnType<typeof setIsLoggedInAC>
-
-export type initialParamsAuthType = {
-  isLoggedIn: boolean
-}
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
+//as const для явного указания типа литерала на основе конкретного значения 
 
 const initialParamsAuth = {
   isLoggedIn: false //залогин пользователь или нет
 }
 
-export const authReducer = (state = initialParamsAuth, action: AuthActionType): initialParamsAuthType => {
-  switch (action.type) {
-    case "LOGIN/IS-LOGIN-IN":
-      return { ...state, isLoggedIn: action.isLoggedIn }
-    default:
-      return state
+const slice = createSlice({
+  name: "auth",
+  initialState: initialParamsAuth,
+  reducers: {
+    setIsLoggedInAC(state, action: PayloadAction<{ isLoggedIn: boolean }>) {
+      state.isLoggedIn = action.payload.isLoggedIn
+    }
   }
-}
+})
 
-//action creator
-export const setIsLoggedInAC = (isLoggedIn: boolean) => {
-  return {
-    type: "LOGIN/IS-LOGIN-IN", isLoggedIn
-  } as const //для явного указания типа литерала на основе конкретного значения 
-}
+export const authReducer = slice.reducer
+export const { setIsLoggedInAC } = slice.actions
 
 
 //thunks
 export const LoginTC = (params: LoginParamsType): AppThunk =>
   async dispatch => {
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
       const res = await authApi.login(params)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(setIsLoggedInAC(true))
+        // dispatch(setIsLoggedInAC(true))
         dispatch(SetTodoListTC())
-        dispatch(setSuccessAppAC("you have successfully logged in"))
-        dispatch(setStatusAppAC("succeeded"))
+        dispatch(setSuccessAppAC({ success: "you have successfully logged in" }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
+        return { isLoggedIn: true }
       } else {
         handleServerAppError(res.data, dispatch)
       }
@@ -54,14 +48,15 @@ export const LoginTC = (params: LoginParamsType): AppThunk =>
 
 export const LogOutTC = (): AppThunk =>
   async dispatch => {
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
       const res = await authApi.logOut()
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(setIsLoggedInAC(false))
-        dispatch(setSuccessAppAC("you have successfully logged out"))
-        dispatch(setStatusAppAC("succeeded"))
+        // dispatch(setIsLoggedInAC(false))
+        dispatch(setSuccessAppAC({ success: "you have successfully logged out" }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
         dispatch(clearTodoListAC())
+        return { isLoggedIn: false }
       } else {
         handleServerAppError(res.data, dispatch)
       }

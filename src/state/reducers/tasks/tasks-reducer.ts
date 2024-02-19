@@ -1,9 +1,10 @@
 import { AppRootStateType, AppThunk } from '../../store';
 import { TasksStateType } from "../../../apps/App";
-import { addTodolistAction, removeTodolistAction, getTodoListAction, clearTodoListAction } from "../todolists/todolists-reducer";
 import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { addTodolistAC, clearTodoListAC, removeTodolistAC, setTodoListAC } from "../todolists/todolists-reducer";
 
 //АЛГОРИТМ редьюсер- функция кот хранит логику изменения state => возвращает измененый state
 //1. Исходный state
@@ -11,19 +12,10 @@ import { handleServerAppError, handleServerNetworkError } from "../../../utils/e
 //2.1 Какой тип действия хотим выполнить
 //2.2 Данные необходимые для этого действия - action
 
-
-//пишем что нам нужно для выполения action, какие именно данные
-export type TasksActionType =
-  ReturnType<typeof RemoveTaskAC>
-  | ReturnType<typeof AddTaskAC>
-  | ReturnType<typeof ChangeTaskTitleAC>
-  | ReturnType<typeof ChangeTaskStatusAC>
-  | ReturnType<typeof SetTaskskAC>
-  | ReturnType<typeof UpdateTaskAC>
-  | addTodolistAction
-  | getTodoListAction
-  | removeTodolistAction
-  | clearTodoListAction
+// | addTodolistAction
+// | setTodoListAction
+// | removeTodolistAction
+// | clearTodoListAction
 
 
 export enum ResultCode { //enum  ONLY for reading, cannot be overwritten!!
@@ -31,7 +23,6 @@ export enum ResultCode { //enum  ONLY for reading, cannot be overwritten!!
   ERROR = 1,
   ERROR_CAPTCHA = 10
 }
-
 
 export type UpdateTaskModelTypeForAnyField = { //only for UpdateTaskTC
   title?: string
@@ -76,120 +67,85 @@ export const initialStateTasks: TasksStateType = {
   ]
 }
 
-export const tasksReducer = (state: TasksStateType = initialStateTasks, action: TasksActionType): TasksStateType => {
-  switch (action.type) {
-    case "REMOVE-TASK":
-      return { ...state, [action.todoListsId]: state[action.todoListsId].filter(t => t.id !== action.id) };
-    case "ADD-TASK":
-      let copyState = { ...state }
-      let tasks = copyState[action.task.todoListId]
-      if (tasks) {
-        const newTasks = [action.task, ...tasks]
-        copyState[action.task.todoListId] = newTasks
-        return copyState
-      }
-      return copyState
-    case "CHANGE-TASK-TITLE":
-      return { ...state, [action.todoListsId]: state[action.todoListsId]?.map(t => t.id === action.taskId ? { ...t, title: action.title } : t) }
-    case "CHANGE-TASK-STATUS": {
-      const copyState = { ...state }
-      const tasks = copyState[action.todoListsId]
-      if (tasks) {
-        return { ...copyState, [action.todoListsId]: tasks.map(t => t.id === action.taskId ? { ...t, status: action.status } : t) }
-      }
-      return copyState
+const slice = createSlice({
+  name: "tasks",
+  initialState: initialStateTasks,
+  reducers: {
+    removeTaskAC(state, action: PayloadAction<{ todoListId: string, taskId: string }>) {
+      const tasks = state[action.payload.todoListId]
+      const index = tasks.findIndex(t => t.id === action.payload.taskId)
+      if (index !== -1) tasks.splice(index, 1)
+    },
+    addTaskAC(state, action: PayloadAction<{ task: TaskTypeApi }>) {
+      console.log(state[action.payload.task.todoListId])
+      console.log(state[action.payload.task.id])
+      state[action.payload.task.todoListId]?.unshift(action.payload.task)
+      debugger
+    },
+    changeTaskStatusAC(state, action: PayloadAction<{ todoListId: string, taskId: string, status: TaskStatuses }>) {
+      const tasks = state[action.payload.todoListId]
+      const index = tasks.findIndex(t => t.id === action.payload.taskId)
+      if (index !== -1) tasks[index].status = action.payload.status
+    },
+    updateTaskAC(state, action: PayloadAction<{ todoListId: string, taskId: string, model: UpdateTaskModelTypeForAnyField }>) {
+      const tasks = state[action.payload.todoListId]
+      const index = tasks.findIndex(t => t.id === action.payload.taskId)
+      if (index !== -1) tasks[index] = { ...tasks[index], ...action.payload.model }
+    },
+    setTaskskAC(state, action: PayloadAction<{ todoListId: string, tasks: TaskTypeApi[] }>) {
+      state[action.payload.todoListId] = action.payload.tasks
     }
-    case "UPDATE-TASK":
-      return { ...state, [action.todoListsId]: state[action.todoListsId].map((t) => t.id === action.taskId ? { ...t, ...action.model } : t) }
-    case "ADD-TODOLIST":
-      return { [action.todolist.id]: [], ...state }
-    case "REMOVE-TODOLIST": {
-      let copyState = { ...state }
-      delete copyState[action.todoListsId] //delete property from {}
-      return copyState
-    }
-    case "SET-TODOLIST": {
-      const copyState = { ...state }
-      delete copyState["todoListId1"];
-      delete copyState["todoListId2"];
-      action.todoLists.map(tl => copyState[tl.id] = [])//создаем свойство на основе тех листов,
-      //которые прилетели с сервера - пробегаемся по каждому листу и  находим свойство id к которому добавляем - пустой массив
-      return copyState
-    }
-    case "SET-TASKS": {
-      return { ...state, [action.todoListsId]: action.tasks }//скопировала стейт,
-      // нашла нужный todolist по приходящему action и установила tasks, которые прилетели с сервера
-    }
-    case "CLEAR-TODOLISTS":
-      return {}
-    default: return state
+  },
+  extraReducers: (builder) => { //для обработки чужих reducer, 
+    //extraReducers НЕ СОЗДАЕТ actions creators, он использует с другой логикой редьюсер с таким же названием
+    builder
+      .addCase(addTodolistAC, (state, action) => {
+        state[action.payload.todolist.id] = []
+      })
+      .addCase(removeTodolistAC, (state, action) => {
+        delete state[action.payload.todoListId] //delete property from {}
+      })
+      .addCase(setTodoListAC, (state, action) => {
+        delete state["todoListId1"]
+        delete state["todoListId2"]
+        action.payload.todoLists.map(tl => state[tl.id] = [])//создаем свойство на основе тех листов,
+        //которые прилетели с сервера - пробегаемся по каждому листу и  находим свойство id к которому добавляем - пустой массив
+      })
+      .addCase(clearTodoListAC, (state, action) => {
+        return {}
+      })
   }
-}
+})
 
-//функц action creator
-export const RemoveTaskAC = (todoListsId: string, id: string) => {
-  return {
-    type: "REMOVE-TASK", todoListsId, id
-  } as const //для явного указания типа литерала на основе конкретного значения 
-}
-
-export const AddTaskAC = (task: TaskTypeApi) => ({ type: "ADD-TASK", task } as const)
-
-
-export const ChangeTaskStatusAC = (todoListsId: string, taskId: string, status: TaskStatuses) => {
-  return {
-    type: "CHANGE-TASK-STATUS",
-    todoListsId, taskId, status
-  } as const
-}
-
-export const ChangeTaskTitleAC = (todoListsId: string, taskId: string, title: string) => {
-  return {
-    type: "CHANGE-TASK-TITLE",
-    todoListsId, taskId, title
-  } as const
-}
-
-export const UpdateTaskAC = (todoListsId: string, taskId: string, model: UpdateTaskModelTypeForAnyField) => {
-  return {
-    type: "UPDATE-TASK",
-    todoListsId, taskId, model
-  } as const
-}
-
-export const SetTaskskAC = (todoListsId: string, tasks: TaskTypeApi[]) => {
-  return {
-    type: "SET-TASKS",
-    todoListsId, tasks
-  } as const
-}
+export const tasksReducer = slice.reducer
+export const { removeTaskAC, addTaskAC, changeTaskStatusAC, updateTaskAC, setTaskskAC } = slice.actions
 
 
 //thunks
-export const SetTasksTC = (todoListsId: string): AppThunk =>
+export const SetTasksTC = (todoListId: string): AppThunk =>
   async dispatch => {
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
-      const res = await tasksApi.getTasks(todoListsId)
-      dispatch(SetTaskskAC(todoListsId, res.data.items))
-      dispatch(setStatusAppAC("succeeded"))
+      const res = await tasksApi.getTasks(todoListId)
+      dispatch(setTaskskAC({ todoListId, tasks: res.data.items }))
+      dispatch(setStatusAppAC({ status: "succeeded" }))
     } catch (err) {
       handleServerNetworkError(err as { message: string }, dispatch)
     }
   }
 
 
-export const RemoveTaskTC = (todoListsId: string, taskId: string): AppThunk =>
+export const RemoveTaskTC = (todoListId: string, taskId: string): AppThunk =>
   async dispatch => {
     //dispatch - функция, которая используется для отправки действий в хранилище Redux.
-    dispatch(setStatusAppAC("loading"))
-    dispatch(ChangeTaskStatusAC(todoListsId, taskId, TaskStatuses.inProgress))
+    dispatch(setStatusAppAC({ status: "loading" }))
+    dispatch(changeTaskStatusAC({ todoListId, taskId, status: TaskStatuses.inProgress }))
     try {
-      const res = await tasksApi.deleteTasks(todoListsId, taskId)
+      const res = await tasksApi.deleteTasks(todoListId, taskId)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(RemoveTaskAC(todoListsId, taskId))
-        dispatch(setSuccessAppAC("task was successfully removed"))
-        dispatch(setStatusAppAC("succeeded"))
+        dispatch(removeTaskAC({ todoListId, taskId }))
+        dispatch(setSuccessAppAC({ success: "task was successfully removed" }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
       }
     } catch (err) {
       handleServerNetworkError(err as { message: string }, dispatch)
@@ -197,17 +153,17 @@ export const RemoveTaskTC = (todoListsId: string, taskId: string): AppThunk =>
   }
 
 
-export const AddTaskTC = (title: string, todoListsId: string): AppThunk =>
+export const AddTaskTC = (title: string, todoListId: string): AppThunk =>
   async dispatch => {
     //Для чего нужна функция dispatch санке ? Чтобы изменять state
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
-      const res = await tasksApi.createTasks(todoListsId, title)
+      const res = await tasksApi.createTasks(todoListId, title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         const task = res.data.data.item
-        dispatch(AddTaskAC(task))
-        dispatch(setSuccessAppAC("task was successfully added"))
-        dispatch(setStatusAppAC("succeeded"))
+        dispatch(addTaskAC({ task }))
+        dispatch(setSuccessAppAC({ success: "task was successfully added" }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
       } else {
         handleServerAppError(res.data, dispatch)
       }
@@ -218,10 +174,10 @@ export const AddTaskTC = (title: string, todoListsId: string): AppThunk =>
 
 
 //update any field
-export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateTaskModelTypeForAnyField): AppThunk =>
+export const UpdateTaskTC = (todoListId: string, taskId: string, model: UpdateTaskModelTypeForAnyField): AppThunk =>
   async (dispatch, getState: () => AppRootStateType) => { //Для чего нужна функция dispatch санке? Чтобы изменять state
     const state = getState()
-    const task = state.tasks[todoListsId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
+    const task = state.tasks[todoListId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
 
     if (!task) return
 
@@ -233,15 +189,15 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
       priority: task.priority,
       startDate: task.startDate,
       deadline: task.deadline,
-      ...model //перезатираю теми соападающими полями, которые приходят с UpdateTaskTC
+      ...model //перезатираю теми совпадающими полями, которые приходят с UpdateTaskTC
     }
-    dispatch(setStatusAppAC("loading"))
+    dispatch(setStatusAppAC({ status: "loading" }))
     try {
-      const res = await tasksApi.updateTasks(todoListsId, taskId, apiModel)
+      const res = await tasksApi.updateTasks(todoListId, taskId, apiModel)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(UpdateTaskAC(todoListsId, taskId, apiModel))
-        dispatch(setSuccessAppAC("task was successfully updated"))
-        dispatch(setStatusAppAC("succeeded"))
+        dispatch(updateTaskAC({ todoListId, taskId, model: apiModel }))
+        dispatch(setSuccessAppAC({ success: "task was successfully updated" }))
+        dispatch(setStatusAppAC({ status: "succeeded" }))
       } else {
         handleServerAppError(res.data, dispatch)
       }
@@ -250,20 +206,20 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
     }
   }
 
-//export const ChangeTaskTitleTC = (todoListsId: string, taskId: string, title: string) => {
+//export const ChangeTaskTitleTC = (todoListId: string, taskId: string, title: string) => {
 // return (dispatch: Dispatch) => {
-//   tasksApi.updateTasks(todoListsId, taskId, title)
+//   tasksApi.updateTasks(todoListId, taskId, title)
 //     .then(res => {
-//       const action = ChangeTaskTitleAC(todoListsId, taskId, title)
+//       const action = ChangeTaskTitleAC(todoListId, taskId, title)
 //       dispatch(action)
 //     })
 // }
 //}
 
-// export const ChangeTaskStatusTC = (todoListsId: string, taskId: string, status: TaskStatuses) => {
+// export const ChangeTaskStatusTC = (todoListId: string, taskId: string, status: TaskStatuses) => {
 //   return (dispatch: Dispatch, getState: () => AppRootStateType) => { //Для чего нужна функция dispatch санке ? Чтобы изменять state
 //     const state = getState()
-//     const task = state.tasks[todoListsId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
+//     const task = state.tasks[todoListId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
 //     if (!task) {
 //       console.warn("Task was not found")
 //       return
@@ -277,9 +233,9 @@ export const UpdateTaskTC = (todoListsId: string, taskId: string, model: UpdateT
 //       startDate: task.startDate,
 //       deadline: task.deadline,
 //     }
-//     tasksApi.updateTasks(todoListsId, taskId, model)
+//     tasksApi.updateTasks(todoListId, taskId, model)
 //       .then(res => {
-//         const action = ChangeTaskStatusAC(todoListsId, taskId, status)
+//         const action = ChangeTaskStatusAC(todoListId, taskId, status)
 //         debugger
 //         dispatch(action)
 //       })

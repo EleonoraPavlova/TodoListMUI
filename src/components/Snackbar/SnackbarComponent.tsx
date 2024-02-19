@@ -5,6 +5,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { setErrorAppAC, setSuccessAppAC } from "../../state/reducers/app/app-reducer";
 
+
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
   ref,
@@ -19,8 +20,8 @@ export function SnackbarComponent() { //вывод всплывающих соо
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') return
-    dispatch(setErrorAppAC(null))
-    dispatch(setSuccessAppAC(null))
+    dispatch(setErrorAppAC({ error: null }))
+    dispatch(setSuccessAppAC({ success: null }))
   };
 
   if (!error && !success) {

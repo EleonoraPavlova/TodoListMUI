@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { AddItemForm } from "../../components/AddItemForm/AddItemForm";
 import { EditableSpan } from "../../components/EditableSpan/EditableSpan";
 import { IconButton, List, Typography } from "@mui/material"
@@ -17,7 +17,6 @@ export type TodolistRedaxProps = {
 }
 
 export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, demo = false }) => {
-  console.log("TodolistRedax")
   let { id, filter, title, entityStatus } = todolists // что входит todoLists пропсы,
   // ПИСАТЬ НУЖНО ТО, ЧТО НУЖНО ВЫТЯНУТЬ ИЗ state - разворачивание объекта todoLists
 
@@ -50,7 +49,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   }, [tasks, filter]);
 
   const changeTodolistTitleHandler = useCallback((title: string) => {
-    dispatch(ChangeTodoListTitleTC(id, title))
+    dispatch(ChangeTodoListTitleTC({ todoListId: id, title, filter }))
   }, [dispatch, id])
 
   const removeTodoListHandler = useCallback(() => {
@@ -59,7 +58,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
 
   const changeTodoListFilter = useCallback((todoListId: string, filter: FilterValuesType) => {
-    dispatch(ChangeTodoListFilterTC(todoListId, title, filter))
+    dispatch(ChangeTodoListFilterTC({ todoListId, title, filter }))
   }, [dispatch, title])
 
   const onAllClickHandler = useCallback(() => (changeTodoListFilter(id, "all")), [changeTodoListFilter, id]);
@@ -68,7 +67,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
   const tasksList: Array<JSX.Element> =
     tasks.map(t => {
-      return (< Task key={t.id} task={t} todoListsId={id} />)
+      return (< Task key={t.id} task={t} todoListId={id} />)
     })
 
 

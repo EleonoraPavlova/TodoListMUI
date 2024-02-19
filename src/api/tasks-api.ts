@@ -55,19 +55,19 @@ export type UpdateTaskModelType = { //что ожидает метод put in re
 }
 
 export const tasksApi = {
-  getTasks(todolistId: string) {
-    return instance.get<ResponseTasksGetType>(`/todo-lists/${todolistId}/tasks`)
+  getTasks(todoListId: string) {
+    return instance.get<ResponseTasksGetType>(`/todo-lists/${todoListId}/tasks`)
   },
 
-  createTasks(todolistId: string, title: string) {
-    return instance.post<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks`, { title })
+  createTasks(todoListId: string, title: string) {
+    return instance.post<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks`, { title })
   },
 
-  deleteTasks(todolistId: string, taskId: string) {
-    return instance.delete<OperationResult>(`/todo-lists/${todolistId}/tasks/${taskId}`)
+  deleteTasks(todoListId: string, taskId: string) {
+    return instance.delete<OperationResult>(`/todo-lists/${todoListId}/tasks/${taskId}`)
   },
 
-  updateTasks(todolistId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
+  updateTasks(todoListId: string, taskId: string, model: UpdateTaskModelType) {
+    return instance.put<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks/${taskId}`, model)
   }
 }

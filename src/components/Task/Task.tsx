@@ -9,27 +9,28 @@ import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 
 type TaskProps = {
   task: TaskTypeApi
-  todoListsId: string
+  todoListId: string
 }
 
+
 //рендер компоненты происходит, если пропсы меняются
-export const Task: React.FC<TaskProps> = memo(({ task, todoListsId }) => {
+export const Task: React.FC<TaskProps> = memo(({ task, todoListId }) => {
   let { id, title, status } = task
   const disabled = (status === TaskStatuses.inProgress)
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
-    dispatch(RemoveTaskTC(todoListsId, task.id))
+    dispatch(RemoveTaskTC(todoListId, task.id))
   }
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const currentStatus = e.currentTarget.checked;
     const newStatus = currentStatus ? TaskStatuses.Completed : TaskStatuses.New;
-    dispatch(UpdateTaskTC(todoListsId, id, { status: newStatus }))
+    dispatch(UpdateTaskTC(todoListId, id, { status: newStatus }))
   }
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatch(UpdateTaskTC(todoListsId, id, { title }))
+    dispatch(UpdateTaskTC(todoListId, id, { title }))
   }
 
   return (

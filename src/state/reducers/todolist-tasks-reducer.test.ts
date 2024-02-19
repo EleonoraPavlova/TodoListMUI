@@ -9,7 +9,7 @@ test('ids should be equals', () => {
   const startTodolistsState: TodolistDomainTypeApi[] = [];
   let newTodolist = { id: todoListId1, title: "Added todolist", filter: "all", addedDate: "", order: 1 };
 
-  const action = addTodolistAC(newTodolist);
+  const action = addTodolistAC({ todolist: newTodolist });
 
   const endTasksState = tasksReducer(startTasksState, action)
   const endTodolistsState = todolistReducer(startTodolistsState, action)
@@ -18,20 +18,20 @@ test('ids should be equals', () => {
   const idFromTasks = keys[0];
   const idFromTodolists = endTodolistsState[0].id;
 
-  expect(idFromTasks).toBe(action.todolist.id); //сравниваю с тем значением которое должно прийти из action типа
-  expect(idFromTodolists).toBe(action.todolist.id);
+  expect(idFromTasks).toBe(action.payload.todolist.id); //сравниваю с тем значением которое должно прийти из action типа
+  expect(idFromTodolists).toBe(action.payload.todolist.id);
 });
 
 
-test('property with todolistId should be deleted', () => {
+test('property with todoListId should be deleted', () => {
   const startState = tasksInitialState
 
-  const action = removeTodolistAC(todoListId2);
+  const action = removeTodolistAC({ todoListId: todoListId2 });
   const endState = tasksReducer(startState, action)
 
 
   const keys = Object.keys(endState);
 
   expect(keys.length).toBe(1);
-  expect(endState["todolistId2"]).not.toBeDefined();
+  expect(endState["todoListId2"]).not.toBeDefined();
 });

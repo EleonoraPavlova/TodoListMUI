@@ -1,26 +1,27 @@
 import {
   addTodolistAC,
-  changeTodoListFilterAC,
-  changeTodoListTitleAC,
   changeTodolistEntityStatusAC,
   FilterValuesType,
   removeTodolistAC,
-  getTodoListAC,
-  todolistReducer
+  setTodoListAC,
+  todolistReducer,
+  updateTodolistAC,
+  UpdateTodolistPayload
 } from "./todolists-reducer";
 import { todoListId1, todoListId2 } from "../../initialState/idState";
 import { todolistInitialState } from "../../initialState/todolistsInitialState";
 import { RequestStatusType } from "../app/app-reducer";
 
+
 let startState = todolistInitialState
 
 
 test('correct todolist should be removed', () => {
-  //action можно писать вместо функц removeTodolistAC(todolistId1)
-  // const action: removeTodolistACtion = { type: "REMOVE-TODOLIST", todoListsId: todolistId1 }
+  //action можно писать вместо функц removeTodolistAC(todoListId1)
+  // const action: removeTodolistACtion = { type: "REMOVE-TODOLIST", todoListId: todoListId1 }
 
   const endState =
-    todolistReducer(startState, removeTodolistAC(todoListId1)) //  todolistReducer(startState, action)
+    todolistReducer(startState, removeTodolistAC({ todoListId: todoListId1 })) //  todolistReducer(startState, action)
 
   expect(endState.length).toBe(1);
   expect(endState[0].id).toBe(todoListId2);
@@ -30,7 +31,7 @@ test('correct todolist should be removed', () => {
 test('should be added correct todolist ', () => {
   let newTodolist = { id: todoListId1, title: "Added todolist", filter: "all", addedDate: "", order: 1 };
 
-  const endState = todolistReducer(startState, addTodolistAC(newTodolist))
+  const endState = todolistReducer(startState, addTodolistAC({ todolist: newTodolist }))
 
   expect(endState.length).toBe(3);
   expect(endState[0].order).toBe(1);
@@ -39,23 +40,25 @@ test('should be added correct todolist ', () => {
 
 
 test('should be change title todolist ', () => {
-  let newTodolistTitle = "Change title";
-
-  //const action: changeTodoListTitleACtion = { type: "CNAHGE-TODOLIST-TITLE", todoListsId: todolistId1, title: newTodolistTitle }
-
-  const endState = todolistReducer(startState, changeTodoListTitleAC(todoListId1, newTodolistTitle))
+  const params: UpdateTodolistPayload = {
+    todoListId: todoListId1,
+    title: "Change title",
+    filter: "all"
+  }
+  const endState = todolistReducer(startState, updateTodolistAC({ params }))
 
   expect(endState.length).toBe(2);
-  expect(endState[0].title).toBe(newTodolistTitle);
+  expect(endState[0].title).toBe(params.title);
 });
 
 
 test('should be change filter todolist ', () => {
-  let newFilter: FilterValuesType = "active";
-
-  //const action: changeTodoListFilterACtion = { type: "CNAHGE-TODOLIST-FILTER", todoListsId: todolistId2, filter: newFilter }
-
-  const endState = todolistReducer(startState, changeTodoListFilterAC(todoListId2, startState[1].title, newFilter))
+  const params: UpdateTodolistPayload = {
+    todoListId: todoListId2,
+    title: startState[1].title,
+    filter: 'active'
+  }
+  const endState = todolistReducer(startState, updateTodolistAC({ params }))
 
   expect(endState.length).toBe(2);
   expect(endState[1].filter).toBe("active");
@@ -63,9 +66,7 @@ test('should be change filter todolist ', () => {
 
 
 test('todolist should be set', () => {
-  //const action: changeTodoListFilterACtion = { type: "CNAHGE-TODOLIST-FILTER", todoListsId: todolistId2, filter: newFilter }
-
-  const endState = todolistReducer([], getTodoListAC(startState))
+  const endState = todolistReducer([], setTodoListAC({ todoLists: startState }))
 
   const keys = Object.keys(endState)
 
@@ -78,7 +79,7 @@ test('todolist should be set', () => {
 
 test('todolist entityStatus should be changed', () => {
   let newStatus: RequestStatusType = "succeeded"
-  const endState = todolistReducer(startState, changeTodolistEntityStatusAC(startState[0].id, newStatus))
+  const endState = todolistReducer(startState, changeTodolistEntityStatusAC({ todoListId: startState[0].id, entityStatus: newStatus }))
 
   expect(endState[0].entityStatus).toBe(newStatus)
   expect(startState[0].entityStatus).toBe("idle");

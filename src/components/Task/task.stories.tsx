@@ -30,7 +30,7 @@ const meta: Meta<typeof Task> = {
       order: 1,
       addedDate: ""
     },
-    todoListsId: 'fgdosrg8rgju'
+    todoListId: 'fgdosrg8rgju'
   },
   // decorators: [
   //   (Story) => (
@@ -66,9 +66,9 @@ export const TaskDoneStory: Story = { ///статика
 
 // const TaskExample = () => { //пример живой таски без стора
 //   let [task, setTask] = useState({ id: '12wsdewfijdei', title: 'JS', isDone: false })
-//   return <Task task={task} todoListsId={"fgdosrg8rgju"}
+//   return <Task task={task} todoListId={"fgdosrg8rgju"}
 //     сhangeTaskStatus={() => setTask({ ...task, isDone: !task.isDone })}
-//     changeTaskTitle={(todoListsId, title) => setTask({ ...task, title: title })}
+//     changeTaskTitle={(todoListId, title) => setTask({ ...task, title: title })}
 //     removeTask={action("removeTask")}
 //   />
 // }
@@ -89,7 +89,7 @@ const TaskWithRedux = () => {
     dispatch(AddTaskTC("NEW TITLE", "1"));
   }, []);//один раз только при монтировании компонента
 
-  // todolistId1 взято из декоратора[ReduxStoreProviderDecorator] - первое значение просто для демонстрации
+  // todoListId1 взято из декоратора[ReduxStoreProviderDecorator] - первое значение просто для демонстрации
   if (!task) task = {
     id: "nnn", title: "Oops", description: "", completed: true, status: TaskStatuses.Completed,
     priority: TaskPriorities.Low,
@@ -99,7 +99,7 @@ const TaskWithRedux = () => {
     order: 1,
     addedDate: ""
   } //дефолтная таска
-  return <Task todoListsId={"todolistId1"} task={task} />
+  return <Task todoListId={"todoListId1"} task={task} />
 }
 
 export const TaskWithReduxStory: Story = { //интерактив
