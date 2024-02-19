@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/TodoListMUI/static/css/main.5f11462c.css",
-    "main.js": "/TodoListMUI/static/js/main.0ad82e11.js",
+    "main.js": "/TodoListMUI/static/js/main.b3128f63.js",
     "static/media/roboto-latin-500-normal.woff2": "/TodoListMUI/static/media/roboto-latin-500-normal.f25d774ecfe0996f8eb5.woff2",
     "static/media/roboto-latin-700-normal.woff2": "/TodoListMUI/static/media/roboto-latin-700-normal.227c93190fe7f82de3f8.woff2",
     "static/media/roboto-latin-400-normal.woff2": "/TodoListMUI/static/media/roboto-latin-400-normal.b009a76ad6afe4ebd301.woff2",
@@ -60,10 +60,10 @@
     "static/media/roboto-greek-ext-700-normal.woff": "/TodoListMUI/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/TodoListMUI/index.html",
     "main.5f11462c.css.map": "/TodoListMUI/static/css/main.5f11462c.css.map",
-    "main.0ad82e11.js.map": "/TodoListMUI/static/js/main.0ad82e11.js.map"
+    "main.b3128f63.js.map": "/TodoListMUI/static/js/main.b3128f63.js.map"
   },
   "entrypoints": [
     "static/css/main.5f11462c.css",
-    "static/js/main.0ad82e11.js"
+    "static/js/main.b3128f63.js"
   ]
 }
