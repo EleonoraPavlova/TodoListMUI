@@ -1,6 +1,6 @@
 import { addTaskAC, changeTaskStatusAC, removeTaskAC, setTaskskAC, tasksReducer, updateTaskAC } from './tasks-reducer'
 import { TasksStateType } from '../../../apps/App'
-import { addTodolistAC } from "../todolists/todolists-reducer"
+import { addTodolistAC, setTodoListAC } from "../todolists/todolists-reducer"
 import { tasksInitialState } from "../../initialState/tasksInitialState"
 import { todoListId1, todoListId2 } from "../../initialState/idState"
 import { TaskPriorities, TaskStatuses, UpdateTaskModelType } from "../../../api/tasks-api"
@@ -11,7 +11,6 @@ let startState: TasksStateType
 beforeEach(() => { //Выполняет функцию перед выполнением тестов в текущем файле
   startState = tasksInitialState
 })
-
 
 test('correct task should be deleted from correct array', () => {
   const action = removeTaskAC({ todoListId: todoListId2, taskId: startState[todoListId2][0].id })
@@ -99,4 +98,23 @@ test('tasks should be added for todolist', () => {
 
   expect(endState[todoListId1].length).toBe(5); //положили в пустой todoListId1 таски 4 шт
   expect(endState[todoListId2].length).toBe(0);//ничего не положили в пустой todoListId2 таски 
+});
+
+
+test('empty todolist should be added wnen we set todolists', () => {
+  const todolist = {
+    id: "1",
+    addedDate: "",
+    order: 1,
+    title: "Title"
+  }
+  const action = setTodoListAC({ todoLists: [todolist] })
+  const endState = tasksReducer({
+    [todoListId1]: [],
+    [todoListId2]: [],
+  }, action)
+
+
+  expect(endState["1"].length).toBe(1)
+  expect(endState["1"]).toBeDefined()
 });

@@ -6,22 +6,24 @@ import { todolistReducer } from "../../state/reducers/todolists/todolists-reduce
 import { InitialStateApp, appReducer } from "../../state/reducers/app/app-reducer";
 import { configureStore } from "@reduxjs/toolkit";
 import { tasksInitialState } from "../../state/initialState/tasksInitialState";
-import { AppRootStateType } from "../../state/store";
 import { todolistInitialState } from "../../state/initialState/todolistsInitialState";
+import { authReducer, initialParamsAuth } from "../../state/reducers/auth/auth-reducers";
+import { MemoryRouter } from "react-router-dom";
 
 
 //создали моковый по сути стор для демонстрации
 const rootReducerMoc = combineReducers({
   todolists: todolistReducer,
   tasks: tasksReducer,
-  app: appReducer
+  app: appReducer,
+  auth: authReducer
 })
-
 
 const initialGlobalStateMoc: AppRootStateTypeMoc = {
   todolists: todolistInitialState,
   tasks: tasksInitialState,
-  app: InitialStateApp
+  app: InitialStateApp,
+  auth: initialParamsAuth
 };
 
 export type AppRootStateTypeMoc = ReturnType<typeof rootReducerMoc>
@@ -34,5 +36,8 @@ storyBookStore.dispatch({ type: 'SET-APP-STATUS', status: initialGlobalStateMoc.
 
 export const ReduxStoreProviderDecorator = (storyFn: () => React.ReactNode) => {
   // React. ReactNode - это набор всех возможных значений, возвращаемых компонентом
-  return <Provider store={storyBookStore}>{storyFn()}</Provider>
+  return <MemoryRouter>
+    <Provider store={storyBookStore}>{
+      storyFn()}</Provider>
+  </MemoryRouter>
 }

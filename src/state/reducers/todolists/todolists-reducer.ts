@@ -5,7 +5,6 @@ import { handleServerAppError, handleServerNetworkError } from "../../../utils/e
 import { ResultCode, SetTasksTC } from "../tasks/tasks-reducer";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-
 //АЛГОРИТМ
 //1. Исходный state
 //2. Объект для выполения действия со state
@@ -59,12 +58,6 @@ export const todolistReducer = slice.reducer
 export const { removeTodolistAC, addTodolistAC,
   updateTodolistAC, changeTodolistEntityStatusAC, setTodoListAC,
   clearTodoListAC } = slice.actions
-
-// export const changeTodoListTitleAC = (todoListId: string, title: string) => {
-//   return {
-//     type: "CNAHGE-TODOLIST-TITLE", title, todoListId
-//   } as const
-// }
 
 // export const changeTodoListFilterAC = (todoListId: string, title: string, filter: FilterValuesType) => {
 //   return {

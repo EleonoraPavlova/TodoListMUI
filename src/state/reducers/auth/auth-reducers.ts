@@ -7,7 +7,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 //as const для явного указания типа литерала на основе конкретного значения 
 
-const initialParamsAuth = {
+export const initialParamsAuth = {
   isLoggedIn: false //залогин пользователь или нет
 }
 

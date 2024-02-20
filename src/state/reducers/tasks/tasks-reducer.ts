@@ -80,7 +80,6 @@ const slice = createSlice({
       console.log(state[action.payload.task.todoListId])
       console.log(state[action.payload.task.id])
       state[action.payload.task.todoListId]?.unshift(action.payload.task)
-      debugger
     },
     changeTaskStatusAC(state, action: PayloadAction<{ todoListId: string, taskId: string, status: TaskStatuses }>) {
       const tasks = state[action.payload.todoListId]

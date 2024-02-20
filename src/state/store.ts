@@ -6,8 +6,6 @@ import { todolistReducer } from "./reducers/todolists/todolists-reducer";
 import { configureStore } from "@reduxjs/toolkit";
 import { authReducer } from "./reducers/auth/auth-reducers";
 
-export type AppRootStateType = ReturnType<typeof rootReducer>
-
 const rootReducer = combineReducers({
   todolists: todolistReducer,
   tasks: tasksReducer,
@@ -15,6 +13,8 @@ const rootReducer = combineReducers({
   auth: authReducer
 })
 
+export type RootReducerType = typeof rootReducer //определила тип самой функции
+export type AppRootStateType = ReturnType<RootReducerType>
 
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,

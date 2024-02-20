@@ -21,8 +21,6 @@ const Books = React.memo(BooksSecret) //не перезапускает пере
 // если не произошло изменений! писать всегда для использов useMemo/useCallback
 
 export const useCallBackRender = () => {
-  console.log("useCallBack")
-
   const [counter, setCounter] = useState(0)
   const [books, setBooks] = useState(["React", "JS", "CSS", "HTML"])
 

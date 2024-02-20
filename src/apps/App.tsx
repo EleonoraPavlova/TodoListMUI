@@ -38,6 +38,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useAppSelector<RequestStatusType>(state => state.app.status)
   let isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
   let initialized = useAppSelector<boolean>(state => state.app.initialized)
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
 
