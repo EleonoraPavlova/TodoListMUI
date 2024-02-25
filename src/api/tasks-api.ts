@@ -1,6 +1,7 @@
 //DAL level
 //в api не должно быть ничего кроме axios
 import { instance } from "./todolist-api"
+import { ResponseType } from "./todolist-api"
 
 export enum TaskStatuses {
   New = 0, // false
@@ -38,11 +39,11 @@ type ResponseTasksGetType = {
   error: string
 }
 
-export type OperationResult<T = {}> = {
-  data: T
-  resultCode: number
-  messages: string[]
-}
+// export type OperationResult<T = {}> = {
+//   data: T
+//   resultCode: number
+//   messages: string[]
+// }
 
 export type UpdateTaskModelType = { //что ожидает метод put in request
   title: string
@@ -60,14 +61,14 @@ export const tasksApi = {
   },
 
   createTasks(todoListId: string, title: string) {
-    return instance.post<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks`, { title })
+    return instance.post<ResponseType<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks`, { title })
   },
 
-  deleteTasks(todoListId: string, taskId: string) {
-    return instance.delete<OperationResult>(`/todo-lists/${todoListId}/tasks/${taskId}`)
+  deleteTask(todoListId: string, taskId: string) {
+    return instance.delete<ResponseType>(`/todo-lists/${todoListId}/tasks/${taskId}`)
   },
 
   updateTasks(todoListId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put<OperationResult<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks/${taskId}`, model)
+    return instance.put<ResponseType<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks/${taskId}`, model)
   }
 }

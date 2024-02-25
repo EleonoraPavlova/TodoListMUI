@@ -6,7 +6,7 @@ import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import { Task } from "../../components/Task/Task";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
 import { FilterValuesType } from "../../state/reducers/todolists/todolists-reducer";
-import { SetTasksTC } from "../../state/reducers/tasks/tasks-reducer";
+import { getTasksTC } from "../../state/reducers/tasks/tasks-reducer";
 import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 
 
@@ -34,7 +34,7 @@ export function Todolist(props: TodolistPropsType) {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(SetTasksTC(props.todoListId))
+    dispatch(getTasksTC(props.todoListId))
   }, [])
 
   const addItem = (title: string) => {

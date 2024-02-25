@@ -1,12 +1,11 @@
 import {
-  addTodolistAC,
+  addTodolistTC,
   changeTodolistEntityStatusAC,
-  FilterValuesType,
-  removeTodolistAC,
-  setTodoListAC,
+  removeTodolistTC,
+  setTodoListTC,
   todolistReducer,
-  updateTodolistAC,
-  UpdateTodolistPayload
+  UpdateTodolistPayload,
+  updateTodolistTC
 } from "./todolists-reducer";
 import { todoListId1, todoListId2 } from "../../initialState/idState";
 import { todolistInitialState } from "../../initialState/todolistsInitialState";
@@ -15,13 +14,12 @@ import { RequestStatusType } from "../app/app-reducer";
 
 let startState = todolistInitialState
 
-
 test('correct todolist should be removed', () => {
   //action можно писать вместо функц removeTodolistAC(todoListId1)
   // const action: removeTodolistACtion = { type: "REMOVE-TODOLIST", todoListId: todoListId1 }
 
   const endState =
-    todolistReducer(startState, removeTodolistAC({ todoListId: todoListId1 })) //  todolistReducer(startState, action)
+    todolistReducer(startState, removeTodolistTC.fulfilled({ todoListId: todoListId1 }, "", "requestId")) //  todolistReducer(startState, action)
 
   expect(endState.length).toBe(1);
   expect(endState[0].id).toBe(todoListId2);
@@ -31,7 +29,7 @@ test('correct todolist should be removed', () => {
 test('should be added correct todolist ', () => {
   let newTodolist = { id: todoListId1, title: "Added todolist", filter: "all", addedDate: "", order: 1 };
 
-  const endState = todolistReducer(startState, addTodolistAC({ todolist: newTodolist }))
+  const endState = todolistReducer(startState, addTodolistTC.fulfilled({ todolist: newTodolist }, "", "requestId"))
 
   expect(endState.length).toBe(3);
   expect(endState[0].order).toBe(1);
@@ -45,10 +43,10 @@ test('should be change title todolist ', () => {
     title: "Change title",
     filter: "all"
   }
-  const endState = todolistReducer(startState, updateTodolistAC({ params }))
+  const endState = todolistReducer(startState, updateTodolistTC.fulfilled({ params }, "", params))
 
   expect(endState.length).toBe(2);
-  expect(endState[0].title).toBe(params.title);
+  expect(endState[1].title).toBe(params.title);
 });
 
 
@@ -58,7 +56,7 @@ test('should be change filter todolist ', () => {
     title: startState[1].title,
     filter: 'active'
   }
-  const endState = todolistReducer(startState, updateTodolistAC({ params }))
+  const endState = todolistReducer(startState, updateTodolistTC.fulfilled({ params }, "", params))
 
   expect(endState.length).toBe(2);
   expect(endState[1].filter).toBe("active");
@@ -66,7 +64,7 @@ test('should be change filter todolist ', () => {
 
 
 test('todolist should be set', () => {
-  const endState = todolistReducer([], setTodoListAC({ todoLists: startState }))
+  const endState = todolistReducer([], setTodoListTC.fulfilled({ todoLists: startState }, "requestId"))
 
   const keys = Object.keys(endState)
 

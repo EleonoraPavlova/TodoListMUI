@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { useFormik } from "formik";
 import { Typography } from "@mui/material";
 import { useAppDispatch } from "../../state/hooks/hooks-selectors";
-import { LoginTC } from "../../state/reducers/auth/auth-reducers";
+import { loginTC } from "../../state/reducers/auth/auth-reducers";
 import { LoginParamsType } from "../../api/auth-api";
 import { handleServerNetworkError } from "../../utils/error-utils";
 
@@ -44,8 +44,11 @@ export const Login = () => {
     onSubmit: async (values, { setFieldValue, setSubmitting }) => {
       setSubmitting(true)
       try {
-        await dispatch(LoginTC(values))
-        setFieldValue("password", "")
+        const res = await dispatch(loginTC(values))
+        if (loginTC.rejected.match(res)) {
+          if (res.payload?.fieldsErrors?.length)
+            setFieldValue("password", "")
+        }
       } catch (err) {
         handleServerNetworkError(err as { message: string }, dispatch)
       }

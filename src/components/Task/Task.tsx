@@ -2,7 +2,7 @@ import React, { ChangeEvent, memo } from 'react';
 import { Checkbox, IconButton, ListItem } from "@mui/material"
 import { EditableSpan } from "../EditableSpan/EditableSpan";
 import { Delete } from "@mui/icons-material";
-import { RemoveTaskTC, UpdateTaskTC } from "../../state/reducers/tasks/tasks-reducer";
+import { removeTaskTC, updateTaskTC } from "../../state/reducers/tasks/tasks-reducer";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
 import { useAppDispatch } from "../../state/hooks/hooks-selectors";
 
@@ -20,17 +20,17 @@ export const Task: React.FC<TaskProps> = memo(({ task, todoListId }) => {
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
-    dispatch(RemoveTaskTC(todoListId, task.id))
+    dispatch(removeTaskTC({ todoListId, taskId: task.id }))
   }
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const currentStatus = e.currentTarget.checked;
     const newStatus = currentStatus ? TaskStatuses.Completed : TaskStatuses.New;
-    dispatch(UpdateTaskTC(todoListId, id, { status: newStatus }))
+    dispatch(updateTaskTC({ todoListId, taskId: id, model: { status: newStatus } }))
   }
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatch(UpdateTaskTC(todoListId, id, { title }))
+    dispatch(updateTaskTC({ todoListId, taskId: id, model: { title } }))
   }
 
   return (

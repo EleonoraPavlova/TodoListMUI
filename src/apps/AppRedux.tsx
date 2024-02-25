@@ -8,11 +8,11 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
-import { AddTodolistTC } from "../state/reducers/todolists/todolists-reducer";
 import { ButtonMemo } from "../components/ButtonMemo";
 import { TaskTypeApi } from "../api/tasks-api";
 import { useAppDispatch } from "../state/hooks/hooks-selectors";
 import { TodoListsForRender } from "../components/TodolistRender/TodolistRender";
+import { addTodolistTC } from "../state/reducers/todolists/todolists-reducer";
 
 
 export type TasksStateType = {
@@ -29,7 +29,7 @@ export const AppRedux: React.FC<AppReduxProps> = ({ demo = false }) => {
 
   const addTodoList = useCallback((title: string) => {
     if (demo) return
-    dispatch(AddTodolistTC(title))
+    dispatch(addTodolistTC(title))
   }, [dispatch])// пишем в зависимости то, что влияет на изменение todolista(обычно props)
   //  - видно в теле функции   
 

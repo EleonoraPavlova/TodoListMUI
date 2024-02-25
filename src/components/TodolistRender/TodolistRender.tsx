@@ -2,7 +2,7 @@ import { Box, Grid, Paper } from "@mui/material"
 import { TodolistRedax } from "../../pages/TodolistPage/TodolistRedax"
 import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
 import { memo } from "react";
-import { AddTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
+import { TodolistDomainTypeApi, addTodolistTC } from "../../state/reducers/todolists/todolists-reducer";
 import { AddItemForm } from "../AddItemForm/AddItemForm";
 
 export type TodoListsForRenderProps = {
@@ -13,6 +13,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
   //useSelector дает доступ к state
   //записывать так! HE {tasks, todoLists} - cоздается новая копия
   let todolists = useAppSelector<TodolistDomainTypeApi[]>(state => state.todolists);
+  console.log(todolists)
   //let tasks = useSelector(tasksSelector);
 
   //let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
@@ -20,7 +21,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
   const dispatch = useAppDispatch()
 
   const addTodoList = (title: string) => {
-    dispatch(AddTodolistTC(title))
+    dispatch(addTodolistTC(title))
   }
 
   return (

@@ -18,11 +18,15 @@ export type TodolistTypeApi = {
   title: string
 }
 
+export type FieldsErrorType = {
+  field: string,
+  error: string
+}
 
 export type ResponseType<T = {}> = {
   resultCode: number
   messages: string[]
-  fieldsErrors: string[]
+  fieldsErrors: FieldsErrorType[]
   data: T
 }
 

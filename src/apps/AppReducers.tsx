@@ -8,8 +8,8 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { lightGreen, lime } from "@mui/material/colors";
 import MenuIcon from '@mui/icons-material/Menu';
-import { changeTaskStatusAC, removeTaskAC, tasksReducer } from "../state/reducers/tasks/tasks-reducer";
-import { FilterValuesType, removeTodolistAC, TodolistDomainTypeApi, todolistReducer, updateTodolistAC } from "../state/reducers/todolists/todolists-reducer";
+import { tasksReducer } from "../state/reducers/tasks/tasks-reducer";
+import { FilterValuesType, TodolistDomainTypeApi, todolistReducer } from "../state/reducers/todolists/todolists-reducer";
 import { TaskStatuses, TaskTypeApi } from "../api/tasks-api";
 import { todolistInitialState } from "../state/initialState/todolistsInitialState";
 import { tasksInitialState } from "../state/initialState/tasksInitialState";
@@ -28,8 +28,8 @@ function AppReducers() {
 
   //for tasks - 4 функц
   function removeTask(todoListId: string, id: string) {
-    const action = removeTaskAC({ todoListId, taskId: id })
-    dispatchTasks(action)
+    // const action = removeTaskAC({ todoListId, taskId: id })
+    // dispatchTasks(action)
   }
 
   function addTask(todoListId: string, title: string) {
@@ -38,8 +38,8 @@ function AppReducers() {
   }
 
   function changeStatus(todoListId: string, taskId: string, status: TaskStatuses) {
-    const action = changeTaskStatusAC({ todoListId, taskId, status })
-    dispatchTasks(action)
+    // const action = changeTaskStatusAC({ todoListId, taskId, status })
+    // dispatchTasks(action)
   }
 
   function changeTaskTitle(todoListId: string, taskId: string, title: string) {
@@ -55,14 +55,14 @@ function AppReducers() {
   }
 
   function changeTodoListFilter(todoListId: string, title: string, filter: FilterValuesType) {
-    const action = updateTodolistAC({ params: { todoListId, title, filter } })
-    dispatchTodolists(action)
+    // const action = updateTodolistAC({ params: { todoListId, title, filter } })
+    // dispatchTodolists(action)
   }
 
   function removeTodoList(todoListId: string) {
-    const action = removeTodolistAC({ todoListId })
-    dispatchTasks(action)
-    dispatchTodolists(action)
+    // const action = removeTodolistAC({ todoListId })
+    // dispatchTasks(action)
+    // dispatchTodolists(action)
   }
 
 

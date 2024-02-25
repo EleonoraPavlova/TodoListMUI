@@ -2,14 +2,14 @@ import { TasksStateType } from "../../apps/App";
 import { todoListId1, todoListId2 } from "../initialState/idState";
 import { tasksInitialState } from "../initialState/tasksInitialState";
 import { tasksReducer } from "./tasks/tasks-reducer";
-import { removeTodolistAC, todolistReducer, addTodolistAC, TodolistDomainTypeApi } from "./todolists/todolists-reducer";
+import { todolistReducer, TodolistDomainTypeApi, removeTodolistTC, addTodolistTC } from "./todolists/todolists-reducer";
 
 test('ids should be equals', () => {
   const startTasksState: TasksStateType = {};
   const startTodolistsState: TodolistDomainTypeApi[] = [];
-  let newTodolist = { id: todoListId1, title: "Added todolist", filter: "all", addedDate: "", order: 1 };
+  let newTodolist = { id: todoListId1, title: "Added todolist", filter: "all", addedDate: "", order: 1 }
 
-  const action = addTodolistAC({ todolist: newTodolist });
+  const action = addTodolistTC.fulfilled({ todolist: newTodolist }, "", "requestId")
 
   const endTasksState = tasksReducer(startTasksState, action)
   const endTodolistsState = todolistReducer(startTodolistsState, action)
@@ -26,7 +26,7 @@ test('ids should be equals', () => {
 test('property with todoListId should be deleted', () => {
   const startState = tasksInitialState
 
-  const action = removeTodolistAC({ todoListId: todoListId2 });
+  const action = removeTodolistTC.fulfilled({ todoListId: todoListId2 }, "", "requestId");
   const endState = tasksReducer(startState, action)
 
 

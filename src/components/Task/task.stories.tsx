@@ -4,7 +4,7 @@ import { Task } from './Task';
 import { AppRootStateType } from "../../state/store";
 import { useSelector } from "react-redux";
 import { ReduxStoreProviderDecorator } from "../../stories/decorators/ReduxStoreProviderDecorator";
-import { AddTaskTC } from "../../state/reducers/tasks/tasks-reducer";
+import { addTaskTC } from "../../state/reducers/tasks/tasks-reducer";
 import { useEffect } from "react";
 import { TaskPriorities, TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
 import { todoListId1 } from "../../state/initialState/idState";
@@ -86,7 +86,7 @@ const TaskWithRedux = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(AddTaskTC("NEW TITLE", "1"));
+    dispatch(addTaskTC({ title: "NEW TITLE", todoListId: "1" }));
   }, []);//один раз только при монтировании компонента
 
   // todoListId1 взято из декоратора[ReduxStoreProviderDecorator] - первое значение просто для демонстрации

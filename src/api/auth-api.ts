@@ -1,7 +1,7 @@
 //DAL level
 //в api не должно быть ничего кроме axios
-import { OperationResult } from "./tasks-api"
 import { instance } from "./todolist-api"
+import { ResponseType } from "./todolist-api"
 
 
 export type LoginParamsType = {
@@ -14,14 +14,14 @@ export type LoginParamsType = {
 
 export const authApi = {
   login(params: LoginParamsType) {
-    return instance.post<OperationResult<{ userId: number }>>("/auth/login", params)
+    return instance.post<ResponseType<{ userId: number }>>("/auth/login", params)
   },
 
-  authMe() { //проверрочный запрос на cookie при инициализации app
-    return instance.get<OperationResult<{ id: number, email: string, login: string }>>("/auth/me")
+  authMe() { //проверочный запрос на cookie при инициализации app
+    return instance.get<ResponseType<{ id: number, email: string, login: string }>>("/auth/me")
   },
 
   logOut() {
-    return instance.delete<OperationResult>("/auth/login")
+    return instance.delete<ResponseType>("/auth/login")
   }
 }

@@ -17,7 +17,7 @@ import { RequestStatusType, setInitializeAppTC } from "../state/reducers/app/app
 import { Navigate, Routes, useNavigate } from "react-router-dom";
 import { Route } from "react-router-dom";
 import { Login } from "../pages/Login/Login";
-import { LogOutTC } from "../state/reducers/auth/auth-reducers";
+import { logOutTC } from "../state/reducers/auth/auth-reducers";
 
 
 export type TodolistType = {
@@ -70,7 +70,7 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   }
 
   const logOutHandler = useCallback(() => {
-    dispatch(LogOutTC())
+    dispatch(logOutTC())
   }, [isLoggedIn])
 
   // <CssBaseline /> - обеспечивает максимальное применение стилей из библиотеки

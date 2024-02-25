@@ -3,8 +3,8 @@ import { AddItemForm } from "../../components/AddItemForm/AddItemForm";
 import { EditableSpan } from "../../components/EditableSpan/EditableSpan";
 import { IconButton, List, Typography } from "@mui/material"
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
-import { AddTaskTC } from "../../state/reducers/tasks/tasks-reducer";
-import { ChangeTodoListFilterTC, ChangeTodoListTitleTC, FilterValuesType, RemoveTodolistTC, TodolistDomainTypeApi } from "../../state/reducers/todolists/todolists-reducer";
+import { addTaskTC } from "../../state/reducers/tasks/tasks-reducer";
+import { FilterValuesType, TodolistDomainTypeApi, removeTodolistTC, updateTodolistTC } from "../../state/reducers/todolists/todolists-reducer";
 import { ButtonMemo } from "../../components/ButtonMemo";
 import { Task } from "../../components/Task/Task";
 import { TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
@@ -32,7 +32,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
 
 
   const addItem = useCallback((title: string) => {
-    dispatch(AddTaskTC(title, id))
+    dispatch(addTaskTC({ title, todoListId: id }))
   }, [dispatch, id])
 
   tasks = useMemo(() => {
@@ -49,16 +49,16 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   }, [tasks, filter]);
 
   const changeTodolistTitleHandler = useCallback((title: string) => {
-    dispatch(ChangeTodoListTitleTC({ todoListId: id, title, filter }))
+    dispatch(updateTodolistTC({ todoListId: id, title, filter }))
   }, [dispatch, id])
 
   const removeTodoListHandler = useCallback(() => {
-    dispatch(RemoveTodolistTC(id))
+    dispatch(removeTodolistTC(id))
   }, [dispatch, id]);
 
 
   const changeTodoListFilter = useCallback((todoListId: string, filter: FilterValuesType) => {
-    dispatch(ChangeTodoListFilterTC({ todoListId, title, filter }))
+    dispatch(updateTodolistTC({ todoListId, title, filter }))
   }, [dispatch, title])
 
   const onAllClickHandler = useCallback(() => (changeTodoListFilter(id, "all")), [changeTodoListFilter, id]);

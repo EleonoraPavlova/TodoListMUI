@@ -1,9 +1,9 @@
-import { addTaskAC, changeTaskStatusAC, removeTaskAC, setTaskskAC, tasksReducer, updateTaskAC } from './tasks-reducer'
+import { addTaskTC, getTasksTC, removeTaskTC, tasksReducer, updateTaskTC } from './tasks-reducer'
 import { TasksStateType } from '../../../apps/App'
-import { addTodolistAC, setTodoListAC } from "../todolists/todolists-reducer"
+import { addTodolistTC, setTodoListTC } from "../todolists/todolists-reducer"
 import { tasksInitialState } from "../../initialState/tasksInitialState"
 import { todoListId1, todoListId2 } from "../../initialState/idState"
-import { TaskPriorities, TaskStatuses, UpdateTaskModelType } from "../../../api/tasks-api"
+import { TaskPriorities, TaskStatuses, TaskTypeApi, UpdateTaskModelType } from "../../../api/tasks-api"
 import { v1 } from "uuid"
 
 let startState: TasksStateType
@@ -13,7 +13,8 @@ beforeEach(() => { //Выполняет функцию перед выполне
 })
 
 test('correct task should be deleted from correct array', () => {
-  const action = removeTaskAC({ todoListId: todoListId2, taskId: startState[todoListId2][0].id })
+  const payload = { todoListId: todoListId2, taskId: startState[todoListId2][0].id }
+  const action = removeTaskTC.fulfilled(payload, "requestId", payload)
 
   const endState = tasksReducer(startState, action)
 
@@ -22,17 +23,18 @@ test('correct task should be deleted from correct array', () => {
 
 
 test('correct task should be added to correct array', () => {
-  const action = addTaskAC({
-    task: {
-      id: v1(), title: "Juice", description: "", completed: false, status: TaskStatuses.New,
-      priority: TaskPriorities.Low,
-      startDate: "",
-      deadline: "",
-      todoListId: todoListId1,
-      order: 1,
-      addedDate: ""
-    }
-  });
+  const task: TaskTypeApi = {
+    id: v1(), title: "Juice", description: "", completed: false, status: TaskStatuses.New,
+    priority: TaskPriorities.Low,
+    startDate: "",
+    deadline: "",
+    todoListId: todoListId1,
+    order: 1,
+    addedDate: ""
+  }
+  const action = addTaskTC.fulfilled(
+    { task }, "requestId", { title: task.title, todoListId: task.todoListId }
+  )
 
   const endState = tasksReducer(startState, action)
 
@@ -43,7 +45,11 @@ test('correct task should be added to correct array', () => {
 })
 
 test('status of specified task should be changed', () => {
-  const action = changeTaskStatusAC({ todoListId: todoListId2, taskId: startState[todoListId2][1].id, status: TaskStatuses.New });
+  const payload = {
+    todoListId: todoListId2, taskId: startState[todoListId2][1].id,
+    model: { ...startState[todoListId2][1], status: TaskStatuses.New }
+  }
+  const action = updateTaskTC.fulfilled(payload, "", payload)
 
   const endState = tasksReducer(startState, action)
 
@@ -62,7 +68,9 @@ test('title of specified task should be changed', () => {
     startDate: '',
     deadline: '',
   }
-  const action = updateTaskAC({ todoListId: todoListId2, taskId: startState[todoListId2][1].id, model });
+
+  const payload = { todoListId: todoListId2, taskId: startState[todoListId2][1].id, model }
+  const action = updateTaskTC.fulfilled(payload, "requestId", payload);
 
   const endState = tasksReducer(startState, action)
 
@@ -72,8 +80,8 @@ test('title of specified task should be changed', () => {
 
 
 test('new array should be added when new todolist is added', () => {
-  let newTodolist = { id: "todoListId1", title: "Added todolist", filter: "all", addedDate: "", order: 1 };
-  const action = addTodolistAC({ todolist: newTodolist });
+  let newTodolist = { id: "todoListId1", title: "Added todolist", filter: "all", addedDate: "", order: 1 }
+  const action = addTodolistTC.fulfilled({ todolist: newTodolist }, "", "requestId")
   const endState = tasksReducer(startState, action)
 
   const keys = Object.keys(endState);
@@ -89,7 +97,7 @@ test('new array should be added when new todolist is added', () => {
 
 
 test('tasks should be added for todolist', () => {
-  const action = setTaskskAC({ todoListId: todoListId1, tasks: startState[todoListId1] })
+  const action = getTasksTC.fulfilled({ todoListId: todoListId1, tasks: startState[todoListId1] }, "requestId", "todoListId1")
   const endState = tasksReducer({
     [todoListId1]: [],
     [todoListId2]: [],
@@ -108,7 +116,7 @@ test('empty todolist should be added wnen we set todolists', () => {
     order: 1,
     title: "Title"
   }
-  const action = setTodoListAC({ todoLists: [todolist] })
+  const action = setTodoListTC.fulfilled({ todoLists: [todolist] }, "requestId")
   const endState = tasksReducer({
     [todoListId1]: [],
     [todoListId2]: [],
