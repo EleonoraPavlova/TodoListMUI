@@ -2,7 +2,8 @@ import { TodolistTypeApi, todolistApi } from "../../../api/todolist-api";
 import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { ResultCode, getTasksTC } from "../tasks/tasks-reducer";
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { ClearTasksTodolistsType, clearTasksTodolists } from "../../../actions/actions";
 
 //АЛГОРИТМ
 //1. Исходный state
@@ -122,9 +123,9 @@ const slice = createSlice({
     // setTodoListAC(state, action: PayloadAction<{ todoLists: TodolistTypeApi[] }>) {
     //   return action.payload.todoLists.map(tl => ({ ...tl, filter: "all", entityStatus: "idle" }))
     // },
-    clearTodoListAC() {
-      return []
-    }
+    // clearTodoListAC() {
+    //   return []
+    // }
   },
   extraReducers: (builder) => {
     builder
@@ -143,10 +144,12 @@ const slice = createSlice({
         if (index !== - 1) state[index] = { ...state[index], ...action.payload?.params }
         //объединить существующий элементы массива со значениями из action.payload.params
       })
+      .addCase(clearTasksTodolists, (state, action) => {
+        console.log("state/todolist", current(state))
+        return []
+      })
   }
 })
 
 export const todolistReducer = slice.reducer
-export const {
-  changeTodolistEntityStatusAC,
-  clearTodoListAC } = slice.actions
+export const { changeTodolistEntityStatusAC } = slice.actions

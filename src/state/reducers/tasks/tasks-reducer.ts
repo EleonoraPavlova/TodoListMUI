@@ -3,9 +3,10 @@ import { TasksStateType } from "../../../apps/App";
 import { TaskPriorities, TaskStatuses, UpdateTaskModelType, tasksApi } from "../../../api/tasks-api";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addTodolistTC, clearTodoListAC, removeTodolistTC, setTodoListTC } from "../todolists/todolists-reducer";
+import { PayloadAction, createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { addTodolistTC, removeTodolistTC, setTodoListTC } from "../todolists/todolists-reducer";
 import { AxiosError } from "axios";
+import { ClearTasksTodolistsType, clearTasksTodolists } from "../../../actions/actions";
 
 //АЛГОРИТМ редьюсер- функция кот хранит логику изменения state => возвращает измененый state
 //1. Исходный state
@@ -186,6 +187,9 @@ const slice = createSlice({
     // setTaskskAC(state, action: PayloadAction<{ todoListId: string, tasks: TaskTypeApi[] }>) {
     //   state[action.payload.todoListId] = action.payload.tasks
     // }
+    // clearTasksAC() {
+    //   return {}
+    // }
   },
   extraReducers: (builder) => { //для обработки чужих reducer, 
     //extraReducers НЕ СОЗДАЕТ actions creators, он использует с другой логикой редьюсер с таким же названием
@@ -220,7 +224,8 @@ const slice = createSlice({
         action.payload.todoLists.map(tl => state[tl.id] = [])//создаем свойство на основе тех листов,
         //которые прилетели с сервера - пробегаемся по каждому листу и  находим свойство id к которому добавляем - пустой массив
       })
-      .addCase(clearTodoListAC, (state, action) => {
+      .addCase(clearTasksTodolists, (state, action) => {
+        console.log("state/tasks", current(state))
         return {}
       })
   }

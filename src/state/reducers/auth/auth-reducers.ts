@@ -1,11 +1,12 @@
 import { handleServerAppError, handleServerNetworkError } from "../../../utils/error-utils";
 import { LoginParamsType, authApi } from "../../../api/auth-api";
 import { ResultCode } from "../tasks/tasks-reducer";
-import { setTodoListTC, clearTodoListAC } from "../todolists/todolists-reducer";
+import { setTodoListTC } from "../todolists/todolists-reducer";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { setStatusAppAC, setSuccessAppAC } from "../app/app-reducer";
 import { AxiosError } from "axios";
 import { FieldsErrorType } from "../../../api/todolist-api";
+import { clearTasksTodolists } from "../../../actions/actions";
 //as const для явного указания типа литерала на основе конкретного значения 
 
 export const initialParamsAuth = {
@@ -46,7 +47,7 @@ export const logOutTC = createAsyncThunk<undefined, void, {
       // dispatch(setIsLoggedInAC(false))
       dispatch(setSuccessAppAC({ success: "you have successfully logged out" }))
       dispatch(setStatusAppAC({ status: "succeeded" }))
-      dispatch(clearTodoListAC())
+      dispatch(clearTasksTodolists({ tasks: {}, todolists: [] }))
       return
     } else {
       handleServerAppError(res.data, dispatch)
