@@ -1,15 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Task } from './Task';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Task } from './Task'
 // import { Provider } from "react-redux";
-import { AppRootStateType } from "../../state/store";
-import { useSelector } from "react-redux";
-import { ReduxStoreProviderDecorator } from "../../stories/decorators/ReduxStoreProviderDecorator";
-import { addTaskTC } from "../../state/reducers/tasks/tasks-reducer";
-import { useEffect } from "react";
-import { TaskPriorities, TaskStatuses, TaskTypeApi } from "../../api/tasks-api";
-import { todoListId1 } from "../../state/initialState/idState";
-import { useAppDispatch } from "../../state/hooks/hooks-selectors";
-
+import { AppRootStateType } from '../../state/store'
+import { useSelector } from 'react-redux'
+import { ReduxStoreProviderDecorator } from '../../stories/decorators/ReduxStoreProviderDecorator'
+import { addTaskTC } from '../../state/reducers/tasks/tasks-reducer'
+import { useEffect } from 'react'
+import { TaskPriorities, TaskStatuses, TaskTypeApi } from '../../api/tasks-api'
+import { todoListId1 } from '../../state/initialState/idState'
+import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 
 //done/ not done
 const meta: Meta<typeof Task> = {
@@ -22,15 +21,19 @@ const meta: Meta<typeof Task> = {
   },
   args: {
     task: {
-      id: '12wsdewfijdei', title: 'JS', description: "", completed: true, status: TaskStatuses.Completed,
+      id: '12wsdewfijdei',
+      title: 'JS',
+      description: '',
+      completed: true,
+      status: TaskStatuses.Completed,
       priority: TaskPriorities.Low,
-      startDate: "",
-      deadline: "",
-      todoListId: "",
+      startDate: '',
+      deadline: '',
+      todoListId: '',
       order: 1,
-      addedDate: ""
+      addedDate: '',
     },
-    todoListId: 'fgdosrg8rgju'
+    todoListId: 'fgdosrg8rgju',
   },
   // decorators: [
   //   (Story) => (
@@ -41,28 +44,33 @@ const meta: Meta<typeof Task> = {
   //     </div>
   //   ),
   // ],
-  decorators: [ReduxStoreProviderDecorator]
-};
+  decorators: [ReduxStoreProviderDecorator],
+}
 
-export default meta;
-type Story = StoryObj<typeof Task>;
+export default meta
+type Story = StoryObj<typeof Task>
 
-export const TaskNotDoneStory: Story = {}; //cтатика
+export const TaskNotDoneStory: Story = {} //cтатика
 
-export const TaskDoneStory: Story = { ///статика
+export const TaskDoneStory: Story = {
+  ///статика
   args: {
     task: {
-      id: '12wsdewfijdei', title: 'CSS', description: "", completed: true, status: TaskStatuses.Completed,
+      id: '12wsdewfijdei',
+      title: 'CSS',
+      description: '',
+      completed: true,
+      status: TaskStatuses.Completed,
       priority: TaskPriorities.Low,
-      startDate: "",
-      deadline: "",
-      todoListId: "",
+      startDate: '',
+      deadline: '',
+      todoListId: '',
       order: 1,
-      addedDate: ""
+      addedDate: '',
     },
     //переопределение пропса taskl
   },
-};
+}
 
 // const TaskExample = () => { //пример живой таски без стора
 //   let [task, setTask] = useState({ id: '12wsdewfijdei', title: 'JS', isDone: false })
@@ -80,28 +88,33 @@ export const TaskDoneStory: Story = { ///статика
 //   }
 // };
 
-
 const TaskWithRedux = () => {
   let task = useSelector<AppRootStateType, TaskTypeApi>(state => state.tasks[todoListId1][0])
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(addTaskTC({ title: "NEW TITLE", todoListId: "1" }));
-  }, []);//один раз только при монтировании компонента
+    dispatch(addTaskTC({ title: 'NEW TITLE', todoListId: '1' }))
+  }, []) //один раз только при монтировании компонента
 
   // todoListId1 взято из декоратора[ReduxStoreProviderDecorator] - первое значение просто для демонстрации
-  if (!task) task = {
-    id: "nnn", title: "Oops", description: "", completed: true, status: TaskStatuses.Completed,
-    priority: TaskPriorities.Low,
-    startDate: "",
-    deadline: "",
-    todoListId: "",
-    order: 1,
-    addedDate: ""
-  } //дефолтная таска
-  return <Task todoListId={"todoListId1"} task={task} />
+  if (!task)
+    task = {
+      id: 'nnn',
+      title: 'Oops',
+      description: '',
+      completed: true,
+      status: TaskStatuses.Completed,
+      priority: TaskPriorities.Low,
+      startDate: '',
+      deadline: '',
+      todoListId: '',
+      order: 1,
+      addedDate: '',
+    } //дефолтная таска
+  return <Task todoListId={'todoListId1'} task={task} />
 }
 
-export const TaskWithReduxStory: Story = { //интерактив
-  render: () => < TaskWithRedux />
-};
+export const TaskWithReduxStory: Story = {
+  //интерактив
+  render: () => <TaskWithRedux />,
+}

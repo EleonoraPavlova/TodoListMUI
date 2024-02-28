@@ -1,30 +1,29 @@
 import React from 'react'
-import { Provider } from 'react-redux';
-import { combineReducers } from "redux";
-import { tasksReducer } from '../../state/reducers/tasks/tasks-reducer';
-import { todolistReducer } from "../../state/reducers/todolists/todolists-reducer";
-import { InitialStateApp, appReducer } from "../../state/reducers/app/app-reducer";
-import { configureStore } from "@reduxjs/toolkit";
-import { tasksInitialState } from "../../state/initialState/tasksInitialState";
-import { todolistInitialState } from "../../state/initialState/todolistsInitialState";
-import { authReducer, initialParamsAuth } from "../../state/reducers/auth/auth-reducers";
-import { MemoryRouter } from "react-router-dom";
-
+import { Provider } from 'react-redux'
+import { combineReducers } from 'redux'
+import { tasksReducer } from '../../state/reducers/tasks/tasks-reducer'
+import { todolistReducer } from '../../state/reducers/todolists/todolists-reducer'
+import { InitialStateApp, appReducer } from '../../state/reducers/app/app-reducer'
+import { configureStore } from '@reduxjs/toolkit'
+import { tasksInitialState } from '../../state/initialState/tasksInitialState'
+import { todolistInitialState } from '../../state/initialState/todolistsInitialState'
+import { authReducer, initialParamsAuth } from '../../state/reducers/auth/auth-reducers'
+import { MemoryRouter } from 'react-router-dom'
 
 //создали моковый по сути стор для демонстрации
 const rootReducerMoc = combineReducers({
   todolists: todolistReducer,
   tasks: tasksReducer,
   app: appReducer,
-  auth: authReducer
+  auth: authReducer,
 })
 
 const initialGlobalStateMoc: AppRootStateTypeMoc = {
   todolists: todolistInitialState,
   tasks: tasksInitialState,
   app: InitialStateApp,
-  auth: initialParamsAuth
-};
+  auth: initialParamsAuth,
+}
 
 export type AppRootStateTypeMoc = ReturnType<typeof rootReducerMoc>
 
@@ -36,8 +35,9 @@ storyBookStore.dispatch({ type: 'SET-APP-STATUS', status: initialGlobalStateMoc.
 
 export const ReduxStoreProviderDecorator = (storyFn: () => React.ReactNode) => {
   // React. ReactNode - это набор всех возможных значений, возвращаемых компонентом
-  return <MemoryRouter>
-    <Provider store={storyBookStore}>{
-      storyFn()}</Provider>
-  </MemoryRouter>
+  return (
+    <MemoryRouter>
+      <Provider store={storyBookStore}>{storyFn()}</Provider>
+    </MemoryRouter>
+  )
 }

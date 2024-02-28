@@ -1,19 +1,16 @@
-import * as React from 'react';
-import Stack from '@mui/material/Stack';
-import Snackbar from '@mui/material/Snackbar';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
-import { setErrorAppAC, setSuccessAppAC } from "../../state/reducers/app/app-reducer";
+import * as React from 'react'
+import Stack from '@mui/material/Stack'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
+import { useAppDispatch, useAppSelector } from '../../state/hooks/hooks-selectors'
+import { setErrorAppAC, setSuccessAppAC } from '../../state/reducers/app/app-reducer'
 
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
-  props,
-  ref,
-) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
-
-export function SnackbarComponent() { //вывод всплывающих сообщений ошибки и success
+export function SnackbarComponent() {
+  //вывод всплывающих сообщений ошибки и success
   let error = useAppSelector<string | null>(state => state.app.error) //null - не выводится всплывашка
   let success = useAppSelector<string | null>(state => state.app.success) //null - не выводится всплывашка
   const dispatch = useAppDispatch()
@@ -22,7 +19,7 @@ export function SnackbarComponent() { //вывод всплывающих соо
     if (reason === 'clickaway') return
     dispatch(setErrorAppAC({ error: null }))
     dispatch(setSuccessAppAC({ success: null }))
-  };
+  }
 
   if (!error && !success) {
     return null
@@ -31,11 +28,13 @@ export function SnackbarComponent() { //вывод всплывающих соо
   return (
     <Stack sx={{ width: '100%' }}>
       <Snackbar open={!!error || !!success} autoHideDuration={3000} onClose={handleClose}>
-        <Alert onClose={handleClose}
-          severity={success ? "success" : "error"}
-          sx={{ width: '100%' }}>{success ? success : error}
+        <Alert
+          onClose={handleClose}
+          severity={success ? 'success' : 'error'}
+          sx={{ width: '100%' }}>
+          {success ? success : error}
         </Alert>
       </Snackbar>
-    </Stack >
-  );
+    </Stack>
+  )
 }

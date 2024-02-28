@@ -1,17 +1,16 @@
-import { TextField } from "@mui/material";
-import React, { ChangeEvent, useState, KeyboardEvent, memo } from 'react';
-import styled from "@emotion/styled";
-
+import { TextField } from '@mui/material'
+import React, { ChangeEvent, useState, KeyboardEvent, memo } from 'react'
+import styled from '@emotion/styled'
 
 type EditableSpanProps = {
-  title: string;
+  title: string
   isDone?: boolean | undefined
   changeTitle: (title: string) => void
 }
 
-export const EditableSpan: React.FC<EditableSpanProps> = memo((props) => {
+export const EditableSpan: React.FC<EditableSpanProps> = memo(props => {
   const [editMode, setEditMode] = useState<boolean>(false)
-  let [title, setTitle] = useState<string>("")
+  let [title, setTitle] = useState<string>('')
 
   const onEditMode = () => {
     if (!props.isDone) {
@@ -30,29 +29,28 @@ export const EditableSpan: React.FC<EditableSpanProps> = memo((props) => {
     setTitle(e.currentTarget.value)
   }
 
-
   const onKeyDownEditHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      offEditMode();
+    if (e.key === 'Enter') {
+      offEditMode()
     }
   }
 
-  return (
-    editMode ?
-      <TextField
-        value={title}
-        onChange={onChangeHandler}
-        onBlur={offEditMode}
-        variant="standard"
-        onKeyDown={onKeyDownEditHandler}
-        autoFocus />
-      :
-      <StyledEditableSpan onDoubleClick={onEditMode} >{props.title}</StyledEditableSpan>
+  return editMode ? (
+    <TextField
+      value={title}
+      onChange={onChangeHandler}
+      onBlur={offEditMode}
+      variant="standard"
+      onKeyDown={onKeyDownEditHandler}
+      autoFocus
+    />
+  ) : (
+    <StyledEditableSpan onDoubleClick={onEditMode}>{props.title}</StyledEditableSpan>
   )
 })
 
 const StyledEditableSpan = styled.span`
   overflow: auto;
-`;
+`
 
-export default EditableSpan;
+export default EditableSpan

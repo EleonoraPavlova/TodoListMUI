@@ -1,16 +1,16 @@
-import { Action, combineReducers } from "redux";
-import { ThunkAction } from "redux-thunk"
-import { tasksReducer } from "./reducers/tasks/tasks-reducer";
-import { appReducer } from "./reducers/app/app-reducer";
-import { todolistReducer } from "./reducers/todolists/todolists-reducer";
-import { configureStore } from "@reduxjs/toolkit";
-import { authReducer } from "./reducers/auth/auth-reducers";
+import { Action, combineReducers } from 'redux'
+import { ThunkAction } from 'redux-thunk'
+import { tasksReducer } from './reducers/tasks/tasks-reducer'
+import { appReducer } from './reducers/app/app-reducer'
+import { todolistReducer } from './reducers/todolists/todolists-reducer'
+import { configureStore } from '@reduxjs/toolkit'
+import { authReducer } from './reducers/auth/auth-reducers'
 
 const rootReducer = combineReducers({
   todolists: todolistReducer,
   tasks: tasksReducer,
   app: appReducer,
-  auth: authReducer
+  auth: authReducer,
 })
 
 export type RootReducerType = typeof rootReducer //определила тип самой функции

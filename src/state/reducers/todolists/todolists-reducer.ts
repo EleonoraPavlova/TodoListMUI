@@ -3,7 +3,7 @@ import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from '../app/app-r
 import { handleServerAppError, handleServerNetworkError } from '../../../utils/error-utils'
 import { ResultCode, getTasksTC } from '../tasks/tasks-reducer'
 import { PayloadAction, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
-import { ClearTasksTodolistsType, clearTasksTodolists } from '../../../actions/actions'
+import { clearTasksTodolists } from '../../../actions/actions'
 
 //АЛГОРИТМ
 //1. Исходный state

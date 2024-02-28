@@ -1,20 +1,31 @@
-import React, { Reducer, useReducer, useState } from 'react';
-import './App.css';
-import { AddItemForm } from "../components/AddItemForm/AddItemForm";
+import React, { Reducer, useReducer, useState } from 'react'
+import './App.css'
+import { AddItemForm } from '../components/AddItemForm/AddItemForm'
 import {
-  AppBar, Box, Button, Container,
-  CssBaseline, Grid, IconButton, Paper, Toolbar, Typography,
-} from "@mui/material";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { lightGreen, lime } from "@mui/material/colors";
-import MenuIcon from '@mui/icons-material/Menu';
-import { tasksReducer } from "../state/reducers/tasks/tasks-reducer";
-import { FilterValuesType, TodolistDomainTypeApi, todolistReducer } from "../state/reducers/todolists/todolists-reducer";
-import { TaskStatuses, TaskTypeApi } from "../api/tasks-api";
-import { todolistInitialState } from "../state/initialState/todolistsInitialState";
-import { tasksInitialState } from "../state/initialState/tasksInitialState";
-import { Todolist } from "../pages/TodolistPage/Todolist";
-
+  AppBar,
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  Grid,
+  IconButton,
+  Paper,
+  Toolbar,
+  Typography,
+} from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { lightGreen, lime } from '@mui/material/colors'
+import MenuIcon from '@mui/icons-material/Menu'
+import { tasksReducer } from '../state/reducers/tasks/tasks-reducer'
+import {
+  FilterValuesType,
+  TodolistDomainTypeApi,
+  todolistReducer,
+} from '../state/reducers/todolists/todolists-reducer'
+import { TaskStatuses, TaskTypeApi } from '../api/tasks-api'
+import { todolistInitialState } from '../state/initialState/todolistsInitialState'
+import { tasksInitialState } from '../state/initialState/tasksInitialState'
+import { Todolist } from '../pages/TodolistPage/Todolist'
 
 export type TasksStateType = {
   [todoListId: string]: TaskTypeApi[]
@@ -22,9 +33,14 @@ export type TasksStateType = {
 
 //переделать на api/dispatch
 function AppReducers() {
-  let [todoLists, dispatchTodolists] = useReducer<Reducer<TodolistDomainTypeApi[], any>>(todolistReducer, todolistInitialState);
-  let [tasks, dispatchTasks] = useReducer<Reducer<TasksStateType, any>>(tasksReducer, tasksInitialState)
-
+  let [todoLists, dispatchTodolists] = useReducer<Reducer<TodolistDomainTypeApi[], any>>(
+    todolistReducer,
+    todolistInitialState
+  )
+  let [tasks, dispatchTasks] = useReducer<Reducer<TasksStateType, any>>(
+    tasksReducer,
+    tasksInitialState
+  )
 
   //for tasks - 4 функц
   function removeTask(todoListId: string, id: string) {
@@ -65,7 +81,6 @@ function AppReducers() {
     // dispatchTodolists(action)
   }
 
-
   function changeTodoListTitle(todoListId: string, title: string) {
     // const action = updateTodolistAC({ params: { todoListId, title, todoLists.filter } })
     // dispatchTodolists(action)
@@ -73,11 +88,11 @@ function AppReducers() {
 
   const filterForTasks = (todoListId: string, filter: FilterValuesType): TaskTypeApi[] => {
     let tasksListforId = tasks[todoListId]
-    if (filter === "active") {
-      tasksListforId = tasks[todoListId].filter(t => t.status === TaskStatuses.New);
+    if (filter === 'active') {
+      tasksListforId = tasks[todoListId].filter(t => t.status === TaskStatuses.New)
     }
-    if (filter === "completed") {
-      tasksListforId = tasks[todoListId].filter(t => t.status === TaskStatuses.Completed);
+    if (filter === 'completed') {
+      tasksListforId = tasks[todoListId].filter(t => t.status === TaskStatuses.Completed)
     }
     return tasksListforId
   }
@@ -86,10 +101,18 @@ function AppReducers() {
     return todoLists.map(t => {
       const filterForTasksHandler = () => filterForTasks(t.id, t.filter)
       return (
-        <Paper key={t.id} sx={{
-          p: "15px", display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'
-        }} elevation={8} >
-          < Todolist title={t.title}
+        <Paper
+          key={t.id}
+          sx={{
+            p: '15px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+          }}
+          elevation={8}>
+          <Todolist
+            title={t.title}
             todoListId={t.id}
             tasks={filterForTasksHandler()}
             removeTask={removeTask}
@@ -101,22 +124,20 @@ function AppReducers() {
             changeTaskTitle={changeTaskTitle}
             changeTodolistTitle={changeTodoListTitle}
           />
-        </Paper >
+        </Paper>
       )
     })
   }
 
-
-
   //менять тему сайта
   let [lightMode, setLightMode] = useState<boolean>(true) // для изменения темы стейт
-  let btnText = lightMode ? "dark" : "light"
+  let btnText = lightMode ? 'dark' : 'light'
   const themeHandler = createTheme({
     palette: {
       primary: lightGreen,
       secondary: lime,
-      mode: lightMode ? "light" : "dark",
-    }
+      mode: lightMode ? 'light' : 'dark',
+    },
   })
 
   const toggleTheme = () => {
@@ -130,32 +151,46 @@ function AppReducers() {
       <CssBaseline />
       <div className="App">
         <AppBar position="static">
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <IconButton edge="start" color={"inherit"} aria-label="menu">
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <IconButton edge="start" color={'inherit'} aria-label="menu">
               <MenuIcon fontSize="large" />
             </IconButton>
             <Typography variant="h6">TodoList</Typography>
             <Box>
-              <Button variant="outlined" size="small" color={"inherit"} onClick={toggleTheme} sx={{ mr: '10px' }}>
+              <Button
+                variant="outlined"
+                size="small"
+                color={'inherit'}
+                onClick={toggleTheme}
+                sx={{ mr: '10px' }}>
                 {btnText}
               </Button>
-              <Button variant="outlined" size="small" color={"secondary"}>
+              <Button variant="outlined" size="small" color={'secondary'}>
                 LogOut
               </Button>
             </Box>
           </Toolbar>
         </AppBar>
-        <Container >
-          <Grid container sx={{ p: "20px", justifyContent: "center", alignItems: "center" }}>
-            <AddItemForm errorText={"Enter title"} addItem={addTodoList} />
+        <Container>
+          <Grid container sx={{ p: '20px', justifyContent: 'center', alignItems: 'center' }}>
+            <AddItemForm errorText={'Enter title'} addItem={addTodoList} />
           </Grid>
-          <Grid container sx={{ p: "10px", justifyContent: "space-berween", display: "flex", alignItems: "flex-start", gap: "40px", flexWrap: "wrap" }}>
+          <Grid
+            container
+            sx={{
+              p: '10px',
+              justifyContent: 'space-berween',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '40px',
+              flexWrap: 'wrap',
+            }}>
             {todoListsForRender()}
           </Grid>
-        </Container >
-      </div >
-    </ThemeProvider >
+        </Container>
+      </div>
+    </ThemeProvider>
   )
 }
 
-export default AppReducers;
+export default AppReducers

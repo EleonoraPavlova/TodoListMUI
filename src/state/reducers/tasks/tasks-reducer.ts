@@ -248,7 +248,7 @@ const slice = createSlice({
 })
 
 export const tasksReducer = slice.reducer
-export const { } = slice.actions;
+export const {} = slice.actions
 
 //update any field
 // export const UpdateTaskTC = (todoListId: string, taskId: string, model: UpdateTaskModelTypeForAnyField): AppThunk =>

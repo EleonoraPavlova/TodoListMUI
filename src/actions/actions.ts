@@ -1,11 +1,12 @@
-import { createAction } from "@reduxjs/toolkit";
-import { TodolistDomainTypeApi } from "../state/reducers/todolists/todolists-reducer";
-import { TasksStateType } from "../apps/AppRedux";
-
+import { createAction } from '@reduxjs/toolkit'
+import { TodolistDomainTypeApi } from '../state/reducers/todolists/todolists-reducer'
+import { TasksStateType } from '../apps/AppRedux'
 
 export type ClearTasksTodolistsType = {
-  tasks: TasksStateType,
+  tasks: TasksStateType
   todolists: TodolistDomainTypeApi[]
 }
 
-export const clearTasksTodolists = createAction<ClearTasksTodolistsType>('actions/clearTasksTodolists')
+export const clearTasksTodolists = createAction<ClearTasksTodolistsType>(
+  'actions/clearTasksTodolists'
+)

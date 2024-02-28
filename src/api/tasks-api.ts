@@ -1,13 +1,13 @@
 //DAL level
 //в api не должно быть ничего кроме axios
-import { instance } from "./todolist-api"
-import { ResponseType } from "./todolist-api"
+import { instance } from './todolist-api'
+import { ResponseType } from './todolist-api'
 
 export enum TaskStatuses {
   New = 0, // false
   inProgress = 1,
   Completed = 2, // true
-  Draft = 3
+  Draft = 3,
 }
 
 export enum TaskPriorities {
@@ -15,7 +15,7 @@ export enum TaskPriorities {
   Middle = 1,
   Hi = 2,
   Urgently = 3,
-  Later = 4
+  Later = 4,
 }
 
 export type TaskTypeApi = {
@@ -32,7 +32,6 @@ export type TaskTypeApi = {
   addedDate: string
 }
 
-
 type ResponseTasksGetType = {
   items: TaskTypeApi[]
   totalCount: number
@@ -45,7 +44,8 @@ type ResponseTasksGetType = {
 //   messages: string[]
 // }
 
-export type UpdateTaskModelType = { //что ожидает метод put in request
+export type UpdateTaskModelType = {
+  //что ожидает метод put in request
   title: string
   description: string
   completed: boolean
@@ -61,7 +61,9 @@ export const tasksApi = {
   },
 
   createTasks(todoListId: string, title: string) {
-    return instance.post<ResponseType<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks`, { title })
+    return instance.post<ResponseType<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks`, {
+      title,
+    })
   },
 
   deleteTask(todoListId: string, taskId: string) {
@@ -69,6 +71,9 @@ export const tasksApi = {
   },
 
   updateTasks(todoListId: string, taskId: string, model: UpdateTaskModelType) {
-    return instance.put<ResponseType<{ item: TaskTypeApi }>>(`/todo-lists/${todoListId}/tasks/${taskId}`, model)
-  }
+    return instance.put<ResponseType<{ item: TaskTypeApi }>>(
+      `/todo-lists/${todoListId}/tasks/${taskId}`,
+      model
+    )
+  },
 }

@@ -98,8 +98,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
           size="small"
           onClick={removeTodoListHandler}
           sx={{ ml: '4px' }}
-          disabled={loading}
-        >
+          disabled={loading}>
           <CancelPresentationIcon color={loading ? 'disabled' : 'success'} />
         </IconButton>
       </Typography>

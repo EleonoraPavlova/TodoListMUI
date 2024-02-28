@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import AppRedux from "./AppRedux";
+import type { Meta, StoryObj } from '@storybook/react'
+import AppRedux from './AppRedux'
 // import { store } from "../state/store";
 // import { Provider } from "react-redux";
-import { ReduxStoreProviderDecorator } from "../stories/decorators/ReduxStoreProviderDecorator";
+import { ReduxStoreProviderDecorator } from '../stories/decorators/ReduxStoreProviderDecorator'
 
 const meta: Meta<typeof AppRedux> = {
   title: 'TODOLISTS/AppWithRedux',
@@ -16,10 +16,10 @@ const meta: Meta<typeof AppRedux> = {
   //   ),
   // ],
   //или подключить саму функцию декоратор
-  decorators: [ReduxStoreProviderDecorator]
-};
+  decorators: [ReduxStoreProviderDecorator],
+}
 
-export default meta;
-type Story = StoryObj<typeof AppRedux>;
+export default meta
+type Story = StoryObj<typeof AppRedux>
 
 export const AppReduxStory: Story = {}

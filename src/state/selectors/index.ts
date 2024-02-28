@@ -1,2 +1,2 @@
-export { todolistsSelector } from "./todolistsSelector"
-export { tasksSelector } from "./tasksSelector"
+export { todolistsSelector } from './todolistsSelector'
+export { tasksSelector } from './tasksSelector'

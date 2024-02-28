@@ -1,12 +1,13 @@
-
-import type { Meta, StoryObj } from '@storybook/react';
-import { TodolistRedax } from './TodolistRedax';
-import { ReduxStoreProviderDecorator } from "../../stories/decorators/ReduxStoreProviderDecorator";
-import { TodolistDomainTypeApi, addTodolistTC } from "../../state/reducers/todolists/todolists-reducer";
-import { useLayoutEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../state/hooks/hooks-selectors";
-import { todoListId1 } from "../../state/initialState/idState";
-
+import type { Meta, StoryObj } from '@storybook/react'
+import { TodolistRedax } from './TodolistRedax'
+import { ReduxStoreProviderDecorator } from '../../stories/decorators/ReduxStoreProviderDecorator'
+import {
+  TodolistDomainTypeApi,
+  addTodolistTC,
+} from '../../state/reducers/todolists/todolists-reducer'
+import { useLayoutEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '../../state/hooks/hooks-selectors'
+import { todoListId1 } from '../../state/initialState/idState'
 
 const meta: Meta<typeof TodolistRedax> = {
   title: 'TODOLISTS/TodolistRedax',
@@ -15,14 +16,19 @@ const meta: Meta<typeof TodolistRedax> = {
   argTypes: {},
   args: {
     todolists: {
-      id: todoListId1, title: "HTML&CSS", filter: "all", addedDate: "", order: 1, entityStatus: "idle"
-    }
+      id: todoListId1,
+      title: 'HTML&CSS',
+      filter: 'all',
+      addedDate: '',
+      order: 1,
+      entityStatus: 'idle',
+    },
   },
-  decorators: [ReduxStoreProviderDecorator]
-};
+  decorators: [ReduxStoreProviderDecorator],
+}
 
-export default meta;
-type Story = StoryObj<typeof TodolistRedax>;
+export default meta
+type Story = StoryObj<typeof TodolistRedax>
 
 //тут просто вместо листа заглушка div стоит
 // const TodolistStoryRedux = () => {
@@ -42,28 +48,31 @@ type Story = StoryObj<typeof TodolistRedax>;
 //     </div>
 // };
 
-
-
 //добавить todolist после того, как удалили последний из state
 const TodolistStoryRedux = () => {
   let todoLists = useAppSelector<TodolistDomainTypeApi[]>(state => state.todolists)
-  const payload = { todolist: { id: todoListId1, title: "CSS", addedDate: "", order: 1 } }
+  const payload = { todolist: { id: todoListId1, title: 'CSS', addedDate: '', order: 1 } }
   const dispatch = useAppDispatch()
 
   useLayoutEffect(() => {
     if (todoLists.length === 0) {
-      dispatch(addTodolistTC.fulfilled(payload, "", "requestId"))
+      dispatch(addTodolistTC.fulfilled(payload, '', 'requestId'))
     }
   })
   return !todoLists[0] ? <> </> : <TodolistRedax todolists={todoLists[0]} />
 }
 
 export const TodolistStory: Story = {
-  render: () =>
-    <div style={{ width: '300px', display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      < TodolistStoryRedux />
+  render: () => (
+    <div
+      style={{
+        width: '300px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <TodolistStoryRedux />
     </div>
-};
-
-
-
+  ),
+}
