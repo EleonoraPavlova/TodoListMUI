@@ -1,4 +1,4 @@
-import { authReducer, setIsLoggedInAC } from './auth-reducers'
+import { authReducer, setIsLoggedInAC } from './authSlice'
 
 type startAuthType = {
   isLoggedIn: false

@@ -4,7 +4,7 @@ import { Task } from './Task'
 import { AppRootStateType } from '../../state/store'
 import { useSelector } from 'react-redux'
 import { ReduxStoreProviderDecorator } from '../../stories/decorators/ReduxStoreProviderDecorator'
-import { addTaskTC } from '../../state/reducers/tasks/tasks-reducer'
+import { addTaskTC } from '../../state/reducers/tasks/tasksSlice'
 import { useEffect } from 'react'
 import { TaskPriorities, TaskStatuses, TaskTypeApi } from '../../api/tasks-api'
 import { todoListId1 } from '../../state/initialState/idState'
@@ -89,7 +89,7 @@ export const TaskDoneStory: Story = {
 // };
 
 const TaskWithRedux = () => {
-  let task = useSelector<AppRootStateType, TaskTypeApi>(state => state.tasks[todoListId1][0])
+  let task = useSelector<AppRootStateType, TaskTypeApi>((state) => state.tasks[todoListId1][0])
   const dispatch = useAppDispatch()
 
   useEffect(() => {

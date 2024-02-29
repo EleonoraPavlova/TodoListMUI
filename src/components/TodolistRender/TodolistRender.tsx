@@ -1,12 +1,14 @@
 import { Box, Grid, Paper } from '@mui/material'
 import { TodolistRedax } from '../../pages/TodolistPage/TodolistRedax'
-import { useAppDispatch, useAppSelector } from '../../state/hooks/hooks-selectors'
+import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 import { memo } from 'react'
 import {
   TodolistDomainTypeApi,
   addTodolistTC,
-} from '../../state/reducers/todolists/todolists-reducer'
+  todolistsSelectors,
+} from '../../state/reducers/todolists/todolistsSlice'
 import { AddItemForm } from '../AddItemForm/AddItemForm'
+import { useSelector } from 'react-redux'
 
 export type TodoListsForRenderProps = {
   demo?: boolean
@@ -15,10 +17,9 @@ export type TodoListsForRenderProps = {
 export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ demo = false }) => {
   //useSelector дает доступ к state
   //записывать так! HE {tasks, todoLists} - cоздается новая копия
-  let todolists = useAppSelector<TodolistDomainTypeApi[]>(state => state.todolists)
-  console.log(todolists)
-  //let tasks = useSelector(tasksSelector);
 
+  let todolists = useSelector(todolistsSelectors.todolistsSelector)
+  //let tasks = useSelector(tasksSelector);
   //let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
   //такая запись без использования слоя selectors
   const dispatch = useAppDispatch()
@@ -39,7 +40,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
       <Grid
         container
         sx={{ p: '20px', justifyContent: 'space-evenly', alignItems: 'flex-start', gap: '35px' }}>
-        {todolists.map(t => (
+        {todolists?.map((t: TodolistDomainTypeApi) => (
           <Paper
             key={t.id}
             sx={{

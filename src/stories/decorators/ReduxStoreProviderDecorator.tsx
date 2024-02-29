@@ -1,13 +1,13 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { combineReducers } from 'redux'
-import { tasksReducer } from '../../state/reducers/tasks/tasks-reducer'
-import { todolistReducer } from '../../state/reducers/todolists/todolists-reducer'
-import { InitialStateApp, appReducer } from '../../state/reducers/app/app-reducer'
+import { tasksReducer } from '../../state/reducers/tasks/tasksSlice'
+import { todolistReducer } from '../../state/reducers/todolists/todolistsSlice'
+import { InitialStateApp, appReducer } from '../../state/reducers/app/appSlice'
 import { configureStore } from '@reduxjs/toolkit'
 import { tasksInitialState } from '../../state/initialState/tasksInitialState'
 import { todolistInitialState } from '../../state/initialState/todolistsInitialState'
-import { authReducer, initialParamsAuth } from '../../state/reducers/auth/auth-reducers'
+import { authReducer, initialParamsAuth } from '../../state/reducers/auth/authSlice'
 import { MemoryRouter } from 'react-router-dom'
 
 //создали моковый по сути стор для демонстрации

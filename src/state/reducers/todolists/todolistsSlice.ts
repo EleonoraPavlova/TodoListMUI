@@ -1,9 +1,11 @@
 import { TodolistTypeApi, todolistApi } from '../../../api/todolist-api'
-import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from '../app/app-reducer'
+import { RequestStatusType, setStatusAppAC, setSuccessAppAC } from '../app/appSlice'
 import { handleServerAppError, handleServerNetworkError } from '../../../utils/error-utils'
-import { ResultCode, getTasksTC } from '../tasks/tasks-reducer'
+import { ResultCode, getTasksTC } from '../tasks/tasksSlice'
 import { PayloadAction, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import { clearTasksTodolists } from '../../../actions/actions'
+import { AppRootStateType } from 'state/store'
+import { stat } from 'fs'
 
 //АЛГОРИТМ
 //1. Исходный state
@@ -24,8 +26,6 @@ export type UpdateTodolistPayload = {
   filter: FilterValuesType
 }
 
-const initialState: TodolistDomainTypeApi[] = []
-
 export const setTodoListTC = createAsyncThunk(
   'todolist/setTodoList',
   async (params, { dispatch, rejectWithValue }) => {
@@ -34,7 +34,7 @@ export const setTodoListTC = createAsyncThunk(
       const res = await todolistApi.getTodos()
       // dispatch(setTodoListAC({ todoLists: res.data }))
       dispatch(setStatusAppAC({ status: 'succeeded' }))
-      res.data.map(tl => {
+      res.data.map((tl) => {
         dispatch(getTasksTC(tl.id))
       })
       return { todoLists: res.data }
@@ -112,9 +112,9 @@ export const updateTodolistTC = createAsyncThunk(
   }
 )
 
-const slice = createSlice({
+const todolistSlice = createSlice({
   name: 'todolist',
-  initialState: initialState,
+  initialState: { todolists: [] as TodolistDomainTypeApi[] }, //должен быть {} чтобы было удобство расширения
   reducers: {
     // removeTodolistAC(state, action: PayloadAction<{ todoListId: string }>) {
     //   const index = state.findIndex(t => t.id === action.payload.todoListId)
@@ -132,8 +132,8 @@ const slice = createSlice({
       state,
       action: PayloadAction<{ todoListId: string; entityStatus: RequestStatusType }>
     ) {
-      const index = state.findIndex(t => t.id === action.payload.todoListId)
-      if (index !== -1) state[index].entityStatus = action.payload.entityStatus
+      const index = state.todolists.findIndex((t) => t.id === action.payload.todoListId)
+      if (index !== -1) state.todolists[index].entityStatus = action.payload.entityStatus
     },
     // setTodoListAC(state, action: PayloadAction<{ todoLists: TodolistTypeApi[] }>) {
     //   return action.payload.todoLists.map(tl => ({ ...tl, filter: "all", entityStatus: "idle" }))
@@ -142,29 +142,40 @@ const slice = createSlice({
     //   return []
     // }
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
       .addCase(setTodoListTC.fulfilled, (state, action) => {
-        return action.payload.todoLists.map(tl => ({ ...tl, filter: 'all', entityStatus: 'idle' }))
+        state.todolists = action.payload.todoLists.map((tl) => ({
+          ...tl,
+          filter: 'all',
+          entityStatus: 'idle',
+        }))
       })
       .addCase(addTodolistTC.fulfilled, (state, action) => {
-        state.unshift({ ...action.payload.todolist, filter: 'all', entityStatus: 'idle' })
+        state.todolists.unshift({ ...action.payload.todolist, filter: 'all', entityStatus: 'idle' })
       })
       .addCase(removeTodolistTC.fulfilled, (state, action) => {
-        const index = state.findIndex(t => t.id === action.payload.todoListId)
-        if (index !== -1) state.splice(index, 1)
+        const index = state.todolists.findIndex((t) => t.id === action.payload.todoListId)
+        if (index !== -1) state.todolists.splice(index, 1)
       })
       .addCase(updateTodolistTC.fulfilled, (state, action) => {
-        const index = state.findIndex(t => t.id === action.payload?.params.todoListId)
-        if (index !== -1) state[index] = { ...state[index], ...action.payload?.params }
+        const index = state.todolists.findIndex((t) => t.id === action.payload?.params.todoListId)
+        if (index !== -1)
+          state.todolists[index] = { ...state.todolists[index], ...action.payload?.params }
         //объединить существующий элементы массива со значениями из action.payload.params
       })
       .addCase(clearTasksTodolists, (state, action) => {
         console.log('state/todolist', current(state))
-        return []
+        return { todolists: [] }
       })
+  },
+  selectors: {
+    todolistsSelector: (state) => state.todolists,
   },
 })
 
-export const todolistReducer = slice.reducer
-export const { changeTodolistEntityStatusAC } = slice.actions
+export const todolistReducer = todolistSlice.reducer
+export const { changeTodolistEntityStatusAC } = todolistSlice.actions
+export const todolistsSelectors = todolistSlice.getSelectors(
+  (state: AppRootStateType) => state.todolists
+)

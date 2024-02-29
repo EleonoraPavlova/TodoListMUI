@@ -1,6 +1,6 @@
-import { addTaskTC, getTasksTC, removeTaskTC, tasksReducer, updateTaskTC } from './tasks-reducer'
+import { addTaskTC, getTasksTC, removeTaskTC, tasksReducer, updateTaskTC } from './tasksSlice'
 import { TasksStateType } from '../../../apps/App'
-import { addTodolistTC, setTodoListTC } from '../todolists/todolists-reducer'
+import { addTodolistTC, setTodoListTC } from '../todolists/todolistsSlice'
 import { tasksInitialState } from '../../initialState/tasksInitialState'
 import { todoListId1, todoListId2 } from '../../initialState/idState'
 import {
@@ -101,7 +101,7 @@ test('new array should be added when new todolist is added', () => {
 
   const keys = Object.keys(endState)
 
-  const newKey = keys.find(k => k != todoListId1 && k != todoListId2)
+  const newKey = keys.find((k) => k != todoListId1 && k != todoListId2)
   if (!newKey) {
     throw Error('new key should be added')
   }

@@ -18,7 +18,7 @@ import { ButtonMemo } from '../components/ButtonMemo'
 import { TaskTypeApi } from '../api/tasks-api'
 import { useAppDispatch } from '../state/hooks/hooks-selectors'
 import { TodoListsForRender } from '../components/TodolistRender/TodolistRender'
-import { addTodolistTC } from '../state/reducers/todolists/todolists-reducer'
+import { addTodolistTC } from '../state/reducers/todolists/todolistsSlice'
 
 export type TasksStateType = {
   [todoListId: string]: TaskTypeApi[]

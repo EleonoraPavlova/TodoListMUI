@@ -2,8 +2,14 @@ import * as React from 'react'
 import Stack from '@mui/material/Stack'
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert, { AlertProps } from '@mui/material/Alert'
-import { useAppDispatch, useAppSelector } from '../../state/hooks/hooks-selectors'
-import { setErrorAppAC, setSuccessAppAC } from '../../state/reducers/app/app-reducer'
+import { useAppDispatch } from '../../state/hooks/hooks-selectors'
+import {
+  errorAppSelector,
+  setErrorAppAC,
+  setSuccessAppAC,
+  successAppSelector,
+} from '../../state/reducers/app/appSlice'
+import { useSelector } from 'react-redux'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -11,8 +17,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props,
 
 export function SnackbarComponent() {
   //вывод всплывающих сообщений ошибки и success
-  let error = useAppSelector<string | null>(state => state.app.error) //null - не выводится всплывашка
-  let success = useAppSelector<string | null>(state => state.app.success) //null - не выводится всплывашка
+  let error = useSelector(errorAppSelector) //null - не выводится всплывашка
+  let success = useSelector(successAppSelector) //null - не выводится всплывашка
   const dispatch = useAppDispatch()
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {

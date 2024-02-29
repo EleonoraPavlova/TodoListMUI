@@ -10,7 +10,7 @@ import Button from '@mui/material/Button'
 import { useFormik } from 'formik'
 import { Typography } from '@mui/material'
 import { useAppDispatch } from '../../state/hooks/hooks-selectors'
-import { loginTC } from '../../state/reducers/auth/auth-reducers'
+import { loginTC } from '../../state/reducers/auth/authSlice'
 import { LoginParamsType } from '../../api/auth-api'
 import { handleServerNetworkError } from '../../utils/error-utils'
 
@@ -18,7 +18,7 @@ export const Login = () => {
   const dispatch = useAppDispatch()
 
   const formik = useFormik({
-    validate: values => {
+    validate: (values) => {
       const errors: Partial<LoginParamsType> = {}
 
       if (!values.email) {

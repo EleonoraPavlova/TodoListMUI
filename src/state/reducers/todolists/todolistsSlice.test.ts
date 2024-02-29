@@ -6,10 +6,10 @@ import {
   todolistReducer,
   UpdateTodolistPayload,
   updateTodolistTC,
-} from './todolists-reducer'
+} from './todolistsSlice'
 import { todoListId1, todoListId2 } from '../../initialState/idState'
 import { todolistInitialState } from '../../initialState/todolistsInitialState'
-import { RequestStatusType } from '../app/app-reducer'
+import { RequestStatusType } from '../app/appSlice'
 
 let startState = todolistInitialState
 
@@ -22,8 +22,8 @@ test('correct todolist should be removed', () => {
     removeTodolistTC.fulfilled({ todoListId: todoListId1 }, '', 'requestId')
   ) //  todolistReducer(startState, action)
 
-  expect(endState.length).toBe(1)
-  expect(endState[0].id).toBe(todoListId2)
+  expect(endState.todolists.length).toBe(1)
+  expect(endState.todolists[0].id).toBe(todoListId2)
 })
 
 test('should be added correct todolist ', () => {
@@ -40,9 +40,9 @@ test('should be added correct todolist ', () => {
     addTodolistTC.fulfilled({ todolist: newTodolist }, '', 'requestId')
   )
 
-  expect(endState.length).toBe(3)
-  expect(endState[0].order).toBe(1)
-  expect(endState.length).toBe(3)
+  expect(endState.todolists.length).toBe(3)
+  expect(endState.todolists[0].order).toBe(1)
+  expect(endState.todolists.length).toBe(3)
 })
 
 test('should be change title todolist ', () => {
@@ -53,43 +53,46 @@ test('should be change title todolist ', () => {
   }
   const endState = todolistReducer(startState, updateTodolistTC.fulfilled({ params }, '', params))
 
-  expect(endState.length).toBe(2)
-  expect(endState[1].title).toBe(params.title)
+  expect(endState.todolists.length).toBe(2)
+  expect(endState.todolists[1].title).toBe(params.title)
 })
 
 test('should be change filter todolist ', () => {
   const params: UpdateTodolistPayload = {
     todoListId: todoListId2,
-    title: startState[1].title,
+    title: startState.todolists[1].title,
     filter: 'active',
   }
   const endState = todolistReducer(startState, updateTodolistTC.fulfilled({ params }, '', params))
 
-  expect(endState.length).toBe(2)
-  expect(endState[1].filter).toBe('active')
+  expect(endState.todolists.length).toBe(2)
+  expect(endState.todolists[1].filter).toBe('active')
 })
 
 test('todolist should be set', () => {
   const endState = todolistReducer(
-    [],
-    setTodoListTC.fulfilled({ todoLists: startState }, 'requestId')
+    { todolists: [] },
+    setTodoListTC.fulfilled({ todoLists: startState.todolists }, 'requestId')
   )
 
   const keys = Object.keys(endState)
 
   expect(keys.length).toBe(2) //одно и тоже
-  expect(endState.length).toBe(2) //
-  expect(endState[1].id).toBe(todoListId2)
-  expect(endState[0].id).toBe(todoListId1)
+  expect(endState.todolists.length).toBe(2) //
+  expect(endState.todolists[1].id).toBe(todoListId2)
+  expect(endState.todolists[0].id).toBe(todoListId1)
 })
 
 test('todolist entityStatus should be changed', () => {
   let newStatus: RequestStatusType = 'succeeded'
   const endState = todolistReducer(
     startState,
-    changeTodolistEntityStatusAC({ todoListId: startState[0].id, entityStatus: newStatus })
+    changeTodolistEntityStatusAC({
+      todoListId: startState.todolists[0].id,
+      entityStatus: newStatus,
+    })
   )
 
-  expect(endState[0].entityStatus).toBe(newStatus)
-  expect(startState[0].entityStatus).toBe('idle')
+  expect(endState.todolists[0].entityStatus).toBe(newStatus)
+  expect(startState.todolists[0].entityStatus).toBe('idle')
 })

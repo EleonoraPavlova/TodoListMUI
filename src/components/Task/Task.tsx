@@ -2,7 +2,7 @@ import React, { ChangeEvent, memo } from 'react'
 import { Checkbox, IconButton, ListItem } from '@mui/material'
 import { EditableSpan } from '../EditableSpan/EditableSpan'
 import { Delete } from '@mui/icons-material'
-import { removeTaskTC, updateTaskTC } from '../../state/reducers/tasks/tasks-reducer'
+import { removeTaskTC, updateTaskTC } from '../../state/reducers/tasks/tasksSlice'
 import { TaskStatuses, TaskTypeApi } from '../../api/tasks-api'
 import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 

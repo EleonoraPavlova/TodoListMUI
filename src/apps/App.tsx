@@ -16,16 +16,21 @@ import { createTheme, styled, ThemeProvider } from '@mui/material/styles'
 import { lightGreen, lime } from '@mui/material/colors'
 import MenuIcon from '@mui/icons-material/Menu'
 import { TaskTypeApi } from './../api/tasks-api'
-import { FilterValuesType } from '../state/reducers/todolists/todolists-reducer'
-import { useAppDispatch, useAppSelector } from '../state/hooks/hooks-selectors'
+import { FilterValuesType } from '../state/reducers/todolists/todolistsSlice'
+import { useAppDispatch } from '../state/hooks/hooks-selectors'
 import { TodoListsForRender } from '../components/TodolistRender/TodolistRender'
 import LinearProgress from '@mui/material/LinearProgress'
 import { SnackbarComponent } from '../components/Snackbar/SnackbarComponent'
-import { RequestStatusType, setInitializeAppTC } from '../state/reducers/app/app-reducer'
+import {
+  initializedAppSelector,
+  setInitializeAppTC,
+  statusAppSelector,
+} from '../state/reducers/app/appSlice'
 import { Navigate, Routes, useNavigate } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 import { Login } from '../pages/Login/Login'
-import { logOutTC } from '../state/reducers/auth/auth-reducers'
+import { isLoggedInSelector, logOutTC } from '../state/reducers/auth/authSlice'
+import { useSelector } from 'react-redux'
 
 export type TodolistType = {
   id: string
@@ -42,9 +47,9 @@ export type AppProps = {
 }
 
 export const App: React.FC<AppProps> = ({ demo = false }) => {
-  let status = useAppSelector<RequestStatusType>(state => state.app.status)
-  let isLoggedIn = useAppSelector<boolean>(state => state.auth.isLoggedIn)
-  let initialized = useAppSelector<boolean>(state => state.app.initialized)
+  let status = useSelector(statusAppSelector)
+  let isLoggedIn = useSelector(isLoggedInSelector)
+  let initialized = useSelector(initializedAppSelector)
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()

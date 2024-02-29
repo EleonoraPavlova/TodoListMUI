@@ -3,13 +3,13 @@ import { AddItemForm } from '../../components/AddItemForm/AddItemForm'
 import { EditableSpan } from '../../components/EditableSpan/EditableSpan'
 import { IconButton, List, Typography } from '@mui/material'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
-import { addTaskTC } from '../../state/reducers/tasks/tasks-reducer'
+import { addTaskTC } from '../../state/reducers/tasks/tasksSlice'
 import {
   FilterValuesType,
   TodolistDomainTypeApi,
   removeTodolistTC,
   updateTodolistTC,
-} from '../../state/reducers/todolists/todolists-reducer'
+} from '../../state/reducers/todolists/todolistsSlice'
 import { ButtonMemo } from '../../components/ButtonMemo'
 import { Task } from '../../components/Task/Task'
 import { TaskStatuses, TaskTypeApi } from '../../api/tasks-api'
@@ -25,7 +25,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
   // ПИСАТЬ НУЖНО ТО, ЧТО НУЖНО ВЫТЯНУТЬ ИЗ state - разворачивание объекта todoLists
 
   //СТРОГО БРАТЬ ТЕ ДАННЫЕ, КОТОРЫЕ НУЖНЫ, ДЕСТРУКТУР ТУТ ДЕЛАТЬ НЕ НУЖНО!!ЛИШНИЕ ПЕРЕРЕНДЕРЫ
-  let tasks = useAppSelector<TaskTypeApi[]>(tasks => tasks.tasks[id]) //так вытянули
+  let tasks = useAppSelector<TaskTypeApi[]>((tasks) => tasks.tasks[id]) //так вытянули
   //нужный массив tasks по id
   const loading = entityStatus === 'loading'
   const dispatch = useAppDispatch()
@@ -45,10 +45,10 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
     let filtered = tasks
 
     if (filter === 'active') {
-      filtered = filtered.filter(t => t.status === TaskStatuses.New)
+      filtered = filtered.filter((t) => t.status === TaskStatuses.New)
     }
     if (filter === 'completed') {
-      filtered = filtered.filter(t => t.status === TaskStatuses.Completed)
+      filtered = filtered.filter((t) => t.status === TaskStatuses.Completed)
     }
 
     return filtered
@@ -85,7 +85,7 @@ export const TodolistRedax: React.FC<TodolistRedaxProps> = memo(({ todolists, de
     [changeTodoListFilter, id]
   )
 
-  const tasksList: Array<JSX.Element> = tasks.map(t => {
+  const tasksList: Array<JSX.Element> = tasks.map((t) => {
     return <Task key={t.id} task={t} todoListId={id} />
   })
 

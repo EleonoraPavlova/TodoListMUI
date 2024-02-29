@@ -1,4 +1,4 @@
-import { InitialStateApp, appReducer, setErrorAppAC, setStatusAppAC } from './app-reducer'
+import { InitialStateApp, appReducer, setErrorAppAC, setStatusAppAC } from './appSlice'
 
 test('correct error message should be set', () => {
   const endState = appReducer(InitialStateApp, setErrorAppAC({ error: 'New error' }))

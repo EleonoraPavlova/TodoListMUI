@@ -1,9 +1,9 @@
 import { handleServerAppError, handleServerNetworkError } from '../../../utils/error-utils'
 import { LoginParamsType, authApi } from '../../../api/auth-api'
-import { ResultCode } from '../tasks/tasks-reducer'
-import { setTodoListTC } from '../todolists/todolists-reducer'
+import { ResultCode } from '../tasks/tasksSlice'
+import { setTodoListTC } from '../todolists/todolistsSlice'
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { setStatusAppAC, setSuccessAppAC } from '../app/app-reducer'
+import { setStatusAppAC, setSuccessAppAC } from '../app/appSlice'
 import { AxiosError } from 'axios'
 import { FieldsErrorType } from '../../../api/todolist-api'
 import { clearTasksTodolists } from '../../../actions/actions'
@@ -68,7 +68,7 @@ export const logOutTC = createAsyncThunk<
   }
 })
 
-const slice = createSlice({
+const authSlice = createSlice({
   name: 'auth',
   initialState: initialParamsAuth,
   reducers: {
@@ -76,16 +76,20 @@ const slice = createSlice({
       state.isLoggedIn = action.payload.isLoggedIn
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(loginTC.fulfilled, state => {
+      .addCase(loginTC.fulfilled, (state) => {
         state.isLoggedIn = true
       })
-      .addCase(logOutTC.fulfilled, state => {
+      .addCase(logOutTC.fulfilled, (state) => {
         state.isLoggedIn = false
       })
   },
+  selectors: {
+    isLoggedInSelector: (slice) => slice.isLoggedIn,
+  },
 })
 
-export const authReducer = slice.reducer
-export const { setIsLoggedInAC } = slice.actions
+export const authReducer = authSlice.reducer
+export const { setIsLoggedInAC } = authSlice.actions
+export const { isLoggedInSelector } = authSlice.selectors

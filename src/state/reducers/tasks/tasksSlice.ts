@@ -1,10 +1,10 @@
 import { AppRootStateType } from '../../store'
 import { TasksStateType } from '../../../apps/App'
 import { TaskPriorities, TaskStatuses, UpdateTaskModelType, tasksApi } from '../../../api/tasks-api'
-import { setStatusAppAC, setSuccessAppAC } from '../app/app-reducer'
+import { setStatusAppAC, setSuccessAppAC } from '../app/appSlice'
 import { handleServerAppError, handleServerNetworkError } from '../../../utils/error-utils'
 import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
-import { addTodolistTC, removeTodolistTC, setTodoListTC } from '../todolists/todolists-reducer'
+import { addTodolistTC, removeTodolistTC, setTodoListTC } from '../todolists/todolistsSlice'
 import { AxiosError } from 'axios'
 import { clearTasksTodolists } from '../../../actions/actions'
 
@@ -143,7 +143,7 @@ export const updateTaskTC = createAsyncThunk(
   ) => {
     const { todoListId, taskId, model } = params
     const state = getState() as AppRootStateType
-    const task = state.tasks[todoListId].find(t => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
+    const task = state.tasks[todoListId].find((t) => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
 
     if (!task) return rejectWithValue('mistake')
 
@@ -176,7 +176,7 @@ export const updateTaskTC = createAsyncThunk(
   }
 )
 
-const slice = createSlice({
+const tasksSlice = createSlice({
   name: 'tasks',
   initialState: initialStateTasks,
   reducers: {
@@ -205,8 +205,8 @@ const slice = createSlice({
     //   return {}
     // }
   },
-  extraReducers: builder => {
-    //для обработки чужих reducer,
+  extraReducers: (builder) => {
+    //для обработки чужих reducer, и состояний санок(по типу getTasksTC.fulfilled)
     //extraReducers НЕ СОЗДАЕТ actions creators, он использует с другой логикой редьюсер с таким же названием
     builder
       .addCase(getTasksTC.fulfilled, (state, action) => {
@@ -216,16 +216,17 @@ const slice = createSlice({
       .addCase(removeTaskTC.fulfilled, (state, action) => {
         if (action.payload) {
           const tasks = state[action.payload.todoListId]
-          const index = tasks.findIndex(t => t.id === action.payload?.taskId)
+          const index = tasks.findIndex((t) => t.id === action.payload?.taskId)
           if (index !== -1) tasks.splice(index, 1)
         }
       })
       .addCase(addTaskTC.fulfilled, (state, action) => {
-        state[action.payload.task.todoListId].unshift(action.payload.task)
+        const tasks = state[action.payload.task.todoListId]
+        tasks.unshift(action.payload.task)
       })
       .addCase(updateTaskTC.fulfilled, (state, action) => {
         const tasks = state[action.payload.todoListId]
-        const index = tasks.findIndex(t => t.id === action.payload.taskId)
+        const index = tasks.findIndex((t) => t.id === action.payload.taskId)
         if (index !== -1) tasks[index] = { ...tasks[index], ...action.payload.model }
       })
       .addCase(addTodolistTC.fulfilled, (state, action) => {
@@ -237,7 +238,7 @@ const slice = createSlice({
       .addCase(setTodoListTC.fulfilled, (state, action) => {
         delete state['todoListId1']
         delete state['todoListId2']
-        action.payload.todoLists.map(tl => (state[tl.id] = [])) //создаем свойство на основе тех листов,
+        action.payload.todoLists.map((tl) => (state[tl.id] = [])) //создаем свойство на основе тех листов,
         //которые прилетели с сервера - пробегаемся по каждому листу и  находим свойство id к которому добавляем - пустой массив
       })
       .addCase(clearTasksTodolists, (state, action) => {
@@ -245,10 +246,14 @@ const slice = createSlice({
         return {}
       })
   },
+  selectors: {
+    tasksSelector: (slice) => slice.tasks,
+  },
 })
 
-export const tasksReducer = slice.reducer
-export const {} = slice.actions
+export const tasksReducer = tasksSlice.reducer
+export const {} = tasksSlice.actions
+export const { tasksSelector } = tasksSlice.selectors
 
 //update any field
 // export const UpdateTaskTC = (todoListId: string, taskId: string, model: UpdateTaskModelTypeForAnyField): AppThunk =>

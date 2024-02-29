@@ -5,8 +5,8 @@ import { Button, IconButton, List, Typography } from '@mui/material'
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation'
 import { Task } from '../../components/Task/Task'
 import { TaskStatuses, TaskTypeApi } from '../../api/tasks-api'
-import { FilterValuesType } from '../../state/reducers/todolists/todolists-reducer'
-import { getTasksTC } from '../../state/reducers/tasks/tasks-reducer'
+import { FilterValuesType } from '../../state/reducers/todolists/todolistsSlice'
+import { getTasksTC } from '../../state/reducers/tasks/tasksSlice'
 import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 
 // export type TaskType = {
@@ -48,7 +48,7 @@ export function Todolist(props: TodolistPropsType) {
   const removeTodoListHandler = () => props.removeTodoList(props.todoListId)
 
   const tasksList = () => {
-    return props.tasks.map(t => <Task key={t.id} task={t} todoListId={t.id} />)
+    return props.tasks.map((t) => <Task key={t.id} task={t} todoListId={t.id} />)
   }
 
   const changeEditableSpanTitleHandler = (title: string) => {

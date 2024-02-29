@@ -1,9 +1,9 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { authApi } from '../../../api/auth-api'
 import { handleServerAppError, handleServerNetworkError } from '../../../utils/error-utils'
-import { ResultCode } from '../tasks/tasks-reducer'
-import { setTodoListTC } from '../todolists/todolists-reducer'
-import { setIsLoggedInAC } from '../auth/auth-reducers'
+import { ResultCode } from '../tasks/tasksSlice'
+import { setTodoListTC } from '../todolists/todolistsSlice'
+import { setIsLoggedInAC } from '../auth/authSlice'
 
 export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed' //статус взаимодействия с сервером
 
@@ -46,7 +46,7 @@ export const setInitializeAppTC = createAsyncThunk(
   }
 )
 
-const slice = createSlice({
+const appSlice = createSlice({
   name: 'app',
   initialState: InitialStateApp,
   reducers: {
@@ -63,12 +63,21 @@ const slice = createSlice({
       state.success = action.payload.success
     },
   },
-  extraReducers: builder => {
-    builder.addCase(setInitializeAppTC.fulfilled, state => {
+  extraReducers: (builder) => {
+    builder.addCase(setInitializeAppTC.fulfilled, (state) => {
       state.initialized = true
     })
   },
+  selectors: {
+    statusAppSelector: (slice) => slice.status,
+    errorAppSelector: (slice) => slice.error,
+    successAppSelector: (slice) => slice.success,
+    initializedAppSelector: (slice) => slice.initialized,
+  },
 })
 
-export const appReducer = slice.reducer
-export const { setErrorAppAC, setStatusAppAC, setSuccessAppAC } = slice.actions
+export const appReducer = appSlice.reducer
+export const { setErrorAppAC, setStatusAppAC, setSuccessAppAC } = appSlice.actions
+export const { statusAppSelector, errorAppSelector, successAppSelector, initializedAppSelector } =
+  appSlice.selectors
+// export type AppInitialState = ReturnType<typeof slice.getInitialState> ??

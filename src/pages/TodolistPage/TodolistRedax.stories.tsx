@@ -1,13 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { TodolistRedax } from './TodolistRedax'
 import { ReduxStoreProviderDecorator } from '../../stories/decorators/ReduxStoreProviderDecorator'
-import {
-  TodolistDomainTypeApi,
-  addTodolistTC,
-} from '../../state/reducers/todolists/todolists-reducer'
+import { addTodolistTC, todolistsSelectors } from '../../state/reducers/todolists/todolistsSlice'
 import { useLayoutEffect } from 'react'
-import { useAppDispatch, useAppSelector } from '../../state/hooks/hooks-selectors'
+import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 import { todoListId1 } from '../../state/initialState/idState'
+import { useSelector } from 'react-redux'
 
 const meta: Meta<typeof TodolistRedax> = {
   title: 'TODOLISTS/TodolistRedax',
@@ -50,7 +48,7 @@ type Story = StoryObj<typeof TodolistRedax>
 
 //добавить todolist после того, как удалили последний из state
 const TodolistStoryRedux = () => {
-  let todoLists = useAppSelector<TodolistDomainTypeApi[]>(state => state.todolists)
+  let todoLists = useSelector(todolistsSelectors.todolistsSelector)
   const payload = { todolist: { id: todoListId1, title: 'CSS', addedDate: '', order: 1 } }
   const dispatch = useAppDispatch()
 

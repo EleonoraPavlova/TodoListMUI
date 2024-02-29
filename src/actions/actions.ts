@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { TodolistDomainTypeApi } from '../state/reducers/todolists/todolists-reducer'
+import { TodolistDomainTypeApi } from '../state/reducers/todolists/todolistsSlice'
 import { TasksStateType } from '../apps/AppRedux'
 
 export type ClearTasksTodolistsType = {

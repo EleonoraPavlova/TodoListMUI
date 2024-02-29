@@ -1,17 +1,17 @@
 import { TasksStateType } from '../../apps/App'
 import { todoListId1, todoListId2 } from '../initialState/idState'
 import { tasksInitialState } from '../initialState/tasksInitialState'
-import { tasksReducer } from './tasks/tasks-reducer'
+import { tasksReducer } from './tasks/tasksSlice'
 import {
   todolistReducer,
   TodolistDomainTypeApi,
   removeTodolistTC,
   addTodolistTC,
-} from './todolists/todolists-reducer'
+} from './todolists/todolistsSlice'
 
 test('ids should be equals', () => {
   const startTasksState: TasksStateType = {}
-  const startTodolistsState: TodolistDomainTypeApi[] = []
+  const startTodolistsState: { todolists: TodolistDomainTypeApi[] } = { todolists: [] }
   let newTodolist = {
     id: todoListId1,
     title: 'Added todolist',
@@ -27,7 +27,7 @@ test('ids should be equals', () => {
 
   const keys = Object.keys(endTasksState)
   const idFromTasks = keys[0]
-  const idFromTodolists = endTodolistsState[0].id
+  const idFromTodolists = endTodolistsState.todolists[0].id
 
   expect(idFromTasks).toBe(action.payload.todolist.id) //сравниваю с тем значением которое должно прийти из action типа
   expect(idFromTodolists).toBe(action.payload.todolist.id)
