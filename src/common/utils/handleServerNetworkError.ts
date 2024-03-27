@@ -2,6 +2,7 @@ import { isAxiosError } from 'axios'
 import { setErrorAppAC, setStatusAppAC } from 'BLL/reducers/appSlice'
 import { Dispatch } from 'redux'
 
+//server crashed
 export const handleServerNetworkError = (err: unknown, dispatch: Dispatch): void => {
   let errorMessage = 'Some error occurred'
   if (isAxiosError(err)) {

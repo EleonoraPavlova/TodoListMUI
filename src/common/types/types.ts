@@ -24,7 +24,7 @@ export type UpdateTodolistPayload = {
   filter: FilterValues
 }
 
-//tasks
+//task
 export type Task = {
   description: string
   title: string
@@ -52,6 +52,28 @@ export type UpdateTaskModel = {
   priority: TaskPriorities
   startDate: string
   deadline: string
+}
+
+type UpdateTaskModelForAnyField = {
+  //only for UpdateTaskTC
+  title?: string
+  description?: string
+  completed?: boolean
+  status?: TaskStatuses
+  priority?: TaskPriorities
+  startDate?: string
+  deadline?: string
+}
+
+export type UpdateParamsTask = {
+  todoListId: string
+  taskId: string
+  model: UpdateTaskModelForAnyField | UpdateTaskModel
+}
+
+export type DeleteParamsTask = {
+  todoListId: string
+  taskId: string
 }
 
 //
