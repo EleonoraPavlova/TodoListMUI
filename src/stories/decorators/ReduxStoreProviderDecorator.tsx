@@ -1,31 +1,30 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { combineReducers } from 'redux'
-import { tasksReducer } from '../../state/reducers/tasks/tasksSlice'
-import { todolistReducer } from '../../state/reducers/todolists/todolistsSlice'
-import { InitialStateApp, appReducer } from '../../state/reducers/app/appSlice'
 import { configureStore } from '@reduxjs/toolkit'
-import { tasksInitialState } from '../../state/initialState/tasksInitialState'
-import { todolistInitialState } from '../../state/initialState/todolistsInitialState'
-import { authReducer, initialParamsAuth } from '../../state/reducers/auth/authSlice'
 import { MemoryRouter } from 'react-router-dom'
+import { todolistReducer } from 'app/BLL/reducers/todolistsSlice'
+import { tasksReducer } from 'app/BLL/reducers/tasksSlice'
+import { appReducer } from 'app/BLL/reducers/appSlice'
+import { authReducer } from 'app/BLL/reducers/authSlice'
+import { appInitial, authInitial, tasksInitial, todolistInitial } from 'app/BLL/initialState'
 
 //создали моковый по сути стор для демонстрации
 const rootReducerMoc = combineReducers({
-  todolists: todolistReducer,
-  tasks: tasksReducer,
   app: appReducer,
   auth: authReducer,
+  todolists: todolistReducer,
+  tasks: tasksReducer,
 })
 
-const initialGlobalStateMoc: AppRootStateTypeMoc = {
-  todolists: todolistInitialState,
-  tasks: tasksInitialState,
-  app: InitialStateApp,
-  auth: initialParamsAuth,
+const initialGlobalStateMoc: AppRootStateMoc = {
+  app: appInitial,
+  auth: authInitial,
+  todolists: todolistInitial,
+  tasks: tasksInitial,
 }
 
-export type AppRootStateTypeMoc = ReturnType<typeof rootReducerMoc>
+export type AppRootStateMoc = ReturnType<typeof rootReducerMoc>
 
 export const storyBookStore = configureStore({ reducer: rootReducerMoc, preloadedState: undefined })
 

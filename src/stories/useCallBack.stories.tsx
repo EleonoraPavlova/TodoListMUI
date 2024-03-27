@@ -4,17 +4,17 @@ export default {
   title: 'useCallBackComponent',
 }
 
-type BooksSecretType = {
+type BooksSecret = {
   books: string[]
   addBook: () => void
 }
 
-const BooksSecret = (props: BooksSecretType) => {
+const BooksSecret: React.FC<BooksSecret> = ({ books, addBook }) => {
   return (
     <>
-      <button onClick={props.addBook}>add User</button>
+      <button onClick={addBook}>add User</button>
       <div>
-        {props.books.map((b, index) => (
+        {books.map((b, index) => (
           <div key={index}>{b}</div>
         ))}
       </div>

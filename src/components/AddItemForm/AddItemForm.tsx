@@ -8,7 +8,6 @@ export type AddItemFormProps = {
   disabled?: boolean
 }
 
-//рендер компоненты происходит, если пропсы меняются
 export const AddItemForm: React.FC<AddItemFormProps> = memo(
   ({ errorText, disabled = false, addItem }) => {
     console.log('AddItemForm')

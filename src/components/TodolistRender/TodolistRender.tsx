@@ -1,31 +1,22 @@
 import { Box, Grid, Paper } from '@mui/material'
-import { TodolistRedax } from '../../pages/TodolistPage/TodolistRedax'
-import { useAppDispatch } from '../../state/hooks/hooks-selectors'
 import { memo } from 'react'
-import {
-  TodolistDomainTypeApi,
-  addTodolistTC,
-  todolistsSelectors,
-} from '../../state/reducers/todolists/todolistsSlice'
-import { AddItemForm } from '../AddItemForm/AddItemForm'
 import { useSelector } from 'react-redux'
+import { TodolistPage } from 'features/pages/TodolistPage'
+import { TodolistDomain } from 'common/types'
+import { useAppDispatch } from 'common/hooks/hooks-selectors'
+import { todolistsSelectors, todolistsThunks } from 'app/BLL/reducers/todolistsSlice'
+import { AddItemForm } from 'components/AddItemForm'
 
-export type TodoListsForRenderProps = {
+type TodoListsForRenderProps = {
   demo?: boolean
 }
 
 export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ demo = false }) => {
-  //useSelector дает доступ к state
-  //записывать так! HE {tasks, todoLists} - cоздается новая копия
-
   let todolists = useSelector(todolistsSelectors.todolistsSelector)
-  //let tasks = useSelector(tasksSelector);
-  //let tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks)
-  //такая запись без использования слоя selectors
   const dispatch = useAppDispatch()
 
   const addTodoList = (title: string) => {
-    dispatch(addTodolistTC(title))
+    dispatch(todolistsThunks.addTodolistTC(title))
   }
 
   return (
@@ -40,7 +31,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
       <Grid
         container
         sx={{ p: '20px', justifyContent: 'space-evenly', alignItems: 'flex-start', gap: '35px' }}>
-        {todolists?.map((t: TodolistDomainTypeApi) => (
+        {todolists?.map((t: TodolistDomain) => (
           <Paper
             key={t.id}
             sx={{
@@ -51,7 +42,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
               flexDirection: 'column',
             }}
             elevation={8}>
-            <TodolistRedax todolists={t} demo={demo} />
+            <TodolistPage todolists={t} demo={demo} />
           </Paper>
         ))}
       </Grid>
