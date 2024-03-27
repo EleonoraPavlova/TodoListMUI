@@ -1,4 +1,4 @@
-import { AppDispatch, AppRootState } from 'app/BLL/store'
+import { AppDispatch, AppRootState } from 'BLL/store'
 import { useDispatch, useSelector, TypedUseSelectorHook } from 'react-redux'
 
 type DispatchFunc = () => AppDispatch

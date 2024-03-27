@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { todolistsThunks } from '../todolistsSlice'
 import { RequestStatus } from 'common/types'
-import { appInitial } from 'app/BLL/initialState'
+import { appInitial } from 'BLL/initialState'
 import { handleServerAppError } from 'common/utils/handleServerAppError'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'

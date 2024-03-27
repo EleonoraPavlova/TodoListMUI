@@ -1,4 +1,4 @@
-import { todolistInitial } from 'app/BLL/initialState'
+import { todolistInitial } from 'BLL/initialState'
 import { changeTodolistEntityStatusAC, todolistReducer, todolistsThunks } from './todolistsSlice'
 import { RequestStatus, UpdateTodolistPayload } from 'common/types'
 

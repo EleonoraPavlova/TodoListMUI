@@ -1,6 +1,6 @@
 import { Tasks, TodolistDomain } from 'common/types'
 import { tasksReducer } from '../tasksSlice'
-import { tasksInitial, todoListId1, todoListId2 } from 'app/BLL/initialState'
+import { tasksInitial, todoListId1, todoListId2 } from 'BLL/initialState'
 import { todolistReducer, todolistsThunks } from '../todolistsSlice'
 
 test('ids should be equals', () => {

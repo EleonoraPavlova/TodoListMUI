@@ -3,11 +3,11 @@ import { Provider } from 'react-redux'
 import { combineReducers } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { MemoryRouter } from 'react-router-dom'
-import { todolistReducer } from 'app/BLL/reducers/todolistsSlice'
-import { tasksReducer } from 'app/BLL/reducers/tasksSlice'
-import { appReducer } from 'app/BLL/reducers/appSlice'
-import { authReducer } from 'app/BLL/reducers/authSlice'
-import { appInitial, authInitial, tasksInitial, todolistInitial } from 'app/BLL/initialState'
+import { todolistReducer } from 'BLL/reducers/todolistsSlice'
+import { tasksReducer } from 'BLL/reducers/tasksSlice'
+import { appReducer } from 'BLL/reducers/appSlice'
+import { authReducer } from 'BLL/reducers/authSlice'
+import { appInitial, authInitial, tasksInitial, todolistInitial } from 'BLL/initialState'
 
 //создали моковый по сути стор для демонстрации
 const rootReducerMoc = combineReducers({

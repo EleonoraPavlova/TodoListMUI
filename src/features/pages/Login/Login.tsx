@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import { useFormik } from 'formik'
 import { Typography } from '@mui/material'
-import { loginTC } from 'app/BLL/reducers/authSlice'
+import { authThunks } from 'BLL/reducers/authSlice'
 import { useAppDispatch } from 'common/hooks/hooks-selectors'
 import { handleServerNetworkError } from 'common/utils'
 import { LoginParams } from 'common/types'
@@ -43,8 +43,8 @@ export const Login = () => {
     onSubmit: async (values, { setFieldValue, setSubmitting }) => {
       setSubmitting(true)
       try {
-        const res = await dispatch(loginTC(values))
-        if (loginTC.rejected.match(res)) {
+        const res = await dispatch(authThunks.loginTC(values))
+        if (authThunks.loginTC.rejected.match(res)) {
           if (res.payload?.fieldsErrors?.length) setFieldValue('password', '')
         }
       } catch (err) {

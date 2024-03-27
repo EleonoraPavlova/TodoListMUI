@@ -21,10 +21,10 @@ import { useAppDispatch } from '../common/hooks/hooks-selectors'
 import LinearProgress from '@mui/material/LinearProgress'
 import { SnackBar } from '../components/SnackBar'
 import { Navigate, Routes, useNavigate } from 'react-router-dom'
-import { authThunks, isLoggedInSelector } from 'app/BLL/reducers/authSlice'
+import { authThunks, isLoggedInSelector } from 'BLL/reducers/authSlice'
 import { Login } from 'features/pages/Login'
 import { TodoListsForRender } from 'components/TodolistRender'
-import { appThunks, initializedAppSelector, statusAppSelector } from 'app/BLL/reducers/appSlice'
+import { appThunks, initializedAppSelector, statusAppSelector } from 'BLL/reducers/appSlice'
 
 type AppProps = {
   demo?: boolean

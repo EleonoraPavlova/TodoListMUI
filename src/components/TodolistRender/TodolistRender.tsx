@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { TodolistPage } from 'features/pages/TodolistPage'
 import { TodolistDomain } from 'common/types'
 import { useAppDispatch } from 'common/hooks/hooks-selectors'
-import { todolistsSelectors, todolistsThunks } from 'app/BLL/reducers/todolistsSlice'
+import { todolistsSelectors, todolistsThunks } from 'BLL/reducers/todolistsSlice'
 import { AddItemForm } from 'components/AddItemForm'
 
 type TodoListsForRenderProps = {

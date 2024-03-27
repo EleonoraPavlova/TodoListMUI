@@ -2,11 +2,11 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { FieldsError, LoginParams } from 'common/types'
 import { handleServerAppError, handleServerNetworkError } from 'common/utils'
-import { authInitial } from 'app/BLL/initialState'
+import { authInitial } from 'BLL/initialState'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
-import { clearTasksTodolists } from 'app/BLL/actions/actions'
+import { clearTasksTodolists } from 'BLL/actions/actions'
 import { todolistsThunks } from '../todolistsSlice'
 //as const для явного указания типа литерала на основе конкретного значения
 

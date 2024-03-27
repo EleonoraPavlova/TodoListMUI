@@ -1,4 +1,4 @@
-import { appInitial } from 'app/BLL/initialState'
+import { appInitial } from 'BLL/initialState'
 import { appReducer, setErrorAppAC, setStatusAppAC } from './appSlice'
 
 test('correct error message should be set', () => {

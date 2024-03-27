@@ -7,7 +7,7 @@ import {
   setErrorAppAC,
   setSuccessAppAC,
   successAppSelector,
-} from '../../app/BLL/reducers/appSlice/appSlice'
+} from '../../BLL/reducers/appSlice'
 import { useSelector } from 'react-redux'
 import { useAppDispatch } from 'common/hooks/hooks-selectors'
 

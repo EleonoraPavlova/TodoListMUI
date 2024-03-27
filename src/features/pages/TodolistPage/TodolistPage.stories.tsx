@@ -3,9 +3,9 @@ import { useLayoutEffect } from 'react'
 import { useAppDispatch } from '../../../common/hooks/hooks-selectors'
 import { useSelector } from 'react-redux'
 import { TodolistPage } from './TodolistPage'
-import { todoListId1 } from 'app/BLL/initialState'
+import { todoListId1 } from 'BLL/initialState'
 import { ReduxStoreProviderDecorator } from 'stories/decorators'
-import { todolistsSelectors, todolistsThunks } from 'app/BLL/reducers/todolistsSlice'
+import { todolistsSelectors, todolistsThunks } from 'BLL/reducers/todolistsSlice'
 
 const meta: Meta<typeof TodolistPage> = {
   title: 'TODOLISTS/TodolistPage',

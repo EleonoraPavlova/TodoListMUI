@@ -1,6 +1,6 @@
 import { tasksReducer, tasksThunks } from './tasksSlice'
 import { v1 } from 'uuid'
-import { tasksInitial, todoListId1, todoListId2 } from 'app/BLL/initialState'
+import { tasksInitial, todoListId1, todoListId2 } from 'BLL/initialState'
 import { Task, Tasks, UpdateTaskModel } from 'common/types'
 import { TaskPriorities, TaskStatuses } from 'common/emuns'
 import { todolistsThunks } from '../todolistsSlice'

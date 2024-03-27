@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { useAppDispatch } from '../../common/hooks/hooks-selectors'
 import { TaskPriorities, TaskStatuses } from 'common/emuns'
 import { ReduxStoreProviderDecorator } from 'stories/decorators'
-import { tasksSelector, tasksThunks } from 'app/BLL/reducers/tasksSlice'
+import { tasksSelector, tasksThunks } from 'BLL/reducers/tasksSlice'
 
 const meta: Meta<typeof TaskMap> = {
   //как пропсы

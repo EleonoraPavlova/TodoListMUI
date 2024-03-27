@@ -1,7 +1,7 @@
 import { tasksThunks } from '../tasksSlice/tasksSlice'
 import { PayloadAction, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
 import { clearTasksTodolists } from '../../actions/actions'
-import { AppRootState } from 'app/BLL/store'
+import { AppRootState } from 'BLL/store'
 import { ResultCode } from 'common/emuns'
 import { RequestStatus, TodolistDomain, UpdateTodolistPayload } from 'common/types'
 import { todolistApi } from 'DAL/todolist-api'
