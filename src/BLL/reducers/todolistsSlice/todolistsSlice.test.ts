@@ -41,7 +41,7 @@ test('should be change title todolist ', () => {
   }
   const endState = todolistReducer(
     startState,
-    todolistsThunks.updateTodolistTC.fulfilled({ params }, '', params)
+    todolistsThunks.updateTodolistTC.fulfilled(params, '', params)
   )
 
   expect(endState.todolists.length).toBe(2)
@@ -56,7 +56,7 @@ test('should be change filter todolist ', () => {
   }
   const endState = todolistReducer(
     startState,
-    todolistsThunks.updateTodolistTC.fulfilled({ params }, '', params)
+    todolistsThunks.updateTodolistTC.fulfilled(params, '', params)
   )
 
   expect(endState.todolists.length).toBe(2)

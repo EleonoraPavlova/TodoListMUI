@@ -1,7 +1,7 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
 import { FieldsError, LoginParams } from 'common/types'
-import { handleServerAppError, handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
 import { authInitial } from 'BLL/initialState'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
 import { authApi } from 'DAL/auth-api'
@@ -32,8 +32,8 @@ const authSlice = createSlice({
   },
 })
 
-export const loginTC = createAsyncThunk<
-  undefined,
+export const loginTC = createAppAsyncThunk<
+  { isLoggedIn: boolean },
   LoginParams,
   {
     rejectValue: { errors: string[]; fieldsErrors?: FieldsError[] }
@@ -46,7 +46,7 @@ export const loginTC = createAsyncThunk<
       dispatch(todolistsThunks.setTodoListTC())
       dispatch(setSuccessAppAC({ success: 'you have successfully logged in' }))
       dispatch(setStatusAppAC({ status: 'succeeded' }))
-      return
+      return { isLoggedIn: true }
     } else {
       handleServerAppError(res.data.messages, dispatch)
       return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })
@@ -59,8 +59,8 @@ export const loginTC = createAsyncThunk<
   }
 })
 
-const logOutTC = createAsyncThunk<
-  undefined,
+const logOutTC = createAppAsyncThunk<
+  { isLoggedIn: boolean },
   void,
   {
     rejectValue: { errors: string[]; fieldsErrors?: FieldsError[] }
@@ -74,7 +74,7 @@ const logOutTC = createAsyncThunk<
       dispatch(setSuccessAppAC({ success: 'you have successfully logged out' }))
       dispatch(setStatusAppAC({ status: 'succeeded' }))
       dispatch(clearTasksTodolists({ tasks: {}, todolists: [] }))
-      return
+      return { isLoggedIn: false }
     } else {
       handleServerAppError(res.data.messages, dispatch)
       return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })

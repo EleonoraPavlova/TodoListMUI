@@ -5,8 +5,9 @@ import { appInitial } from 'BLL/initialState'
 import { handleServerAppError } from 'common/utils/handleServerAppError'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
-import { handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk, handleServerNetworkError } from 'common/utils'
 import { setIsLoggedInAC } from '../authSlice'
+import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
 
 const appSlice = createSlice({
   name: 'app',
@@ -35,7 +36,7 @@ const appSlice = createSlice({
   },
 })
 
-const setInitializeAppTC = createAsyncThunk(
+const setInitializeAppTC = createAppAsyncThunk<{ initialized: boolean }, void, AsyncThunkConfig>(
   `${appSlice.name}/setInitializeApp`,
   async (params, { dispatch, rejectWithValue }) => {
     dispatch(setStatusAppAC({ status: 'loading' }))
@@ -48,13 +49,13 @@ const setInitializeAppTC = createAsyncThunk(
         dispatch(todolistsThunks.setTodoListTC())
       } else {
         handleServerAppError(res.data.messages, dispatch)
-        return rejectWithValue({})
+        return rejectWithValue(null)
       }
     } catch (e) {
       handleServerNetworkError(e, dispatch)
-      return rejectWithValue({})
+      return rejectWithValue(null)
     } finally {
-      return
+      return { initialized: true }
       //под капотом происходит dispatch(setInitializeAppAC({ initialized: true }))
     }
   }

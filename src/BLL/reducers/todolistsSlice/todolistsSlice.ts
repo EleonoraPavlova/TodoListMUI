@@ -1,12 +1,13 @@
 import { tasksThunks } from '../tasksSlice/tasksSlice'
-import { PayloadAction, createAsyncThunk, createSlice, current } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice, current } from '@reduxjs/toolkit'
 import { clearTasksTodolists } from '../../actions/actions'
 import { AppRootState } from 'BLL/store'
 import { ResultCode } from 'common/emuns'
-import { RequestStatus, TodolistDomain, UpdateTodolistPayload } from 'common/types'
+import { RequestStatus, TodolistApi, TodolistDomain, UpdateTodolistPayload } from 'common/types'
 import { todolistApi } from 'DAL/todolist-api'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
-import { handleServerAppError, handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
+import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
 
 const todolistSlice = createSlice({
   name: 'todolist',
@@ -37,9 +38,10 @@ const todolistSlice = createSlice({
         if (index !== -1) state.todolists.splice(index, 1)
       })
       .addCase(updateTodolistTC.fulfilled, (state, action) => {
-        const index = state.todolists.findIndex((t) => t.id === action.payload?.params.todoListId)
-        if (index !== -1)
-          state.todolists[index] = { ...state.todolists[index], ...action.payload?.params }
+        const index = state.todolists.findIndex((t) => t.id === action.payload?.todoListId)
+        if (index !== -1) {
+          state.todolists[index] = { ...state.todolists[index], ...action.payload }
+        }
       })
       .addCase(clearTasksTodolists, (state, action) => {
         console.log('state/todolist', current(state))
@@ -51,7 +53,7 @@ const todolistSlice = createSlice({
   },
 })
 
-const setTodoListTC = createAsyncThunk(
+const setTodoListTC = createAppAsyncThunk<{ todoLists: TodolistApi[] }, void, AsyncThunkConfig>(
   `${todolistSlice.name}/setTodoList`,
   async (params, { dispatch, rejectWithValue }) => {
     dispatch(setStatusAppAC({ status: 'loading' }))
@@ -70,9 +72,9 @@ const setTodoListTC = createAsyncThunk(
   }
 )
 
-const removeTodolistTC = createAsyncThunk(
+const removeTodolistTC = createAppAsyncThunk<{ todoListId: string }, string, AsyncThunkConfig>(
   `${todolistSlice.name}/removeTodoList`,
-  async (todoListId: string, { dispatch, rejectWithValue }) => {
+  async (todoListId, { dispatch, rejectWithValue }) => {
     dispatch(setStatusAppAC({ status: 'loading' }))
     dispatch(changeTodolistEntityStatusAC({ todoListId, entityStatus: 'loading' })) //loader appeared
     try {
@@ -93,7 +95,7 @@ const removeTodolistTC = createAsyncThunk(
   }
 )
 
-const addTodolistTC = createAsyncThunk(
+const addTodolistTC = createAppAsyncThunk<{ todolist: TodolistApi }, string, AsyncThunkConfig>(
   `${todolistSlice.name}/addTodoList`,
   async (title: string, { dispatch, rejectWithValue }) => {
     dispatch(setStatusAppAC({ status: 'loading' }))
@@ -115,9 +117,9 @@ const addTodolistTC = createAsyncThunk(
   }
 )
 
-const updateTodolistTC = createAsyncThunk(
+const updateTodolistTC = createAppAsyncThunk<UpdateTodolistPayload, UpdateTodolistPayload>(
   `${todolistSlice.name}/updateTodolist`,
-  async (params: UpdateTodolistPayload, { dispatch, rejectWithValue }) => {
+  async (params, { dispatch, rejectWithValue }) => {
     dispatch(setStatusAppAC({ status: 'loading' }))
     try {
       const res = await todolistApi.updateTodo(params.todoListId, params.title)
@@ -125,7 +127,7 @@ const updateTodolistTC = createAsyncThunk(
         // dispatch(updateTodolistAC({ params }))
         dispatch(setSuccessAppAC({ success: 'todolist title was successfully updated' }))
         dispatch(setStatusAppAC({ status: 'succeeded' }))
-        return { params }
+        return params
       } else {
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
