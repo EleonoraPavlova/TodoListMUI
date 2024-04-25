@@ -1,7 +1,8 @@
 import { tasksThunks } from 'BLL/reducers/tasksSlice'
 import { todolistsThunks } from 'BLL/reducers/todolistsSlice'
 import { TaskStatuses } from 'common/emuns'
-import { useAppDispatch, useAppSelector } from 'common/hooks/hooks-selectors'
+import { useActions } from 'common/hooks'
+import { useAppSelector } from 'common/hooks/selectors'
 import { FilterValues, Task, TodolistDomain } from 'common/types'
 import { useCallback, useMemo } from 'react'
 
@@ -11,13 +12,14 @@ export function useTodoListPage(todolists: TodolistDomain) {
 
   const loading = entityStatus === 'loading'
 
-  const dispatch = useAppDispatch()
+  const { addTaskTC } = useActions(tasksThunks)
+  const { updateTodolistTC, removeTodolistTC } = useActions(todolistsThunks)
 
   const addItem = useCallback(
     (title: string) => {
-      dispatch(tasksThunks.addTaskTC({ title, todoListId: id }))
+      addTaskTC({ title, todoListId: id })
     },
-    [dispatch, id]
+    [addTaskTC, id]
   )
 
   tasks = useMemo(() => {
@@ -35,20 +37,20 @@ export function useTodoListPage(todolists: TodolistDomain) {
 
   const changeTodolistTitleHandler = useCallback(
     (title: string) => {
-      dispatch(todolistsThunks.updateTodolistTC({ todoListId: id, title, filter }))
+      updateTodolistTC({ todoListId: id, title, filter })
     },
-    [dispatch, id]
+    [updateTodolistTC, id]
   )
 
   const removeTodoListHandler = useCallback(() => {
-    dispatch(todolistsThunks.removeTodolistTC(id))
-  }, [dispatch, id])
+    removeTodolistTC(id)
+  }, [removeTodolistTC, id])
 
   const changeTodoListFilter = useCallback(
     (todoListId: string, filter: FilterValues) => {
-      dispatch(todolistsThunks.updateTodolistTC({ todoListId, title, filter }))
+      updateTodolistTC({ todoListId, title, filter })
     },
-    [dispatch, title]
+    [updateTodolistTC, title]
   )
 
   const onAllClickHandler = useCallback(

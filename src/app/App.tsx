@@ -17,7 +17,7 @@ import {
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles'
 import { lightGreen, lime } from '@mui/material/colors'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useAppDispatch } from '../common/hooks/hooks-selectors'
+import { useAppDispatch } from '../common/hooks/selectors'
 import LinearProgress from '@mui/material/LinearProgress'
 import { SnackBar } from '../components/SnackBar'
 import { Navigate, Routes, useNavigate } from 'react-router-dom'
@@ -25,6 +25,7 @@ import { authThunks, isLoggedInSelector } from 'BLL/reducers/authSlice'
 import { Login } from 'features/pages/Login'
 import { TodoListsForRender } from 'components/TodolistRender'
 import { appThunks, initializedAppSelector, statusAppSelector } from 'BLL/reducers/appSlice'
+import { useActions } from 'common/hooks'
 
 type AppProps = {
   demo?: boolean
@@ -34,14 +35,15 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useSelector(statusAppSelector)
   let isLoggedIn = useSelector(isLoggedInSelector)
   let initialized = useSelector(initializedAppSelector)
+  const { setInitializeAppTC } = useActions(appThunks)
+  const { logOutTC } = useActions(authThunks)
 
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   useEffect(() => {
     // if (!demo) return
-    dispatch(appThunks.setInitializeAppTC())
-  }, [dispatch])
+    setInitializeAppTC()
+  }, [setInitializeAppTC])
 
   useEffect(() => {
     if (!isLoggedIn && initialized) {
@@ -66,10 +68,8 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   }
 
   const logOutHandler = useCallback(() => {
-    dispatch(authThunks.logOutTC())
+    logOutTC()
   }, [isLoggedIn])
-
-  // <CssBaseline /> - обеспечивает максимальное применение стилей из библиотеки
 
   const CustomCircularProgress = styled(CircularProgress)(({ theme }) => ({
     '& circle': {

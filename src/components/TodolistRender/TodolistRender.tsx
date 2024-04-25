@@ -3,9 +3,9 @@ import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import { TodolistPage } from 'features/pages/TodolistPage'
 import { TodolistDomain } from 'common/types'
-import { useAppDispatch } from 'common/hooks/hooks-selectors'
 import { todolistsSelectors, todolistsThunks } from 'BLL/reducers/todolistsSlice'
 import { AddItemForm } from 'components/AddItemForm'
+import { useActions } from 'common/hooks'
 
 type TodoListsForRenderProps = {
   demo?: boolean
@@ -13,10 +13,10 @@ type TodoListsForRenderProps = {
 
 export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ demo = false }) => {
   let todolists = useSelector(todolistsSelectors.todolistsSelector)
-  const dispatch = useAppDispatch()
+  const { addTodolistTC } = useActions(todolistsThunks)
 
   const addTodoList = (title: string) => {
-    dispatch(todolistsThunks.addTodolistTC(title))
+    addTodolistTC(title)
   }
 
   return (

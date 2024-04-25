@@ -1,10 +1,11 @@
 import { authThunks } from 'BLL/reducers/authSlice'
-import { useAppDispatch } from 'common/hooks/hooks-selectors'
+import { useActions, useAppDispatch } from 'common/hooks'
 import { LoginParams, ResponseBase, ThunkErrorApiConfig } from 'common/types'
 import { handleServerNetworkError } from 'common/utils'
 import { useFormik } from 'formik'
 
 export function useLogin() {
+  const { loginTC } = useActions(authThunks)
   const dispatch = useAppDispatch()
 
   const formik = useFormik({
@@ -33,7 +34,7 @@ export function useLogin() {
     onSubmit: async (values, { setFieldError, setSubmitting }) => {
       setSubmitting(true)
       try {
-        await dispatch(authThunks.loginTC(values))
+        await loginTC(values)
           .unwrap()
           .then((res) => console.log('res', res))
           .catch((e: ThunkErrorApiConfig | ResponseBase) => {

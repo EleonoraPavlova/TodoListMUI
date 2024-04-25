@@ -3,10 +3,11 @@ import { TaskMap } from './TaskMap'
 // import { Provider } from "react-redux";
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { useAppDispatch } from '../../common/hooks/hooks-selectors'
+import { useAppDispatch } from '../../common/hooks/selectors'
 import { TaskPriorities, TaskStatuses } from 'common/emuns'
 import { ReduxStoreProviderDecorator } from 'stories/decorators'
 import { tasksSelector, tasksThunks } from 'BLL/reducers/tasksSlice'
+import { useActions } from 'common/hooks'
 
 const meta: Meta<typeof TaskMap> = {
   //как пропсы
@@ -50,7 +51,6 @@ type Story = StoryObj<typeof TaskMap>
 export const TaskNotDoneStory: Story = {}
 
 export const TaskDoneStory: Story = {
-  //статика
   args: {
     task: {
       id: '12wsdewfijdei',
@@ -70,10 +70,10 @@ export const TaskDoneStory: Story = {
 
 const TaskWithRedux = () => {
   let task = useSelector(tasksSelector)[0]
-  const dispatch = useAppDispatch()
+  const { addTaskTC } = useActions(tasksThunks)
 
   useEffect(() => {
-    dispatch(tasksThunks.addTaskTC({ title: 'NEW TITLE', todoListId: '1' }))
+    addTaskTC({ title: 'NEW TITLE', todoListId: '1' })
   }, [])
 
   if (!task)

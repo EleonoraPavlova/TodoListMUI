@@ -9,7 +9,7 @@ import {
   successAppSelector,
 } from '../../BLL/reducers/appSlice'
 import { useSelector } from 'react-redux'
-import { useAppDispatch } from 'common/hooks/hooks-selectors'
+import { useAppDispatch } from 'common/hooks/selectors'
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
