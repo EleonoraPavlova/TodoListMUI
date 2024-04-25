@@ -1,7 +1,7 @@
 import { instance } from './instance'
-import { DeleteParamsTask, ResponseBase, Task, UpdateParamsTask } from 'common/types'
+import { ResponseBase, Task, UpdateParamsTask } from 'common/types'
 
-type ResponseTasksGetType = {
+type ResponseTasksGet = {
   items: Task[]
   totalCount: number
   error: string
@@ -9,7 +9,7 @@ type ResponseTasksGetType = {
 
 export const tasksApi = {
   getTasks(todoListId: string) {
-    return instance.get<ResponseTasksGetType>(`/todo-lists/${todoListId}/tasks`)
+    return instance.get<ResponseTasksGet>(`/todo-lists/${todoListId}/tasks`)
   },
 
   createTasks(todoListId: string, title: string) {
@@ -18,7 +18,7 @@ export const tasksApi = {
     })
   },
 
-  deleteTask(params: DeleteParamsTask) {
+  deleteTask(params: Omit<UpdateParamsTask, 'model'>) {
     return instance.delete<ResponseBase>(`/todo-lists/${params.todoListId}/tasks/${params.taskId}`)
   },
 

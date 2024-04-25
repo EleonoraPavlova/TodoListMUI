@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { AxiosError } from 'axios'
-import { FieldsError, LoginParams } from 'common/types'
+import { LoginParams } from 'common/types'
 import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
 import { authInitial } from 'BLL/initialState'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
@@ -8,6 +8,7 @@ import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
 import { clearTasksTodolists } from 'BLL/actions/actions'
 import { todolistsThunks } from '../todolistsSlice'
+import { thunkTryCatch } from 'common/utils/thunkTryCatch'
 //as const для явного указания типа литерала на основе конкретного значения
 
 const authSlice = createSlice({
@@ -32,60 +33,48 @@ const authSlice = createSlice({
   },
 })
 
-export const loginTC = createAppAsyncThunk<
-  { isLoggedIn: boolean },
-  LoginParams,
-  {
-    rejectValue: { errors: string[]; fieldsErrors?: FieldsError[] }
+export const loginTC = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParams>(
+  `${authSlice.name}/login`,
+  (params, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
+      const res = await authApi.login(params)
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
+        dispatch(todolistsThunks.setTodoListTC())
+        dispatch(setSuccessAppAC({ success: 'you have successfully logged in' }))
+        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        return { isLoggedIn: true }
+      } else {
+        handleServerAppError(res.data.messages, dispatch)
+        return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })
+      }
+    })
   }
->(`${authSlice.name}/login`, async (params, { dispatch, rejectWithValue }) => {
-  dispatch(setStatusAppAC({ status: 'loading' }))
-  try {
-    const res = await authApi.login(params)
-    if (res.data.resultCode === ResultCode.SUCCEEDED) {
-      dispatch(todolistsThunks.setTodoListTC())
-      dispatch(setSuccessAppAC({ success: 'you have successfully logged in' }))
-      dispatch(setStatusAppAC({ status: 'succeeded' }))
-      return { isLoggedIn: true }
-    } else {
-      handleServerAppError(res.data.messages, dispatch)
-      return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })
-    }
-  } catch (err) {
-    //server crashed
-    const error: AxiosError = err as AxiosError
-    handleServerNetworkError(err as { message: string }, dispatch)
-    return rejectWithValue({ errors: [error.message], fieldsErrors: undefined })
-  }
-})
+)
 
-const logOutTC = createAppAsyncThunk<
-  { isLoggedIn: boolean },
-  void,
-  {
-    rejectValue: { errors: string[]; fieldsErrors?: FieldsError[] }
+const logOutTC = createAppAsyncThunk<{ isLoggedIn: boolean }>(
+  `${authSlice.name}/logOut`,
+  async (params, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
+      const res = await authApi.logOut()
+      if (res.data.resultCode === ResultCode.SUCCEEDED) {
+        // dispatch(setIsLoggedInAC(false))
+        dispatch(setSuccessAppAC({ success: 'you have successfully logged out' }))
+        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        dispatch(clearTasksTodolists({ tasks: {}, todolists: [] }))
+        return { isLoggedIn: false }
+      } else {
+        const isShowAppError = !res.data.fieldsErrors.length
+        handleServerAppError(res.data.messages, dispatch, isShowAppError)
+        return rejectWithValue({
+          errors: res.data.messages,
+          fieldsErrors: res.data.fieldsErrors,
+        })
+      }
+    })
   }
->(`${authSlice.name}/logOut`, async (params, { dispatch, rejectWithValue }) => {
-  dispatch(setStatusAppAC({ status: 'loading' }))
-  try {
-    const res = await authApi.logOut()
-    if (res.data.resultCode === ResultCode.SUCCEEDED) {
-      // dispatch(setIsLoggedInAC(false))
-      dispatch(setSuccessAppAC({ success: 'you have successfully logged out' }))
-      dispatch(setStatusAppAC({ status: 'succeeded' }))
-      dispatch(clearTasksTodolists({ tasks: {}, todolists: [] }))
-      return { isLoggedIn: false }
-    } else {
-      handleServerAppError(res.data.messages, dispatch)
-      return rejectWithValue({ errors: res.data.messages, fieldsErrors: res.data.fieldsErrors })
-    }
-  } catch (err) {
-    //server crashed
-    const error: AxiosError = err as AxiosError
-    handleServerNetworkError(err as { message: string }, dispatch)
-    return rejectWithValue({ errors: [error.message], fieldsErrors: undefined })
-  }
-})
+)
 
 export const authReducer = authSlice.reducer
 export const authThunks = { loginTC, logOutTC }

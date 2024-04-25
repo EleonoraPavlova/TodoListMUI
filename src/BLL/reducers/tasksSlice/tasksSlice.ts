@@ -1,15 +1,13 @@
 import { createSlice, current } from '@reduxjs/toolkit'
-import { AxiosError } from 'axios'
 import { clearTasksTodolists } from '../../actions/actions'
 import { AppRootState } from 'BLL/store'
 import { todolistsThunks } from '../todolistsSlice'
 import { ResultCode, TaskStatuses } from 'common/emuns'
-import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk, handleServerAppError, thunkTryCatch } from 'common/utils'
 import { tasksInitial } from 'BLL/initialState'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
 import { tasksApi } from 'DAL/tasks-api'
-import { DeleteParamsTask, Task, UpdateParamsTask, UpdateTaskModel } from 'common/types'
-import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
+import { Task, UpdateParamsTask, UpdateTaskModel, UpdateTodolistPayload } from 'common/types'
 
 const tasksSlice = createSlice({
   name: 'tasks',
@@ -57,31 +55,28 @@ const tasksSlice = createSlice({
   },
 })
 
-const getTasksTC = createAppAsyncThunk<
-  { todoListId: string; tasks: Task[] },
-  string,
-  AsyncThunkConfig
->(`${tasksSlice.name}/getTasks`, async (todoListId, { dispatch, rejectWithValue }) => {
-  dispatch(setStatusAppAC({ status: 'loading' }))
-  try {
-    const res = await tasksApi.getTasks(todoListId)
-    // dispatch(setTaskskAC({ todoListId, tasks: res.data.items }))
-    dispatch(setStatusAppAC({ status: 'succeeded' }))
-    return { todoListId, tasks: res.data.items }
-  } catch (err) {
-    const error: AxiosError = err as AxiosError
-    handleServerNetworkError(err as { message: string }, dispatch)
-    return rejectWithValue({ errors: [error.message], fieldsErrors: undefined })
+const getTasksTC = createAppAsyncThunk<{ todoListId: string; tasks: Task[] }, string>(
+  `${tasksSlice.name}/getTasks`,
+  (todoListId, thunkAPI) => {
+    const { dispatch } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
+      const res = await tasksApi.getTasks(todoListId)
+      // dispatch(setTaskskAC({ todoListId, tasks: res.data.items }))
+      dispatch(setStatusAppAC({ status: 'succeeded' }))
+      return { todoListId, tasks: res.data.items }
+    })
   }
-})
+)
 
-const removeTaskTC = createAppAsyncThunk<DeleteParamsTask, DeleteParamsTask, AsyncThunkConfig>(
+type DeleteParamsTask = Omit<UpdateParamsTask, 'model'>
+
+const removeTaskTC = createAppAsyncThunk<DeleteParamsTask, DeleteParamsTask>(
   `${tasksSlice.name}/removeTask`,
-  async (params, { dispatch, rejectWithValue }) => {
+  async (params, thunkAPI) => {
     const { todoListId, taskId } = params
-    dispatch(setStatusAppAC({ status: 'loading' }))
+    const { dispatch, rejectWithValue } = thunkAPI
     dispatch(updateTaskTC({ todoListId, taskId, model: { status: TaskStatuses.inProgress } }))
-    try {
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await tasksApi.deleteTask(params)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // thunkApi.dispatch(removeTaskAC( todoListId, taskId ))
@@ -92,19 +87,15 @@ const removeTaskTC = createAppAsyncThunk<DeleteParamsTask, DeleteParamsTask, Asy
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (err) {
-      const error: AxiosError = err as AxiosError
-      handleServerNetworkError(err as { message: string }, dispatch)
-      return rejectWithValue({ errors: [error.message], fieldsErrors: undefined })
-    }
+    })
   }
 )
 
-const addTaskTC = createAppAsyncThunk<{ task: Task }, { title: string; todoListId: string }>(
+const addTaskTC = createAppAsyncThunk<{ task: Task }, Omit<UpdateTodolistPayload, 'filter'>>(
   `${tasksSlice.name}/addTask`,
-  async ({ title, todoListId }, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+  ({ title, todoListId }, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await tasksApi.createTasks(todoListId, title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         const task = res.data.data.item
@@ -116,22 +107,20 @@ const addTaskTC = createAppAsyncThunk<{ task: Task }, { title: string; todoListI
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 
 //update any field
-const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask, AsyncThunkConfig>(
+const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask>(
   `${tasksSlice.name}/updateTask`,
-  async (params, { dispatch, rejectWithValue, getState }) => {
+  (params, thunkAPI) => {
+    const { dispatch, rejectWithValue, getState } = thunkAPI
     const { todoListId, taskId, model } = params
     const state = getState() as AppRootState
     const task = state.tasks[todoListId].find((t: Task) => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
 
-    if (!task) return rejectWithValue('mistake')
+    if (!task) return rejectWithValue(null)
 
     const apiModel: UpdateTaskModel = {
       title: task.title,
@@ -143,8 +132,7 @@ const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask, Asy
       deadline: task.deadline,
       ...model,
     }
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await tasksApi.updateTask({ todoListId, taskId, model: apiModel })
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(updateTaskAC({ todoListId, taskId, model: apiModel }))
@@ -155,10 +143,7 @@ const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask, Asy
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 

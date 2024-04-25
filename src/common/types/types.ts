@@ -39,9 +39,7 @@ export type Task = {
   addedDate: string
 }
 
-export type Tasks = {
-  [todoListId: string]: Task[]
-}
+export type Tasks = Record<string, Task[]>
 
 export type UpdateTaskModel = {
   //что ожидает метод put in request
@@ -54,32 +52,21 @@ export type UpdateTaskModel = {
   deadline: string
 }
 
-type UpdateTaskModelForAnyField = {
-  //only for UpdateTaskTC
-  title?: string
-  description?: string
-  completed?: boolean
-  status?: TaskStatuses
-  priority?: TaskPriorities
-  startDate?: string
-  deadline?: string
-}
-
 export type UpdateParamsTask = {
   todoListId: string
   taskId: string
-  model: UpdateTaskModelForAnyField | UpdateTaskModel
-}
-
-export type DeleteParamsTask = {
-  todoListId: string
-  taskId: string
+  model: Partial<UpdateTaskModel> | UpdateTaskModel
 }
 
 //
 export type FieldsError = {
   field: string
   error: string
+}
+
+export type ThunkErrorApiConfig = {
+  errors: string[]
+  fieldsErrors: string[] | FieldsError[]
 }
 
 //

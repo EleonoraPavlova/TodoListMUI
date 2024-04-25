@@ -6,7 +6,12 @@ import { ResultCode } from 'common/emuns'
 import { RequestStatus, TodolistApi, TodolistDomain, UpdateTodolistPayload } from 'common/types'
 import { todolistApi } from 'DAL/todolist-api'
 import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
-import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
+import {
+  createAppAsyncThunk,
+  handleServerAppError,
+  handleServerNetworkError,
+  thunkTryCatch,
+} from 'common/utils'
 import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
 
 const todolistSlice = createSlice({
@@ -53,11 +58,11 @@ const todolistSlice = createSlice({
   },
 })
 
-const setTodoListTC = createAppAsyncThunk<{ todoLists: TodolistApi[] }, void, AsyncThunkConfig>(
+const setTodoListTC = createAppAsyncThunk<{ todoLists: TodolistApi[] }>(
   `${todolistSlice.name}/setTodoList`,
-  async (params, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+  (params, thunkAPI) => {
+    const { dispatch } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistApi.getTodos()
       // dispatch(setTodoListAC({ todoLists: res.data }))
       dispatch(setStatusAppAC({ status: 'succeeded' }))
@@ -65,19 +70,16 @@ const setTodoListTC = createAppAsyncThunk<{ todoLists: TodolistApi[] }, void, As
         dispatch(tasksThunks.getTasksTC(tl.id))
       })
       return { todoLists: res.data }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 
-const removeTodolistTC = createAppAsyncThunk<{ todoListId: string }, string, AsyncThunkConfig>(
+const removeTodolistTC = createAppAsyncThunk<{ todoListId: string }, string>(
   `${todolistSlice.name}/removeTodoList`,
-  async (todoListId, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
+  (todoListId, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
     dispatch(changeTodolistEntityStatusAC({ todoListId, entityStatus: 'loading' })) //loader appeared
-    try {
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistApi.deleteTodo(todoListId)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(removeTodolistAC({ todoListId }))
@@ -88,18 +90,15 @@ const removeTodolistTC = createAppAsyncThunk<{ todoListId: string }, string, Asy
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 
-const addTodolistTC = createAppAsyncThunk<{ todolist: TodolistApi }, string, AsyncThunkConfig>(
+const addTodolistTC = createAppAsyncThunk<{ todolist: TodolistApi }, string>(
   `${todolistSlice.name}/addTodoList`,
-  async (title: string, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+  (title, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistApi.createTodo(title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(addTodolistAC({ todolist: res.data.data.item }))
@@ -110,18 +109,15 @@ const addTodolistTC = createAppAsyncThunk<{ todolist: TodolistApi }, string, Asy
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 
 const updateTodolistTC = createAppAsyncThunk<UpdateTodolistPayload, UpdateTodolistPayload>(
   `${todolistSlice.name}/updateTodolist`,
-  async (params, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+  (params, thunkAPI) => {
+    const { dispatch, rejectWithValue } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistApi.updateTodo(params.todoListId, params.title)
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(updateTodolistAC({ params }))
@@ -132,10 +128,7 @@ const updateTodolistTC = createAppAsyncThunk<UpdateTodolistPayload, UpdateTodoli
         handleServerAppError(res.data.messages, dispatch)
         return rejectWithValue(null)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    }
+    })
   }
 )
 

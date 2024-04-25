@@ -1,36 +1,26 @@
-import React, { ChangeEvent, memo } from 'react'
+import React, { memo } from 'react'
 import { Checkbox, IconButton, ListItem } from '@mui/material'
 import { EditableSpan } from '../EditableSpan'
 import { Delete } from '@mui/icons-material'
-import { tasksThunks } from 'BLL/reducers/tasksSlice'
 import { TaskStatuses } from 'common/emuns'
-import { useAppDispatch } from 'common/hooks/hooks-selectors'
 import { Task } from 'common/types'
+import { useTaskMap } from './hooks/useTaskMap'
 
 type TaskProps = {
   task: Task
   todoListId: string
 }
 
-//рендер компоненты происходит, если пропсы меняются
 export const TaskMap: React.FC<TaskProps> = memo(({ task, todoListId }) => {
-  let { id, title, status } = task
-  const disabled = status === TaskStatuses.inProgress
-  const dispatch = useAppDispatch()
-
-  const removeTaskHandler = () => {
-    dispatch(tasksThunks.removeTaskTC({ todoListId, taskId: task.id }))
-  }
-
-  const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const currentStatus = e.currentTarget.checked
-    const newStatus = currentStatus ? TaskStatuses.Completed : TaskStatuses.New
-    dispatch(tasksThunks.updateTaskTC({ todoListId, taskId: id, model: { status: newStatus } }))
-  }
-
-  const changeTaskTitleHandler = (title: string) => {
-    dispatch(tasksThunks.updateTaskTC({ todoListId, taskId: id, model: { title } }))
-  }
+  let { title } = task
+  const {
+    status,
+    id,
+    disabled,
+    removeTaskHandler,
+    changeTaskStatusHandler,
+    changeTaskTitleHandler,
+  } = useTaskMap(task, todoListId)
 
   return (
     <ListItem

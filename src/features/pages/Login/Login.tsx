@@ -7,72 +7,46 @@ import FormGroup from '@mui/material/FormGroup'
 import FormLabel from '@mui/material/FormLabel'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
-import { useFormik } from 'formik'
-import { Typography } from '@mui/material'
-import { authThunks } from 'BLL/reducers/authSlice'
-import { useAppDispatch } from 'common/hooks/hooks-selectors'
-import { handleServerNetworkError } from 'common/utils'
-import { LoginParams } from 'common/types'
+import { Box } from '@mui/material'
+import { useLogin } from './hooks/useLogin'
 
 export const Login = () => {
-  const dispatch = useAppDispatch()
-
-  const formik = useFormik({
-    validate: (values) => {
-      const errors: Partial<LoginParams> = {}
-
-      if (!values.email) {
-        errors.email = 'Required'
-      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-        errors.email = 'Invalid email address'
-      }
-
-      if (!values.password) {
-        errors.password = 'Required'
-      } else if (values.password.length < 4) {
-        errors.password = 'Must be more 4 symbols'
-      }
-
-      return errors
-    },
-    initialValues: {
-      email: '',
-      password: '',
-      rememberMe: false,
-    },
-    onSubmit: async (values, { setFieldValue, setSubmitting }) => {
-      setSubmitting(true)
-      try {
-        const res = await dispatch(authThunks.loginTC(values))
-        if (authThunks.loginTC.rejected.match(res)) {
-          if (res.payload?.fieldsErrors?.length) setFieldValue('password', '')
-        }
-      } catch (err) {
-        handleServerNetworkError(err as { message: string }, dispatch)
-      }
-      setSubmitting(false)
-    },
-  })
-
+  const { formik } = useLogin()
   return (
     <Grid container justifyContent={'center'}>
       <Grid item justifyContent={'center'}>
         <form onSubmit={formik.handleSubmit}>
           <FormControl>
-            <FormLabel>
-              <Typography variant="body1" fontWeight="bold" sx={{ paddingTop: '15px' }}>
-                To log in get registered
-              </Typography>
+            <FormLabel sx={{ textAlign: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  marginTop: '10px',
+                  height: '45px',
+                }}>
+                <span>Email:</span> <h6>free@samuraijs.com</h6>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px', height: '30px' }}>
+                <span>Password:</span> <h6>free</h6>
+              </Box>
             </FormLabel>
+
             <FormGroup>
               <TextField
                 label="Email"
                 margin="normal"
                 autoComplete="email"
                 error={!!(formik.touched.email && formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
                 {...formik.getFieldProps('email')}
               />
+
+              {formik.touched.email && formik.errors.email ? (
+                <h6 style={{ color: 'red', margin: '0px' }}>
+                  {formik.touched.email && formik.errors.email}
+                </h6>
+              ) : null}
 
               <TextField
                 label="Password"
@@ -80,9 +54,14 @@ export const Login = () => {
                 type="password"
                 autoComplete="password"
                 error={!!(formik.touched.password && formik.errors.password)}
-                helperText={formik.touched.password && formik.errors.password}
                 {...formik.getFieldProps('password')}
               />
+
+              {formik.touched.password && formik.errors.password ? (
+                <h6 style={{ color: 'red', margin: '0px' }}>
+                  {formik.touched.password && formik.errors.password}
+                </h6>
+              ) : null}
 
               <FormControlLabel
                 label={'Remember me'}

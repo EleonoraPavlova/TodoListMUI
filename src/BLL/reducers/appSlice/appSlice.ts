@@ -1,13 +1,13 @@
-import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { todolistsThunks } from '../todolistsSlice'
 import { RequestStatus } from 'common/types'
 import { appInitial } from 'BLL/initialState'
 import { handleServerAppError } from 'common/utils/handleServerAppError'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
-import { createAppAsyncThunk, handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk } from 'common/utils'
 import { setIsLoggedInAC } from '../authSlice'
-import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
+import { thunkTryCatch } from 'common/utils'
 
 const appSlice = createSlice({
   name: 'app',
@@ -36,11 +36,11 @@ const appSlice = createSlice({
   },
 })
 
-const setInitializeAppTC = createAppAsyncThunk<{ initialized: boolean }, void, AsyncThunkConfig>(
+const setInitializeAppTC = createAppAsyncThunk<{ initialized: boolean }>(
   `${appSlice.name}/setInitializeApp`,
-  async (params, { dispatch, rejectWithValue }) => {
-    dispatch(setStatusAppAC({ status: 'loading' }))
-    try {
+  (params, thunkAPI) => {
+    const { dispatch } = thunkAPI
+    return thunkTryCatch(thunkAPI, async () => {
       const res = await authApi.authMe()
       // анонимный пользователь или авториз
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
@@ -48,16 +48,10 @@ const setInitializeAppTC = createAppAsyncThunk<{ initialized: boolean }, void, A
         dispatch(setStatusAppAC({ status: 'succeeded' }))
         dispatch(todolistsThunks.setTodoListTC())
       } else {
-        handleServerAppError(res.data.messages, dispatch)
-        return rejectWithValue(null)
+        handleServerAppError(res.data.messages, dispatch, false)
       }
-    } catch (e) {
-      handleServerNetworkError(e, dispatch)
-      return rejectWithValue(null)
-    } finally {
       return { initialized: true }
-      //под капотом происходит dispatch(setInitializeAppAC({ initialized: true }))
-    }
+    })
   }
 )
 
