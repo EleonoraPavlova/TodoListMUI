@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Route } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import './App.css'
 import {
@@ -9,7 +8,6 @@ import {
   CircularProgress,
   Container,
   CssBaseline,
-  Grid,
   IconButton,
   Toolbar,
   Typography,
@@ -17,15 +15,13 @@ import {
 import { createTheme, styled, ThemeProvider } from '@mui/material/styles'
 import { lightGreen, lime } from '@mui/material/colors'
 import MenuIcon from '@mui/icons-material/Menu'
-import { useAppDispatch } from '../common/hooks/selectors'
 import LinearProgress from '@mui/material/LinearProgress'
 import { SnackBar } from '../components/SnackBar'
-import { Navigate, Routes, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { authThunks, isLoggedInSelector } from 'BLL/reducers/authSlice'
-import { Login } from 'features/pages/Login'
-import { TodoListsForRender } from 'components/TodolistRender'
 import { appThunks, initializedAppSelector, statusAppSelector } from 'BLL/reducers/appSlice'
 import { useActions } from 'common/hooks'
+import { Routing } from 'features/routes/Routing'
 
 type AppProps = {
   demo?: boolean
@@ -124,26 +120,9 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
         </AppBar>
         {status === 'loading' && <LinearProgress />}
         <Container sx={{ marginTop: '25px' }}>
-          <Grid
-            container
-            sx={{
-              p: '10px',
-              justifyContent: 'center',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '40px',
-              flexWrap: 'wrap',
-            }}>
-            <Routes>
-              <Route path="/" element={<TodoListsForRender demo={demo} />} />
-              <Route
-                path="login"
-                element={isLoggedIn && initialized ? <Navigate to="/" /> : <Login />}
-              />
-              <Route path="404" element={<h1>404: PAGE NOT FOUND</h1>} />
-              <Route path="*" element={<Navigate to="/404" />} />
-            </Routes>
-          </Grid>
+          <Box>
+            <Routing />
+          </Box>
         </Container>
       </Box>
     </ThemeProvider>

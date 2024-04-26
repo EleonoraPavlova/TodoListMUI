@@ -6,6 +6,7 @@ import { TodolistDomain } from 'common/types'
 import { todolistsSelectors, todolistsThunks } from 'BLL/reducers/todolistsSlice'
 import { AddItemForm } from 'components/AddItemForm'
 import { useActions } from 'common/hooks'
+import React from 'react'
 
 type TodoListsForRenderProps = {
   demo?: boolean
@@ -19,6 +20,22 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
     addTodolistTC(title)
   }
 
+  const todolistsMap: JSX.Element[] = todolists.map((t: TodolistDomain) => (
+    <React.Fragment key={t.id}>
+      <Paper
+        sx={{
+          padding: '15px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+        }}
+        elevation={6}>
+        <TodolistPage todolists={t} demo={demo} />
+      </Paper>
+    </React.Fragment>
+  ))
+
   return (
     <Box
       sx={{
@@ -28,24 +45,18 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
         gap: '26px',
       }}>
       <AddItemForm errorText={'Enter title'} addItem={addTodoList} />
-      <Grid
-        container
-        sx={{ p: '20px', justifyContent: 'space-evenly', alignItems: 'flex-start', gap: '35px' }}>
-        {todolists?.map((t: TodolistDomain) => (
-          <Paper
-            key={t.id}
-            sx={{
-              p: '15px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-            }}
-            elevation={8}>
-            <TodolistPage todolists={t} demo={demo} />
-          </Paper>
-        ))}
-      </Grid>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'nowrap',
+          overflow: 'auto',
+          gap: '20px',
+          width: '100%',
+          padding: '0 15px',
+        }}>
+        {todolistsMap}
+      </Box>
     </Box>
   )
 })
