@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import './App.css'
 import {
@@ -12,16 +12,17 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { createTheme, styled, ThemeProvider } from '@mui/material/styles'
-import { lightGreen, lime } from '@mui/material/colors'
+import { ThemeProvider, styled } from '@mui/material/styles'
 import MenuIcon from '@mui/icons-material/Menu'
 import LinearProgress from '@mui/material/LinearProgress'
 import { SnackBar } from '../components/SnackBar'
 import { useNavigate } from 'react-router-dom'
-import { authThunks, isLoggedInSelector } from 'BLL/reducers/authSlice'
+import { isLoggedInSelector } from 'BLL/reducers/authSlice'
 import { appThunks, initializedAppSelector, statusAppSelector } from 'BLL/reducers/appSlice'
 import { useActions } from 'common/hooks'
 import { Routing } from 'features/routes/Routing'
+import { useApp } from './hooks/useApp'
+import { lime } from '@mui/material/colors'
 
 type AppProps = {
   demo?: boolean
@@ -31,41 +32,8 @@ export const App: React.FC<AppProps> = ({ demo = false }) => {
   let status = useSelector(statusAppSelector)
   let isLoggedIn = useSelector(isLoggedInSelector)
   let initialized = useSelector(initializedAppSelector)
-  const { setInitializeAppTC } = useActions(appThunks)
-  const { logOutTC } = useActions(authThunks)
 
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    // if (!demo) return
-    setInitializeAppTC()
-  }, [setInitializeAppTC])
-
-  useEffect(() => {
-    if (!isLoggedIn && initialized) {
-      navigate('/login')
-    } else {
-      navigate('/')
-    }
-  }, [isLoggedIn, initialized, navigate])
-
-  let [lightMode, setLightMode] = useState<boolean>(true) // change state theme
-  let btnText = lightMode ? 'dark' : 'light'
-  const themeHandler = createTheme({
-    palette: {
-      primary: lightGreen,
-      secondary: lime,
-      mode: lightMode ? 'light' : 'dark',
-    },
-  })
-
-  const toggleTheme = () => {
-    setLightMode(!lightMode)
-  }
-
-  const logOutHandler = useCallback(() => {
-    logOutTC()
-  }, [isLoggedIn])
+  const { btnText, toggleTheme, logOutHandler, themeHandler } = useApp()
 
   const CustomCircularProgress = styled(CircularProgress)(({ theme }) => ({
     '& circle': {
