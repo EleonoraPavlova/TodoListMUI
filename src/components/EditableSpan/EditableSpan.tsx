@@ -2,13 +2,13 @@ import { TextField } from '@mui/material'
 import React, { ChangeEvent, useState, KeyboardEvent, memo } from 'react'
 import styled from '@emotion/styled'
 
-type EditableSpanProps = {
+type Props = {
   title: string
   isDone?: boolean | undefined
   changeTitle: (title: string) => void
 }
 
-export const EditableSpan: React.FC<EditableSpanProps> = memo((props) => {
+export const EditableSpan: React.FC<Props> = memo((props) => {
   const [editMode, setEditMode] = useState<boolean>(false)
   let [title, setTitle] = useState<string>('')
 

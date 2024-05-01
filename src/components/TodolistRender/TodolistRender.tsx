@@ -1,4 +1,4 @@
-import { Box, Grid, Paper } from '@mui/material'
+import { Box, Paper } from '@mui/material'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import { TodolistPage } from 'features/pages/TodolistPage'
@@ -8,11 +8,11 @@ import { AddItemForm } from 'components/AddItemForm'
 import { useActions } from 'common/hooks'
 import React from 'react'
 
-type TodoListsForRenderProps = {
+type Props = {
   demo?: boolean
 }
 
-export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ demo = false }) => {
+export const TodoListsForRender: React.FC<Props> = memo(({ demo = false }) => {
   let todolists = useSelector(todolistsSelectors.todolistsSelector)
   const { addTodolistTC } = useActions(todolistsThunks)
 
@@ -31,7 +31,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
           flexDirection: 'column',
         }}
         elevation={6}>
-        <TodolistPage todolists={t} demo={demo} />
+        <TodolistPage todolist={t} demo={demo} />
       </Paper>
     </React.Fragment>
   ))
@@ -44,7 +44,7 @@ export const TodoListsForRender: React.FC<TodoListsForRenderProps> = memo(({ dem
         flexDirection: 'column',
         gap: '26px',
       }}>
-      <AddItemForm errorText={'Enter title'} addItem={addTodoList} />
+      <AddItemForm addItem={addTodoList} />
       <Box
         sx={{
           display: 'flex',

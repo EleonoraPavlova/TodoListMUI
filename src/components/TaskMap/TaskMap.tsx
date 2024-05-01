@@ -6,12 +6,12 @@ import { TaskStatuses } from 'common/emuns'
 import { Task } from 'common/types'
 import { useTaskMap } from './hooks/useTaskMap'
 
-type TaskProps = {
+type Props = {
   task: Task
   todoListId: string
 }
 
-export const TaskMap: React.FC<TaskProps> = memo(({ task, todoListId }) => {
+export const TaskMap: React.FC<Props> = memo(({ task, todoListId }) => {
   let { title } = task
   const {
     status,
@@ -22,10 +22,12 @@ export const TaskMap: React.FC<TaskProps> = memo(({ task, todoListId }) => {
     changeTaskTitleHandler,
   } = useTaskMap(task, todoListId)
 
+  let completedStatus = status === TaskStatuses.Completed
+
   return (
     <ListItem
       key={id}
-      className={status === TaskStatuses.Completed ? 'is-done' : ''}
+      className={completedStatus ? 'is-done' : ''}
       disablePadding
       divider
       sx={{
@@ -45,7 +47,7 @@ export const TaskMap: React.FC<TaskProps> = memo(({ task, todoListId }) => {
       <EditableSpan
         title={title}
         changeTitle={changeTaskTitleHandler}
-        isDone={status === TaskStatuses.Completed || disabled}
+        isDone={completedStatus || disabled}
       />
       <IconButton
         edge="end"

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { AddItemForm, AddItemFormProps } from './AddItemForm'
+import { AddItemForm } from './AddItemForm'
 import { action } from '@storybook/addon-actions'
 import TextField from '@mui/material/TextField'
 import { ChangeEvent, useState, KeyboardEvent } from 'react'
@@ -27,13 +27,17 @@ export const AddItemFormStory: Story = {
   },
 }
 
-const AddItemFormError = (props: AddItemFormProps) => {
+type Props = {
+  addItem: (title: string) => void
+}
+
+const AddItemFormError: React.FC<Props> = ({ addItem }) => {
   let [error, setError] = useState<string>('Mistake')
   let [title, setTitle] = useState('')
 
   const addTasks = () => {
     if (title.trim() !== '') {
-      props.addItem(title.trim())
+      addItem(title.trim())
       setTitle('')
     } else {
       setError(error)
@@ -74,11 +78,9 @@ const AddItemFormError = (props: AddItemFormProps) => {
 }
 
 export const AddItemFormErrorStory: Story = {
-  render: () => <AddItemFormError addItem={action('addItem was action')} errorText={'Mistake'} />,
+  render: () => <AddItemFormError addItem={action('addItem was action')} />,
 }
 
 export const AddItemFormDisabledStory: Story = {
-  render: () => (
-    <AddItemForm addItem={action('addItem was action')} disabled={true} errorText={''} />
-  ),
+  render: () => <AddItemForm addItem={action('addItem was action')} disabled={true} />,
 }

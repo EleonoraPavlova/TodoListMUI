@@ -1,14 +1,13 @@
 import { createTheme } from '@mui/material'
 import { lightGreen, lime } from '@mui/material/colors'
 import { appThunks, initializedAppSelector } from 'BLL/reducers/appSlice'
-import { authThunks, isLoggedInSelector } from 'BLL/reducers/authSlice'
+import { isLoggedInSelector } from 'BLL/reducers/authSlice'
 import { useActions } from 'common/hooks'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
 export function useApp() {
-  const { logOutTC } = useActions(authThunks)
   let isLoggedIn = useSelector(isLoggedInSelector)
   let initialized = useSelector(initializedAppSelector)
 
@@ -43,9 +42,5 @@ export function useApp() {
     },
   })
 
-  const logOutHandler = useCallback(() => {
-    logOutTC()
-  }, [isLoggedIn])
-
-  return { btnText, toggleTheme, logOutHandler, themeHandler }
+  return { btnText, toggleTheme, themeHandler }
 }

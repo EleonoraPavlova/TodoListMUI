@@ -6,7 +6,7 @@ import { TodolistPage } from './TodolistPage'
 import { todoListId1 } from 'BLL/initialState'
 import { ReduxStoreProviderDecorator } from 'stories/decorators'
 import { todolistsSelectors, todolistsThunks } from 'BLL/reducers/todolistsSlice'
-import { useActions } from 'common/hooks'
+import { Box } from '@mui/material'
 
 const meta: Meta<typeof TodolistPage> = {
   title: 'TODOLISTS/TodolistPage',
@@ -14,7 +14,7 @@ const meta: Meta<typeof TodolistPage> = {
   tags: ['autodocs'],
   argTypes: {},
   args: {
-    todolists: {
+    todolist: {
       id: todoListId1,
       title: 'HTML&CSS',
       filter: 'all',
@@ -39,13 +39,13 @@ const TodolistStoryRedux = () => {
       dispatch(todolistsThunks.addTodolistTC.fulfilled(payload, '', 'requestId'))
     }
   })
-  return !todoLists[0] ? <> </> : <TodolistPage todolists={todoLists[0]} />
+  return !todoLists[0] ? <> </> : <TodolistPage todolist={todoLists[0]} />
 }
 
 export const TodolistStory: Story = {
   render: () => (
-    <div
-      style={{
+    <Box
+      sx={{
         width: '300px',
         display: 'flex',
         flexDirection: 'column',
@@ -53,6 +53,6 @@ export const TodolistStory: Story = {
         justifyContent: 'center',
       }}>
       <TodolistStoryRedux />
-    </div>
+    </Box>
   ),
 }
