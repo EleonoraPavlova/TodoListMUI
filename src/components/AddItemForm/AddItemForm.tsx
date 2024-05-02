@@ -4,7 +4,7 @@ import { IconButton, TextField } from '@mui/material'
 import { useAddItemForm } from './hooks/useAddItemForm'
 
 type Props = {
-  addItem: (title: string) => void //это нужно обвернуть в useCallBack
+  addItem: (title: string) => Promise<any>
   disabled?: boolean
 }
 
@@ -13,7 +13,7 @@ export const AddItemForm: React.FC<Props> = memo(({ disabled = false, addItem })
     useAddItemForm(addItem)
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
       <TextField
         value={input}
         disabled={disabled}
@@ -22,7 +22,7 @@ export const AddItemForm: React.FC<Props> = memo(({ disabled = false, addItem })
         label="Value"
         size="small"
         onBlur={onBlurHandler}
-        sx={{ mr: '3px' }}
+        sx={{ mr: '3px', width: '200px' }}
         error={!!error}
         helperText={error}
       />

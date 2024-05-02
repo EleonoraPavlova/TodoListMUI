@@ -1,19 +1,25 @@
+import { AxiosError } from 'axios'
+import { ResponseBase } from 'common/types'
 import { ChangeEvent, useCallback, useState, KeyboardEvent } from 'react'
 
-export function useAddItemForm(addItem: (title: string) => void) {
+export function useAddItemForm(addItem: (title: string) => Promise<any>) {
   let [error, setError] = useState<string | null>(null)
   let [input, setInput] = useState('')
 
   const addTask = useCallback(
     (title: string) => {
       if (/[a-zA-Zа-яА-ЯёЁ0-9]/i.test(title) && title.length >= 3) {
-        if (title.length > 100) {
-          setInput(input)
-          setError('max 100 characters')
-        } else {
-          addItem(title)
-          setInput('')
-        }
+        addItem(title)
+          .then(() => {
+            setInput('')
+          })
+          .catch((e: ResponseBase | AxiosError) => {
+            if ('fieldsErrors' in e) {
+              setError(e.messages[0])
+            } else {
+              setError(e.message)
+            }
+          })
       } else {
         setError('min 3 characters')
       }

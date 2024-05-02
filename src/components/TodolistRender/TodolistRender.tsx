@@ -17,7 +17,7 @@ export const TodoListsForRender: React.FC<Props> = memo(({ demo = false }) => {
   const { addTodolistTC } = useActions(todolistsThunks)
 
   const addTodoList = (title: string) => {
-    addTodolistTC(title)
+    return addTodolistTC(title).unwrap()
   }
 
   const todolistsMap: JSX.Element[] = todolists.map((t: TodolistDomain) => (

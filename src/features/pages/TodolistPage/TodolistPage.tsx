@@ -21,7 +21,7 @@ export const TodolistPage: React.FC<Props> = memo(({ todolist, demo = false }) =
 
   const addItem = useCallback(
     (title: string) => {
-      addTaskTC({ title, todoListId: id })
+      return addTaskTC({ title, todoListId: id }).unwrap()
     },
     [addTaskTC, id]
   )

@@ -1,12 +1,10 @@
 import { authThunks } from 'BLL/reducers/authSlice'
-import { useActions, useAppDispatch } from 'common/hooks'
+import { useActions } from 'common/hooks'
 import { LoginParams, ResponseBase, ThunkErrorApiConfig } from 'common/types'
-import { handleServerNetworkError } from 'common/utils'
 import { useFormik } from 'formik'
 
 export function useLogin() {
   const { loginTC } = useActions(authThunks)
-  const dispatch = useAppDispatch()
 
   const formik = useFormik({
     validate: (values) => {
@@ -33,24 +31,20 @@ export function useLogin() {
     },
     onSubmit: async (values, { setFieldError, setSubmitting }) => {
       setSubmitting(true)
-      try {
-        await loginTC(values)
-          .unwrap()
-          .then((res) => console.log('res', res))
-          .catch((e: ThunkErrorApiConfig | ResponseBase) => {
-            if ('errors' in e) {
-              setFieldError('email', e.errors[0])
-              setFieldError('password', e.errors[0])
-            } else if ('messages' in e) {
-              const { fieldsErrors } = e
-              fieldsErrors.forEach((el) => {
-                setFieldError(el.field, el.error)
-              })
-            }
-          })
-      } catch (err) {
-        handleServerNetworkError(err as { message: string }, dispatch)
-      }
+      await loginTC(values)
+        .unwrap()
+        .then((res) => console.log('res', res))
+        .catch((e: ThunkErrorApiConfig | ResponseBase) => {
+          if ('errors' in e) {
+            setFieldError('email', e.errors[0])
+            setFieldError('password', e.errors[0])
+          } else if ('messages' in e) {
+            const { fieldsErrors } = e
+            fieldsErrors.forEach((el) => {
+              setFieldError(el.field, el.error)
+            })
+          }
+        })
       setSubmitting(false)
     },
   })

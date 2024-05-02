@@ -3,7 +3,7 @@ import { clearTasksTodolists } from '../../actions/actions'
 import { AppRootState } from 'BLL/store'
 import { todolistsThunks } from '../todolistsSlice'
 import { ResultCode, TaskStatuses } from 'common/emuns'
-import { createAppAsyncThunk, handleServerAppError, thunkTryCatch } from 'common/utils'
+import { createAppAsyncThunk } from 'common/utils'
 import { tasksInitial } from 'BLL/initialState'
 import { setSuccessAppAC } from '../appSlice'
 import { tasksApi } from 'DAL/tasks-api'
@@ -38,7 +38,7 @@ const tasksSlice = createSlice({
         state[action.payload.todolist.id] = []
       })
       .addCase(todolistsThunks.removeTodolistTC.fulfilled, (state, action) => {
-        delete state[action.payload.todoListId] //delete property from {}
+        delete state[action.payload.todoListId]
       })
       .addCase(todolistsThunks.setTodoListTC.fulfilled, (state, action) => {
         delete state['todoListId1']
@@ -57,12 +57,9 @@ const tasksSlice = createSlice({
 
 const getTasksTC = createAppAsyncThunk<{ todoListId: string; tasks: Task[] }, string>(
   `${tasksSlice.name}/getTasks`,
-  (todoListId, thunkAPI) => {
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await tasksApi.getTasks(todoListId)
-      // dispatch(setTaskskAC({ todoListId, tasks: res.data.items }))
-      return { todoListId, tasks: res.data.items }
-    })
+  async (todoListId) => {
+    const res = await tasksApi.getTasks(todoListId)
+    return { todoListId, tasks: res.data.items }
   }
 )
 
@@ -70,48 +67,37 @@ type DeleteParamsTask = Omit<UpdateParamsTask, 'model'>
 
 const removeTaskTC = createAppAsyncThunk<DeleteParamsTask, DeleteParamsTask>(
   `${tasksSlice.name}/removeTask`,
-  async (params, thunkAPI) => {
+  async (params, { dispatch, rejectWithValue }) => {
     const { todoListId, taskId } = params
-    const { dispatch, rejectWithValue } = thunkAPI
     dispatch(updateTaskTC({ todoListId, taskId, model: { status: TaskStatuses.inProgress } }))
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await tasksApi.deleteTask(params)
-      if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        // thunkApi.dispatch(removeTaskAC( todoListId, taskId ))
-        dispatch(setSuccessAppAC({ success: 'task was successfully removed' }))
-        return params
-      } else {
-        handleServerAppError(res.data.messages, dispatch)
-        return rejectWithValue(null)
-      }
-    })
+    const res = await tasksApi.deleteTask(params)
+    if (res.data.resultCode === ResultCode.SUCCEEDED) {
+      dispatch(setSuccessAppAC({ success: 'task was successfully removed' }))
+      return params
+    } else {
+      return rejectWithValue(res.data)
+    }
   }
 )
 
 const addTaskTC = createAppAsyncThunk<{ task: Task }, Omit<UpdateTodolistPayload, 'filter'>>(
   `${tasksSlice.name}/addTask`,
-  ({ title, todoListId }, thunkAPI) => {
-    const { dispatch, rejectWithValue } = thunkAPI
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await tasksApi.createTasks(todoListId, title)
-      if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        const task = res.data.data.item
-        // thunkApi.dispatch(addTaskAC({ task }))
-        dispatch(setSuccessAppAC({ success: 'task was successfully added' }))
-        return { task }
-      } else {
-        handleServerAppError(res.data.messages, dispatch)
-        return rejectWithValue(null)
-      }
-    })
+  async ({ title, todoListId }, { dispatch, rejectWithValue }) => {
+    const res = await tasksApi.createTasks(todoListId, title)
+    if (res.data.resultCode === ResultCode.SUCCEEDED) {
+      const task = res.data.data.item
+      dispatch(setSuccessAppAC({ success: 'task was successfully added' }))
+      return { task }
+    } else {
+      return rejectWithValue(res.data)
+    }
   }
 )
 
 //update any field
 const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask>(
   `${tasksSlice.name}/updateTask`,
-  (params, thunkAPI) => {
-    const { dispatch, rejectWithValue, getState } = thunkAPI
+  async (params, { dispatch, rejectWithValue, getState }) => {
     const { todoListId, taskId, model } = params
     const state = getState() as AppRootState
     const task = state.tasks[todoListId].find((t: Task) => t.id === taskId) //нашли нужную таску в state и меняю поля которые необходимо
@@ -128,17 +114,14 @@ const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask>(
       deadline: task.deadline,
       ...model,
     }
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await tasksApi.updateTask({ todoListId, taskId, model: apiModel })
-      if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        // dispatch(updateTaskAC({ todoListId, taskId, model: apiModel }))
-        dispatch(setSuccessAppAC({ success: 'task was successfully updated' }))
-        return params
-      } else {
-        handleServerAppError(res.data.messages, dispatch)
-        return rejectWithValue(null)
-      }
-    })
+
+    const res = await tasksApi.updateTask({ todoListId, taskId, model: apiModel })
+    if (res.data.resultCode === ResultCode.SUCCEEDED) {
+      dispatch(setSuccessAppAC({ success: 'task was successfully updated' }))
+      return params
+    } else {
+      return rejectWithValue(res.data)
+    }
   }
 )
 

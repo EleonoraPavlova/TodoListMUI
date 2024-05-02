@@ -18,5 +18,4 @@ export const handleServerAppError = (
       setErrorAppAC(messages.length ? { error: messages[0] } : { error: 'Some error occurred' })
     )
   }
-  // dispatch(setStatusAppAC({ status: 'failed' }))
 }

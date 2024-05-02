@@ -23,12 +23,15 @@ type Story = StoryObj<typeof AddItemForm>
 
 export const AddItemFormStory: Story = {
   args: {
-    addItem: action('Button clicked inside form'),
+    addItem: (title: string) =>
+      new Promise((resolve) => {
+        resolve(title)
+      }),
   },
 }
 
 type Props = {
-  addItem: (title: string) => void
+  addItem: (title: string) => Promise<any>
 }
 
 const AddItemFormError: React.FC<Props> = ({ addItem }) => {
@@ -77,10 +80,16 @@ const AddItemFormError: React.FC<Props> = ({ addItem }) => {
   )
 }
 
+const addItemTest = (title: string) => {
+  return new Promise((resolve) => {
+    resolve(title)
+  })
+}
+
 export const AddItemFormErrorStory: Story = {
-  render: () => <AddItemFormError addItem={action('addItem was action')} />,
+  render: () => <AddItemFormError addItem={addItemTest} />,
 }
 
 export const AddItemFormDisabledStory: Story = {
-  render: () => <AddItemForm addItem={action('addItem was action')} disabled={true} />,
+  render: () => <AddItemForm addItem={addItemTest} disabled={true} />,
 }

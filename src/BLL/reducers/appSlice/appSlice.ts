@@ -1,12 +1,17 @@
-import { PayloadAction, createSlice, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit'
+import {
+  PayloadAction,
+  createSlice,
+  isAnyOf,
+  isFulfilled,
+  isPending,
+  isRejected,
+} from '@reduxjs/toolkit'
 import { todolistsThunks } from '../todolistsSlice'
 import { appInitial } from 'BLL/initialState'
-import { handleServerAppError } from 'common/utils/handleServerAppError'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
 import { createAppAsyncThunk } from 'common/utils'
-import { setIsLoggedInAC } from '../authSlice'
-import { thunkTryCatch } from 'common/utils'
+import { tasksThunks } from '../tasksSlice'
 
 const appSlice = createSlice({
   name: 'app',
@@ -18,22 +23,37 @@ const appSlice = createSlice({
     setSuccessAppAC(state, action: PayloadAction<{ success: string | null }>) {
       state.success = action.payload.success
     },
+    setInitializeAppAC(state) {
+      state.initialized = true
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(setInitializeAppTC.fulfilled, (state) => {
+      .addMatcher(isAnyOf(setInitializeAppTC.fulfilled, setInitializeAppTC.rejected), (state) => {
         state.initialized = true
       })
       .addMatcher(isPending, (state) => {
         state.status = 'loading'
       })
-      .addMatcher(isRejected, (state) => {
-        state.status = 'failed'
-      })
       .addMatcher(isFulfilled, (state) => {
         state.status = 'succeeded'
       })
+      .addMatcher(isRejected, (state, action: any) => {
+        state.status = 'failed'
+        if (
+          action.type === todolistsThunks.addTodolistTC.rejected.type ||
+          action.type === tasksThunks.addTaskTC.rejected.type ||
+          action.type === setInitializeAppTC.rejected.type
+        )
+          return
+        if (action.payload) {
+          state.error = action.payload.errors[0]
+        } else {
+          state.error = action.error.message ? action.error.message : 'Some error occurred'
+        }
+      })
   },
+  //action.payload.messages[0]
   selectors: {
     statusAppSelector: (slice) => slice.status,
     errorAppSelector: (slice) => slice.error,
@@ -42,21 +62,17 @@ const appSlice = createSlice({
   },
 })
 
-export const setInitializeAppTC = createAppAsyncThunk<{ initialized: boolean }>(
+export const setInitializeAppTC = createAppAsyncThunk<{ isLoggedIn: boolean }>(
   `${appSlice.name}/setInitializeApp`,
-  (params, thunkAPI) => {
-    const { dispatch } = thunkAPI
-    return thunkTryCatch(thunkAPI, async () => {
-      const res = await authApi.authMe()
-      // anonymous user or authorization
-      if (res.data.resultCode === ResultCode.SUCCEEDED) {
-        dispatch(setIsLoggedInAC({ isLoggedIn: true }))
-        dispatch(todolistsThunks.setTodoListTC())
-      } else {
-        handleServerAppError(res.data.messages, dispatch, false)
-      }
-      return { initialized: true }
-    })
+  async (_, { dispatch, rejectWithValue }) => {
+    const res = await authApi.authMe()
+    // anonymous user or authorization
+    if (res.data.resultCode === ResultCode.SUCCEEDED) {
+      dispatch(todolistsThunks.setTodoListTC())
+      return { isLoggedIn: true }
+    } else {
+      return rejectWithValue(res.data)
+    }
   }
 )
 
@@ -65,4 +81,3 @@ export const appThunks = { setInitializeAppTC }
 export const { setErrorAppAC, setSuccessAppAC } = appSlice.actions
 export const { statusAppSelector, errorAppSelector, successAppSelector, initializedAppSelector } =
   appSlice.selectors
-export { isPending, isRejected, isFulfilled }
