@@ -1,5 +1,5 @@
 import { isAxiosError } from 'axios'
-import { setErrorAppAC, setStatusAppAC } from 'BLL/reducers/appSlice'
+import { setErrorAppAC } from 'BLL/reducers/appSlice'
 import { Dispatch } from 'redux'
 
 //server crashed
@@ -14,5 +14,4 @@ export const handleServerNetworkError = (err: unknown, dispatch: Dispatch): void
   }
 
   dispatch(setErrorAppAC({ error: errorMessage }))
-  dispatch(setStatusAppAC({ status: 'failed' }))
 }

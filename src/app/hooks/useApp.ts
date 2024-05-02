@@ -16,7 +16,6 @@ export function useApp() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // if (!demo) return
     setInitializeAppTC()
   }, [setInitializeAppTC])
 

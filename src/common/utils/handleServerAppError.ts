@@ -1,4 +1,4 @@
-import { setErrorAppAC, setStatusAppAC } from 'BLL/reducers/appSlice'
+import { setErrorAppAC } from 'BLL/reducers/appSlice'
 import { Dispatch } from 'redux'
 
 /**
@@ -18,5 +18,5 @@ export const handleServerAppError = (
       setErrorAppAC(messages.length ? { error: messages[0] } : { error: 'Some error occurred' })
     )
   }
-  dispatch(setStatusAppAC({ status: 'failed' }))
+  // dispatch(setStatusAppAC({ status: 'failed' }))
 }

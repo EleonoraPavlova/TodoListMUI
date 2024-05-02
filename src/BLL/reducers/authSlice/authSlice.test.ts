@@ -1,10 +1,10 @@
 import { authReducer, setIsLoggedInAC } from './authSlice'
 
-type startAuthType = {
+type startAuth = {
   isLoggedIn: false
 }
 
-let startState: startAuthType
+let startState: startAuth
 
 beforeEach(() => {
   startState = {

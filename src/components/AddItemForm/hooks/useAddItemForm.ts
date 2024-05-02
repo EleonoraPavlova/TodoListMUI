@@ -20,6 +20,7 @@ export function useAddItemForm(addItem: (title: string) => void) {
     },
     [addItem, setInput, setError, input]
   )
+
   const onChangeHandler = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.currentTarget.value

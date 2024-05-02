@@ -5,7 +5,7 @@ import { todolistsThunks } from '../todolistsSlice'
 import { ResultCode, TaskStatuses } from 'common/emuns'
 import { createAppAsyncThunk, handleServerAppError, thunkTryCatch } from 'common/utils'
 import { tasksInitial } from 'BLL/initialState'
-import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
+import { setSuccessAppAC } from '../appSlice'
 import { tasksApi } from 'DAL/tasks-api'
 import { Task, UpdateParamsTask, UpdateTaskModel, UpdateTodolistPayload } from 'common/types'
 
@@ -58,11 +58,9 @@ const tasksSlice = createSlice({
 const getTasksTC = createAppAsyncThunk<{ todoListId: string; tasks: Task[] }, string>(
   `${tasksSlice.name}/getTasks`,
   (todoListId, thunkAPI) => {
-    const { dispatch } = thunkAPI
     return thunkTryCatch(thunkAPI, async () => {
       const res = await tasksApi.getTasks(todoListId)
       // dispatch(setTaskskAC({ todoListId, tasks: res.data.items }))
-      dispatch(setStatusAppAC({ status: 'succeeded' }))
       return { todoListId, tasks: res.data.items }
     })
   }
@@ -81,7 +79,6 @@ const removeTaskTC = createAppAsyncThunk<DeleteParamsTask, DeleteParamsTask>(
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // thunkApi.dispatch(removeTaskAC( todoListId, taskId ))
         dispatch(setSuccessAppAC({ success: 'task was successfully removed' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
         return params
       } else {
         handleServerAppError(res.data.messages, dispatch)
@@ -101,7 +98,6 @@ const addTaskTC = createAppAsyncThunk<{ task: Task }, Omit<UpdateTodolistPayload
         const task = res.data.data.item
         // thunkApi.dispatch(addTaskAC({ task }))
         dispatch(setSuccessAppAC({ success: 'task was successfully added' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
         return { task }
       } else {
         handleServerAppError(res.data.messages, dispatch)
@@ -137,7 +133,6 @@ const updateTaskTC = createAppAsyncThunk<UpdateParamsTask, UpdateParamsTask>(
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(updateTaskAC({ todoListId, taskId, model: apiModel }))
         dispatch(setSuccessAppAC({ success: 'task was successfully updated' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
         return params
       } else {
         handleServerAppError(res.data.messages, dispatch)

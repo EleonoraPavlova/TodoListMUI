@@ -1,9 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { AxiosError } from 'axios'
 import { LoginParams } from 'common/types'
-import { createAppAsyncThunk, handleServerAppError, handleServerNetworkError } from 'common/utils'
+import { createAppAsyncThunk, handleServerAppError } from 'common/utils'
 import { authInitial } from 'BLL/initialState'
-import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
+import { setSuccessAppAC } from '../appSlice'
 import { authApi } from 'DAL/auth-api'
 import { ResultCode } from 'common/emuns'
 import { clearTasksTodolists } from 'BLL/actions/actions'
@@ -42,7 +41,7 @@ export const loginTC = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParams>
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         dispatch(todolistsThunks.setTodoListTC())
         dispatch(setSuccessAppAC({ success: 'you have successfully logged in' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        // dispatch(setStatusAppAC({ status: 'succeeded' }))
         return { isLoggedIn: true }
       } else {
         handleServerAppError(res.data.messages, dispatch)
@@ -61,7 +60,7 @@ const logOutTC = createAppAsyncThunk<{ isLoggedIn: boolean }>(
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(setIsLoggedInAC(false))
         dispatch(setSuccessAppAC({ success: 'you have successfully logged out' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        // dispatch(setStatusAppAC({ status: 'succeeded' }))
         dispatch(clearTasksTodolists({ tasks: {}, todolists: [] }))
         return { isLoggedIn: false }
       } else {

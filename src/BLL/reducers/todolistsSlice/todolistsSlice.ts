@@ -5,14 +5,8 @@ import { AppRootState } from 'BLL/store'
 import { ResultCode } from 'common/emuns'
 import { RequestStatus, TodolistApi, TodolistDomain, UpdateTodolistPayload } from 'common/types'
 import { todolistApi } from 'DAL/todolist-api'
-import { setStatusAppAC, setSuccessAppAC } from '../appSlice'
-import {
-  createAppAsyncThunk,
-  handleServerAppError,
-  handleServerNetworkError,
-  thunkTryCatch,
-} from 'common/utils'
-import { AsyncThunkConfig } from '@reduxjs/toolkit/dist/createAsyncThunk'
+import { setSuccessAppAC } from '../appSlice'
+import { createAppAsyncThunk, handleServerAppError, thunkTryCatch } from 'common/utils'
 
 const todolistSlice = createSlice({
   name: 'todolist',
@@ -65,7 +59,7 @@ const setTodoListTC = createAppAsyncThunk<{ todoLists: TodolistApi[] }>(
     return thunkTryCatch(thunkAPI, async () => {
       const res = await todolistApi.getTodos()
       // dispatch(setTodoListAC({ todoLists: res.data }))
-      dispatch(setStatusAppAC({ status: 'succeeded' }))
+      // dispatch(setStatusAppAC({ status: 'succeeded' }))
       res.data.map((tl) => {
         dispatch(tasksThunks.getTasksTC(tl.id))
       })
@@ -84,7 +78,7 @@ const removeTodolistTC = createAppAsyncThunk<{ todoListId: string }, string>(
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(removeTodolistAC({ todoListId }))
         dispatch(setSuccessAppAC({ success: 'todolist was successfully removed' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        // dispatch(setStatusAppAC({ status: 'succeeded' }))
         return { todoListId }
       } else {
         handleServerAppError(res.data.messages, dispatch)
@@ -103,7 +97,7 @@ const addTodolistTC = createAppAsyncThunk<{ todolist: TodolistApi }, string>(
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(addTodolistAC({ todolist: res.data.data.item }))
         dispatch(setSuccessAppAC({ success: 'todolist was successfully added' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        // dispatch(setStatusAppAC({ status: 'succeeded' }))
         return { todolist: res.data.data.item }
       } else {
         handleServerAppError(res.data.messages, dispatch)
@@ -122,7 +116,7 @@ const updateTodolistTC = createAppAsyncThunk<UpdateTodolistPayload, UpdateTodoli
       if (res.data.resultCode === ResultCode.SUCCEEDED) {
         // dispatch(updateTodolistAC({ params }))
         dispatch(setSuccessAppAC({ success: 'todolist title was successfully updated' }))
-        dispatch(setStatusAppAC({ status: 'succeeded' }))
+        // dispatch(setStatusAppAC({ status: 'succeeded' }))
         return params
       } else {
         handleServerAppError(res.data.messages, dispatch)
